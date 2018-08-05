@@ -35,22 +35,70 @@ namespace DOL.GS.PropertyCalc
 	[PropertyCalculator(eProperty.Stat_First, eProperty.Stat_Last)]
 	public class StatCalculator : PropertyCalculator
     {
+        public class LivingProperty
+        {
+            private GameLiving living;
+            private eProperty propID;
+            private StatCalculator statCalc = new StatCalculator();
+
+            public LivingProperty(GameLiving living, eProperty propID)
+            {
+                this.living = living;
+                this.propID = propID;
+            }
+
+            public int Base
+            {
+                get
+                {
+                    return living.GetBaseStat((eStat)propID);
+                }
+            }
+            public int Ability
+            {
+                get
+                {
+                    return living.AbilityBonus[propID];
+                }
+            }
+            public int Item
+            {
+                get
+                {
+                    return statCalc.CalcValueFromItems(living, propID);
+                }
+            }
+            public int Buff
+            {
+                get
+                {
+                    return statCalc.CalcValueFromBuffs(living, propID);
+                }
+            }
+            public int Debuff
+            {
+                get
+                {
+                    return living.DebuffCategory[propID];
+                }
+            }
+        }
+
         public StatCalculator() { }
 
         public override int CalcValue(GameLiving living, eProperty property)
         {
+            var statProperty = new LivingProperty(living, property);
             int propertyIndex = (int)property;
 
-            // Base stats/abilities/debuffs/death.
+            int baseStat = statProperty.Base;
+            int abilityBonus = statProperty.Ability;
+            int itemBonus = statProperty.Item;
+            int buffBonus = statProperty.Buff;
+            int debuff = statProperty.Debuff;
 
-            int baseStat = living.GetBaseStat((eStat)property);
-            int abilityBonus = living.AbilityBonus[propertyIndex];
-            int debuff = living.DebuffCategory[propertyIndex];
 			int deathConDebuff = 0;
-
-            int itemBonus = CalcValueFromItems(living, property);
-            int buffBonus = CalcValueFromBuffs(living, property);
-
+            
 			// Special cases:
 			// 1) ManaStat (base stat + acuity, players only).
 			// 2) As of patch 1.64: - Acuity - This bonus will increase your casting stat, 
