@@ -35,13 +35,13 @@ namespace DOL.GS.PropertyCalc
 	[PropertyCalculator(eProperty.Stat_First, eProperty.Stat_Last)]
 	public class StatCalculator : PropertyCalculator
     {
-        public class LivingProperty
+        public class StatBonus
         {
             private GameLiving living;
             private eProperty propID;
             private StatCalculator statCalc = new StatCalculator();
 
-            public LivingProperty(GameLiving living, eProperty propID)
+            public StatBonus(GameLiving living, eProperty propID)
             {
                 this.living = living;
                 this.propID = propID;
@@ -58,7 +58,19 @@ namespace DOL.GS.PropertyCalc
             {
                 get
                 {
-                    return living.AbilityBonus[propID];
+                    int abilityBonus = living.AbilityBonus[propID];
+                    if (living is GamePlayer)
+                    {
+                        GamePlayer player = living as GamePlayer;
+                        if (propID == (eProperty)(player.CharacterClass.ManaStat))
+                        {
+                            if (player.CharacterClass.ID != (int)eCharacterClass.Scout && player.CharacterClass.ID != (int)eCharacterClass.Hunter && player.CharacterClass.ID != (int)eCharacterClass.Ranger)
+                            {
+                                abilityBonus += player.AbilityBonus[(int)eProperty.Acuity];
+                            }
+                        }
+                    }
+                    return abilityBonus;
                 }
             }
             public int Item
@@ -88,7 +100,7 @@ namespace DOL.GS.PropertyCalc
 
         public override int CalcValue(GameLiving living, eProperty property)
         {
-            var statProperty = new LivingProperty(living, property);
+            var statProperty = new StatBonus(living, property);
             int propertyIndex = (int)property;
 
             int baseStat = statProperty.Base;
@@ -108,16 +120,16 @@ namespace DOL.GS.PropertyCalc
 
 			if (living is GamePlayer)
 			{
-				GamePlayer player = living as GamePlayer;
-				if (property == (eProperty)(player.CharacterClass.ManaStat))
-				{
-					if (player.CharacterClass.ID != (int)eCharacterClass.Scout && player.CharacterClass.ID != (int)eCharacterClass.Hunter && player.CharacterClass.ID != (int)eCharacterClass.Ranger)
-					{
-						abilityBonus += player.AbilityBonus[(int)eProperty.Acuity];
-					}
-				}
+                GamePlayer player = living as GamePlayer;
+                //if (property == (eProperty)(player.CharacterClass.ManaStat))
+                //{
+                //	if (player.CharacterClass.ID != (int)eCharacterClass.Scout && player.CharacterClass.ID != (int)eCharacterClass.Hunter && player.CharacterClass.ID != (int)eCharacterClass.Ranger)
+                //	{
+                //		abilityBonus += player.AbilityBonus[(int)eProperty.Acuity];
+                //	}
+                //}
 
-				deathConDebuff = player.TotalConstitutionLostAtDeath;
+                deathConDebuff = player.TotalConstitutionLostAtDeath;
 			}
 
 			// Apply debuffs, 100% effectiveness for player buffs, 50% effectiveness
