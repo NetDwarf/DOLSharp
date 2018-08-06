@@ -7,6 +7,7 @@ namespace DOL.UnitTests.Gameserver
     [TestFixture]
     public class UT_StatCalculator
     {
+        #region CalcValueFromBuffs
         [Test]
         public void CalcValueFromBuffs_GameNPCWith100ConstBaseBuff_Return100()
         {
@@ -20,7 +21,7 @@ namespace DOL.UnitTests.Gameserver
         }
 
         [Test]
-        public void CalcValueFromBuffs_Level50PlayerWith100ConstBaseBuff_ReturnCapAt62()
+        public void CalcValueFromBuffs_Level50PlayerWith100ConstBaseBuff_Return62()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
@@ -70,7 +71,9 @@ namespace DOL.UnitTests.Gameserver
             
             Assert.AreEqual(0, actual);
         }
+        #endregion
 
+        #region CalcValueFromItems
         [Test]
         public void CalcValueFromItems_LivingIsNull_ReturnZero()
         {
@@ -153,51 +156,19 @@ namespace DOL.UnitTests.Gameserver
         }
 
         [Test]
-        public void GetItemBonusCapIncrease_Level50Player100ConstCap_ReturnCapAt26()
+        public void CalcValueFromItems_Level50Player100ConstitutionAnd10ConstCap_Return85()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-            player.ItemBonus[eProperty.ConCapBonus] = 100;
-
-            int actual = StatCalculator.GetItemBonusCapIncrease(player, eProperty.Constitution);
-
-            int expected = (int)(50 / 2.0 + 1);
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void GetItemBonusCapIncrease_Level50Player10ConstCap_Return10()
-        {
-            var player = Create.FakePlayer();
-            player.Level = 50;
+            player.ItemBonus[eProperty.Constitution] = 100;
             player.ItemBonus[eProperty.ConCapBonus] = 10;
+            StatCalculator statCalc = createStatCalculator();
 
-            int actual = StatCalculator.GetItemBonusCapIncrease(player, eProperty.Constitution);
+            int actual = statCalc.CalcValueFromItems(player, eProperty.Constitution);
 
-            Assert.AreEqual(10, actual);
+            Assert.AreEqual(85, actual);
         }
-
-        [Test]
-        public void GetMythicalItemBonusCapIncrease_PlayerWith100MythicalConCap_ReturnCapAt52()
-        {
-            var player = Create.FakePlayer();
-            player.ItemBonus[eProperty.MythicalConCapBonus] = 100;
-
-            int actual = StatCalculator.GetMythicalItemBonusCapIncrease(player, eProperty.Constitution);
-
-            Assert.AreEqual(52, actual);
-        }
-
-        [Test]
-        public void GetMythicalItemBonusCapIncrease_PlayerWith10MythicalConCap_Return10()
-        {
-            var player = Create.FakePlayer();
-            player.ItemBonus[eProperty.MythicalConCapBonus] = 10;
-
-            int actual = StatCalculator.GetMythicalItemBonusCapIncrease(player, eProperty.Constitution);
-
-            Assert.AreEqual(10, actual);
-        }
+        #endregion
 
         [Test]
         public void CalcValue_NPCWith100Constitution_Return100()
