@@ -51,7 +51,14 @@ namespace DOL.GS.PropertyCalc
             {
                 get
                 {
-                    return living.GetBaseStat((eStat)propID);
+                    int baseStat = living.GetBaseStat((eStat)propID);
+                    if (living is GamePlayer)
+                    {
+                        GamePlayer player = living as GamePlayer;
+
+                        baseStat -= player.TotalConstitutionLostAtDeath;
+                    }
+                    return baseStat;
                 }
             }
             public int Ability
@@ -91,7 +98,26 @@ namespace DOL.GS.PropertyCalc
             {
                 get
                 {
-                    return living.DebuffCategory[propID];
+                    int debuffValue = living.DebuffCategory[propID];
+                    int unbuffedBonus = Base + Item;
+                    int buffBonus = Buff - Math.Abs(debuffValue);
+
+                    if (buffBonus < 0)
+                    {
+                        unbuffedBonus += buffBonus / 2;
+                        buffBonus = 0;
+                        if (unbuffedBonus < 0)
+                            unbuffedBonus = 0;
+                    }
+                    return Base + Item + Buff - (unbuffedBonus + buffBonus);
+                }
+            }
+
+            public int Value
+            {
+                get
+                {
+                    return Base + Ability + Item + Buff - Debuff;
                 }
             }
         }
@@ -101,59 +127,8 @@ namespace DOL.GS.PropertyCalc
         public override int CalcValue(GameLiving living, eProperty property)
         {
             var statProperty = new StatBonus(living, property);
-            int propertyIndex = (int)property;
-
-            int baseStat = statProperty.Base;
-            int abilityBonus = statProperty.Ability;
-            int itemBonus = statProperty.Item;
-            int buffBonus = statProperty.Buff;
-            int debuff = statProperty.Debuff;
-
-			int deathConDebuff = 0;
-            
-			// Special cases:
-			// 1) ManaStat (base stat + acuity, players only).
-			// 2) As of patch 1.64: - Acuity - This bonus will increase your casting stat, 
-			//    whatever your casting stat happens to be. If you're a druid, you should get an increase to empathy, 
-			//    while a bard should get an increase to charisma.  http://support.darkageofcamelot.com/kb/article.php?id=540
-			// 3) Constitution lost at death, only affects players.
-
-			if (living is GamePlayer)
-			{
-                GamePlayer player = living as GamePlayer;
-                //if (property == (eProperty)(player.CharacterClass.ManaStat))
-                //{
-                //	if (player.CharacterClass.ID != (int)eCharacterClass.Scout && player.CharacterClass.ID != (int)eCharacterClass.Hunter && player.CharacterClass.ID != (int)eCharacterClass.Ranger)
-                //	{
-                //		abilityBonus += player.AbilityBonus[(int)eProperty.Acuity];
-                //	}
-                //}
-
-                deathConDebuff = player.TotalConstitutionLostAtDeath;
-			}
-
-			// Apply debuffs, 100% effectiveness for player buffs, 50% effectiveness
-			// for item and base stats
-
-			int unbuffedBonus = baseStat + itemBonus;
-			buffBonus -= Math.Abs(debuff);
-
-			if (buffBonus < 0)
-			{
-				unbuffedBonus += buffBonus / 2;
-				buffBonus = 0;
-				if (unbuffedBonus < 0)
-					unbuffedBonus = 0;
-			}
-
-			// Add up and apply any multiplicators.
-
-			int stat = unbuffedBonus + buffBonus + abilityBonus;
+            int stat = statProperty.Value;
 			stat = (int)(stat * living.BuffBonusMultCategory1.Get((int)property));
-
-			// Possibly apply constitution loss at death.
-
-			stat -= (property == eProperty.Constitution)? deathConDebuff : 0;
 
 			return Math.Max(1, stat);
         }
