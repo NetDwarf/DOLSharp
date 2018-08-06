@@ -38,20 +38,20 @@ namespace DOL.GS.PropertyCalc
         public class StatBonus
         {
             private GameLiving living;
-            private eProperty propID;
+            private eProperty propertyID;
             private StatCalculator statCalc = new StatCalculator();
 
             public StatBonus(GameLiving living, eProperty propID)
             {
                 this.living = living;
-                this.propID = propID;
+                this.propertyID = propID;
             }
 
             public int Base
             {
                 get
                 {
-                    int baseStat = living.GetBaseStat((eStat)propID);
+                    int baseStat = living.GetBaseStat((eStat)propertyID);
                     if (living is GamePlayer)
                     {
                         GamePlayer player = living as GamePlayer;
@@ -65,11 +65,11 @@ namespace DOL.GS.PropertyCalc
             {
                 get
                 {
-                    int abilityBonus = living.AbilityBonus[propID];
+                    int abilityBonus = living.AbilityBonus[propertyID];
                     if (living is GamePlayer)
                     {
                         GamePlayer player = living as GamePlayer;
-                        if (propID == (eProperty)(player.CharacterClass.ManaStat))
+                        if (propertyID == (eProperty)(player.CharacterClass.ManaStat))
                         {
                             if (player.CharacterClass.ID != (int)eCharacterClass.Scout && player.CharacterClass.ID != (int)eCharacterClass.Hunter && player.CharacterClass.ID != (int)eCharacterClass.Ranger)
                             {
@@ -84,21 +84,23 @@ namespace DOL.GS.PropertyCalc
             {
                 get
                 {
-                    return statCalc.CalcValueFromItems(living, propID);
+                    return statCalc.CalcValueFromItems(living, propertyID);
                 }
             }
             public int Buff
             {
                 get
                 {
-                    return statCalc.CalcValueFromBuffs(living, propID);
+                    var statBuffBonus = new StatBuffBonus(living, propertyID);
+
+                    return statBuffBonus.Value;
                 }
             }
             public int Debuff
             {
                 get
                 {
-                    int debuffValue = living.DebuffCategory[propID];
+                    int debuffValue = living.DebuffCategory[propertyID];
                     int unbuffedBonus = Base + Item;
                     int buffBonus = Buff - Math.Abs(debuffValue);
 
@@ -126,56 +128,76 @@ namespace DOL.GS.PropertyCalc
 
         public override int CalcValue(GameLiving living, eProperty property)
         {
-            var statProperty = new StatBonus(living, property);
-            int stat = statProperty.Value;
+            var statBonus = new StatBonus(living, property);
+            int stat = statBonus.Value;
 			stat = (int)(stat * living.BuffBonusMultCategory1.Get((int)property));
 
 			return Math.Max(1, stat);
         }
 
+        public class StatBuffBonus
+        {
+            private GameLiving living;
+            private eProperty propertyID;
+
+            public StatBuffBonus(GameLiving living, eProperty property)
+            {
+                this.living = living;
+                this.propertyID = property;
+            }
+
+            public int BaseBuff {
+                get
+                {
+                    int baseBonusValue = living.BaseBuffBonusCategory[propertyID];
+                    int baseBuffBonusCap = (living is GamePlayer) ? (int)(living.Level * 1.25) : Int16.MaxValue;
+                    baseBonusValue = Math.Min(baseBonusValue, baseBuffBonusCap);
+                    return baseBonusValue;
+                }
+            }
+            public int SpecBuff
+            {
+                get
+                {
+                    int specBonusValue = living.SpecBuffBonusCategory[propertyID];
+                    if (living is GamePlayer)
+                    {
+                        GamePlayer player = living as GamePlayer;
+                        if (propertyID == (eProperty)(player.CharacterClass.ManaStat))
+                            if (player.CharacterClass.ClassType == eClassType.ListCaster)
+                                specBonusValue += player.BaseBuffBonusCategory[(int)eProperty.Acuity];
+                    }
+                    int specBuffBonusCap = (living is GamePlayer) ? (int)(living.Level * 1.5 * 1.25) : Int16.MaxValue;
+                    specBonusValue = Math.Min(specBonusValue, specBuffBonusCap);
+                    return specBonusValue;
+                }
+            }
+
+            public int Value
+            {
+                get
+                {
+                    if (living == null)
+                        return 0;
+
+                    return BaseBuff + SpecBuff;
+                }
+            }
+        }
+
         /// <summary>
         /// Calculate modified bonuses from buffs only.
         /// </summary>
-        /// <param name="living"></param>
-        /// <param name="property"></param>
-        /// <returns></returns>
         public override int CalcValueFromBuffs(GameLiving living, eProperty property)
         {
-            if (living == null)
-                return 0;
+            var statBuffBonus = new StatBuffBonus(living, property);
 
-            int propertyIndex = (int)property;
-            int baseBuffBonus = living.BaseBuffBonusCategory[propertyIndex];
-            int specBuffBonus = living.SpecBuffBonusCategory[propertyIndex];
-
-            if (living is GamePlayer)
-            {
-                GamePlayer player = living as GamePlayer;
-                if (property == (eProperty)(player.CharacterClass.ManaStat))
-                    if (player.CharacterClass.ClassType == eClassType.ListCaster)
-                        specBuffBonus += player.BaseBuffBonusCategory[(int)eProperty.Acuity];
-            }
-
-            // Caps and cap increases. Only players actually have a buff bonus cap, 
-            // pets don't.
-
-            int baseBuffBonusCap = (living is GamePlayer) ? (int)(living.Level * 1.25) : Int16.MaxValue;
-            int specBuffBonusCap = (living is GamePlayer) ? (int)(living.Level * 1.5 * 1.25) : Int16.MaxValue;
-            
-            // Apply soft caps.
-
-            baseBuffBonus = Math.Min(baseBuffBonus, baseBuffBonusCap);
-            specBuffBonus = Math.Min(specBuffBonus, specBuffBonusCap);
-
-            return baseBuffBonus + specBuffBonus;
+            return statBuffBonus.Value;
         }
 
         /// <summary>
         /// Calculate modified bonuses from items only.
         /// </summary>
-        /// <param name="living"></param>
-        /// <param name="property"></param>
-        /// <returns></returns>
         public override int CalcValueFromItems(GameLiving living, eProperty property)
         {
             if (living == null)
