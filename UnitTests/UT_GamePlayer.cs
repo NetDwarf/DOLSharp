@@ -171,7 +171,7 @@ namespace DOL.UnitTests.Gameserver
         }
 
         [Test]
-        public void Intelligence_AnimistWith30AcuityAnd20IntelligenceAbilityBonus_Return50()
+        public void Intelligence_L50AnimistWith30AcuityAnd20IntelligenceAbilityBonus_Return50()
         {
             var player = createPlayer(new CharacterClassAnimist());
             player.Level = 50;

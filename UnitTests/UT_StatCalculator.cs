@@ -170,6 +170,7 @@ namespace DOL.UnitTests.Gameserver
         }
         #endregion
 
+        #region CalcValue
         [Test]
         public void CalcValue_NPCWith100Constitution_Return100()
         {
@@ -277,7 +278,6 @@ namespace DOL.UnitTests.Gameserver
         public void CalcValue_70ConBaseStatAnd50ConDebuff_Return45()
         {
             var player = Create.FakePlayer();
-            player.Level = 50;
             player.baseStat = 70;
             player.DebuffCategory[eProperty.Constitution] = 50;
             StatCalculator statCalc = createStatCalculator();
@@ -292,7 +292,6 @@ namespace DOL.UnitTests.Gameserver
         public void CalcValue_70ConBaseStatAnd3ConLostOnDeath_Return67()
         {
             var player = Create.FakePlayer();
-            player.Level = 50;
             player.baseStat = 70;
             player.TotalConstitutionLostAtDeath = 3;
             StatCalculator statCalc = createStatCalculator();
@@ -301,6 +300,33 @@ namespace DOL.UnitTests.Gameserver
             
             Assert.AreEqual(67, actual);
         }
+
+        [Test]
+        public void CalcValue_70DexAbilityBonusAnd3ConLostOnDeath_Return70()
+        {
+            var player = Create.FakePlayer();
+            player.AbilityBonus[eProperty.Dexterity] = 70;
+            player.TotalConstitutionLostAtDeath = 3;
+            StatCalculator statCalc = createStatCalculator();
+
+            int actual = statCalc.CalcValue(player, eProperty.Dexterity);
+
+            Assert.AreEqual(70, actual);
+        }
+
+        [Test]
+        public void CalcValue_50DexAbilityBonusAnd25PercentMultiplicator_Return12()
+        {
+            var player = Create.FakePlayer();
+            player.AbilityBonus[eProperty.Dexterity] = 50;
+            player.BuffBonusMultCategory1.Set((int)eProperty.Dexterity, "", 0.25);
+            StatCalculator statCalc = createStatCalculator();
+
+            int actual = statCalc.CalcValue(player, eProperty.Dexterity);
+
+            Assert.AreEqual(12, actual);
+        }
+        #endregion
 
         public static StatCalculator createStatCalculator()
         {
