@@ -5,7 +5,7 @@ using DOL.GS.Effects;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace DOL.UnitTests.Gameserver
+namespace DOL.UnitTests.GameServer
 {
     [TestFixture]
     class UT_GameEffectList

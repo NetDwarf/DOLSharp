@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using DOL.GS;
 
-namespace DOL.UnitTests.Gameserver
+namespace DOL.UnitTests.GameServer
 {
 	[TestFixture]
 	class UT_Boni

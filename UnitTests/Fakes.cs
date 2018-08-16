@@ -3,7 +3,7 @@ using DOL.AI;
 using DOL.Database;
 using DOL.GS;
 
-namespace DOL.UnitTests.Gameserver
+namespace DOL.UnitTests.GameServer
 {
     public class FakePlayer : GamePlayer
     {

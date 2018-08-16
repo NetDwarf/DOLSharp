@@ -3,7 +3,7 @@ using NSubstitute;
 using DOL.GS;
 using DOL.GS.Spells;
 
-namespace DOL.UnitTests.Gameserver
+namespace DOL.UnitTests.GameServer
 {
     [TestFixture]
     class UT_SpellHandler

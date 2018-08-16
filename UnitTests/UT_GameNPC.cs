@@ -2,9 +2,8 @@
 using NSubstitute;
 using DOL.GS;
 using DOL.AI;
-using DOL.GS.PropertyCalc;
 
-namespace DOL.UnitTests.Gameserver
+namespace DOL.UnitTests.GameServer
 {
     [TestFixture]
     class UT_GameNPC

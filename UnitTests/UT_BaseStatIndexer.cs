@@ -2,7 +2,7 @@
 using DOL.GS;
 using DOL.GS.PropertyCalc;
 
-namespace DOL.UnitTests.Gameserver
+namespace DOL.UnitTests.GameServer
 {
 	[TestFixture]
 	class UT_BaseStatIndexer

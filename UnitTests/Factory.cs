@@ -4,7 +4,7 @@ using DOL.Database;
 using DOL.GS;
 using NSubstitute;
 
-namespace DOL.UnitTests.Gameserver
+namespace DOL.UnitTests.GameServer
 {
     public static class Create
     {
