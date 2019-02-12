@@ -363,6 +363,7 @@
     <Compile Include="gameobjects\Atlantis\Teleporter\SpawnDjinnStone.cs" />
     <Compile Include="gameobjects\Atlantis\Teleporter\SummonDjinnStone.cs" />
     <Compile Include="gameobjects\Atlantis\Teleporter\SummonedDjinn.cs" />
+    <Compile Include="gameobjects\Boni\Boni.cs" />
     <Compile Include="gameobjects\CharacterClasses\Albion\CharacterClassNecromancer.cs">
       <SubType>Code</SubType>
     </Compile>

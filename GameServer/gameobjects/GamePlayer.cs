@@ -11510,7 +11510,7 @@ namespace DOL.GS
 
 		public virtual void RefreshItemBonuses()
 		{
-			m_itemBonus = new PropertyIndexer();
+			boni.Clear(eBonusCategory.Item);
 			string slotToLoad = "";
 			switch (VisibleActiveWeaponSlots)
 			{
@@ -15630,11 +15630,6 @@ namespace DOL.GS
 			m_client = client;
 			m_dbCharacter = dbChar;
 			m_controlledHorse = new ControlledHorse(this);
-			m_buff1Bonus = new PropertyIndexer((int)eProperty.MaxProperty); // set up a fixed indexer for players
-			m_buff2Bonus = new PropertyIndexer((int)eProperty.MaxProperty);
-			m_debuffBonus = new PropertyIndexer((int)eProperty.MaxProperty);
-			m_buff4Bonus = new PropertyIndexer((int)eProperty.MaxProperty);
-			m_itemBonus = new PropertyIndexer((int)eProperty.MaxProperty);
 			m_lastUniqueLocations = new GameLocation[4];
 			m_canFly = false;
 

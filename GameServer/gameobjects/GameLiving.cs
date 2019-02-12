@@ -4682,10 +4682,12 @@ namespace DOL.GS
 		}
 		#endregion
 		#region Property/Bonus/Buff/PropertyCalculator fields
+
+		protected Boni boni;
 		/// <summary>
 		/// Array for property boni for abilities
 		/// </summary>
-		protected IPropertyIndexer m_abilityBonus = new PropertyIndexer();
+		protected IPropertyIndexer m_abilityBonus;
 		/// <summary>
 		/// Ability bonus property
 		/// </summary>
@@ -4697,7 +4699,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Array for property boni by items
 		/// </summary>
-		protected IPropertyIndexer m_itemBonus = new PropertyIndexer();
+		protected IPropertyIndexer m_itemBonus;
 		/// <summary>
 		/// Property Item Bonus field
 		/// </summary>
@@ -4710,7 +4712,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Array for buff boni
 		/// </summary>
-		protected IPropertyIndexer m_buff1Bonus = new PropertyIndexer();
+		protected IPropertyIndexer m_buff1Bonus;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
@@ -4723,7 +4725,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Array for second buff boni
 		/// </summary>
-		protected IPropertyIndexer m_buff2Bonus = new PropertyIndexer();
+		protected IPropertyIndexer m_buff2Bonus;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
@@ -4736,7 +4738,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Array for third debuff boni
 		/// </summary>
-		protected IPropertyIndexer m_debuffBonus = new PropertyIndexer();
+		protected IPropertyIndexer m_debuffBonus;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
@@ -4749,7 +4751,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Array for forth buff boni
 		/// </summary>
-		protected IPropertyIndexer m_buff4Bonus = new PropertyIndexer();
+		protected IPropertyIndexer m_buff4Bonus;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
@@ -4775,7 +4777,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Array for spec debuff boni
 		/// </summary>
-		protected IPropertyIndexer m_specDebuffBonus = new PropertyIndexer();
+		protected IPropertyIndexer m_specDebuffBonus;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
@@ -6892,6 +6894,14 @@ namespace DOL.GS
 		public GameLiving()
 			: base()
 		{
+			boni = new Boni();
+			m_abilityBonus = new BonusIndexer(eBonusCategory.Ability, boni);
+			m_itemBonus = new BonusIndexer(eBonusCategory.Item, boni);
+			m_buff1Bonus = new BonusIndexer(eBonusCategory.BaseBuff, boni);
+			m_buff2Bonus = new BonusIndexer(eBonusCategory.SpecBuff, boni);
+			m_buff4Bonus = new BonusIndexer(eBonusCategory.ExtraBuff, boni);
+			m_debuffBonus = new BonusIndexer(eBonusCategory.Debuff, boni);
+			m_specDebuffBonus = new BonusIndexer(eBonusCategory.SpecDebuff, boni);
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);
 			m_groundTarget = new Point3D(0, 0, 0);
