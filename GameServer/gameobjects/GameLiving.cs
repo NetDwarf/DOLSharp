@@ -4684,81 +4684,58 @@ namespace DOL.GS
 		#region Property/Bonus/Buff/PropertyCalculator fields
 
 		protected Boni boni;
-		/// <summary>
-		/// Array for property boni for abilities
-		/// </summary>
-		protected IPropertyIndexer m_abilityBonus;
+		
 		/// <summary>
 		/// Ability bonus property
 		/// </summary>
 		public virtual IPropertyIndexer AbilityBonus
 		{
-			get { return m_abilityBonus; }
+			get { return boni.GetIndexer(ePropertyCategory.Ability); }
 		}
 
-		/// <summary>
-		/// Array for property boni by items
-		/// </summary>
-		protected IPropertyIndexer m_itemBonus;
 		/// <summary>
 		/// Property Item Bonus field
 		/// </summary>
 		public virtual IPropertyIndexer ItemBonus
 		{
-			get { return m_itemBonus; }
+			get { return boni.GetIndexer(ePropertyCategory.Item); }
 		}
 
 
-		/// <summary>
-		/// Array for buff boni
-		/// </summary>
-		protected IPropertyIndexer m_buff1Bonus;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
 		public IPropertyIndexer BaseBuffBonusCategory
 		{
-			get { return m_buff1Bonus; }
+			get { return boni.GetIndexer(ePropertyCategory.BaseBuff); }
 		}
 
-		/// <summary>
-		/// Array for second buff boni
-		/// </summary>
-		protected IPropertyIndexer m_buff2Bonus;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
 		public IPropertyIndexer SpecBuffBonusCategory
 		{
-			get { return m_buff2Bonus; }
+			get { return boni.GetIndexer(ePropertyCategory.SpecBuff); }
 		}
 
-		/// <summary>
-		/// Array for third debuff boni
-		/// </summary>
-		protected IPropertyIndexer m_debuffBonus;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
 		public IPropertyIndexer DebuffCategory
 		{
-			get { return m_debuffBonus; }
+			get { return boni.GetIndexer(ePropertyCategory.Debuff); }
 		}
 
-		/// <summary>
-		/// Array for forth buff boni
-		/// </summary>
-		protected IPropertyIndexer m_buff4Bonus;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
 		public IPropertyIndexer BuffBonusCategory4
 		{
-			get { return m_buff4Bonus; }
+			get { return boni.GetIndexer(ePropertyCategory.ExtraBuff); }
 		}
 
 		/// <summary>
@@ -4775,16 +4752,12 @@ namespace DOL.GS
 		}
 
 		/// <summary>
-		/// Array for spec debuff boni
-		/// </summary>
-		protected IPropertyIndexer m_specDebuffBonus;
-		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
 		public IPropertyIndexer SpecDebuffCategory
 		{
-			get { return m_specDebuffBonus; }
+			get { return boni.GetIndexer(ePropertyCategory.SpecDebuff); }
 		}
 		
 		/// <summary>
@@ -6895,13 +6868,6 @@ namespace DOL.GS
 			: base()
 		{
 			boni = new Boni();
-			m_abilityBonus = new BonusIndexer(eBonusCategory.Ability, boni);
-			m_itemBonus = new BonusIndexer(eBonusCategory.Item, boni);
-			m_buff1Bonus = new BonusIndexer(eBonusCategory.BaseBuff, boni);
-			m_buff2Bonus = new BonusIndexer(eBonusCategory.SpecBuff, boni);
-			m_buff4Bonus = new BonusIndexer(eBonusCategory.ExtraBuff, boni);
-			m_debuffBonus = new BonusIndexer(eBonusCategory.Debuff, boni);
-			m_specDebuffBonus = new BonusIndexer(eBonusCategory.SpecDebuff, boni);
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);
 			m_groundTarget = new Point3D(0, 0, 0);

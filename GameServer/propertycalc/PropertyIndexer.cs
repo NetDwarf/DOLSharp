@@ -26,7 +26,7 @@ namespace DOL.GS.PropertyCalc
 	/// </summary>
 	public sealed class PropertyIndexer : IPropertyIndexer
 	{
-		private readonly ReaderWriterDictionary<int, int> m_propDict;
+		private ReaderWriterDictionary<int, int> m_propDict;
 		
 		public PropertyIndexer()
 		{
@@ -63,6 +63,11 @@ namespace DOL.GS.PropertyCalc
 			{
 				this[(int)index] = value;
 			}
+		}
+
+		public void Clear()
+		{
+			m_propDict = new ReaderWriterDictionary<int, int>();
 		}
 	}
 }
