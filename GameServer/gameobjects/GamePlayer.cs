@@ -11510,7 +11510,7 @@ namespace DOL.GS
 
 		public virtual void RefreshItemBonuses()
 		{
-			boni.Clear(ePropertyCategory.Item);
+			Boni.Clear(Bonus.Item);
 			string slotToLoad = "";
 			switch (VisibleActiveWeaponSlots)
 			{

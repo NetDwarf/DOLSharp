@@ -5,57 +5,58 @@ namespace DOL.GS
 {
 	public class Boni
 	{
-		private PropertyIndexer m_abilityBonus = new PropertyIndexer();
-		private PropertyIndexer m_itemBonus = new PropertyIndexer();
-		private PropertyIndexer m_buff1Bonus = new PropertyIndexer();
-		private PropertyIndexer m_buff2Bonus = new PropertyIndexer();
-		private PropertyIndexer m_debuffBonus = new PropertyIndexer();
-		private PropertyIndexer m_buff4Bonus = new PropertyIndexer();
-		private PropertyIndexer m_specDebuffBonus = new PropertyIndexer();
-
-		public int ValueOf(ePropertyCategory category, eProperty property)
-		{
-			return GetIndexer(category)[property];
-		}
-
-		public void Add(Bonus bonusProp)
-		{
-			var indexer = GetIndexer(bonusProp.Category);
-			indexer[bonusProp.Property] += bonusProp.Value;
-		}
-
-		public void Remove(Bonus bonusProp)
-		{
-			var malus = new Bonus(-1 * bonusProp.Value, bonusProp.Property, bonusProp.Category);
-			Add(malus);
-		}
-
-		public PropertyIndexer GetIndexer(ePropertyCategory category)
+		private IPropertyIndexer GetIndexer(ePropertyCategory category)
 		{
 			switch (category)
 			{
 				case ePropertyCategory.Ability:
-					return m_abilityBonus;
+					return AbilityBoni;
 				case ePropertyCategory.Item:
-					return m_itemBonus;
+					return ItemBoni;
 				case ePropertyCategory.BaseBuff:
-					return m_buff1Bonus;
+					return BaseBuffBoni;
 				case ePropertyCategory.SpecBuff:
-					return m_buff2Bonus;
+					return SpecBuffBoni;
 				case ePropertyCategory.ExtraBuff:
-					return m_buff4Bonus;
+					return ExtraBuffBoni;
 				case ePropertyCategory.Debuff:
-					return m_debuffBonus;
+					return DebuffBoni;
 				case ePropertyCategory.SpecDebuff:
-					return m_specDebuffBonus;
+					return SpecBuffBoni;
 				default:
 					throw new ArgumentException();
 			}
 		}
 
-		public void Clear(ePropertyCategory category)
+		public IPropertyIndexer AbilityBoni { get; } = new PropertyIndexer();
+		public IPropertyIndexer ItemBoni { get; } = new PropertyIndexer();
+		public IPropertyIndexer BaseBuffBoni { get; } = new PropertyIndexer();
+		public IPropertyIndexer SpecBuffBoni { get; } = new PropertyIndexer();
+		public IPropertyIndexer ExtraBuffBoni { get; } = new PropertyIndexer();
+		public IPropertyIndexer DebuffBoni { get; } = new PropertyIndexer();
+		public IPropertyIndexer SpecDebuffBoni { get; } = new PropertyIndexer();
+
+		public void Add(Bonus bonus)
 		{
-			var indexer = GetIndexer(category);
+			var indexer = GetIndexer(bonus.Category);
+			indexer[bonus.Property] += bonus.Value;
+		}
+
+		public void Remove(Bonus bonus)
+		{
+			var malus = new Bonus(-1 * bonus.Value, bonus.Property, bonus.Category);
+			Add(malus);
+		}
+
+		public int GetValueOf(PropertyComponent component)
+		{
+			var indexer = GetIndexer(component.Category);
+			return indexer[component.Property];
+		}
+
+		public void Clear(PropertyCategory category)
+		{
+			var indexer = GetIndexer(category.Value);
 			indexer.Clear();
 		}
 	}
@@ -82,20 +83,41 @@ namespace DOL.GS
 		public static PropertyCategory SpecDebuff { get { return new PropertyCategory(ePropertyCategory.SpecDebuff); } }
 	}
 
+	public class PropertyComponent
+	{
+		public ePropertyCategory Category { get; }
+		public eProperty Property { get; }
+
+		public PropertyComponent(ePropertyCategory category, eProperty property)
+		{
+			Category = category;
+			Property = property;
+		}
+
+		public Bonus Create(int value)
+		{
+			return new Bonus(value, Property, Category);
+		}
+	}
+
 	public class PropertyCategory
 	{
 		public PropertyCategory(ePropertyCategory category)
 		{
-			this.Category = category;
+			this.Value = category;
 		}
 
-		public ePropertyCategory Category { get; }
-
-		public Bonus Constitution(int value) { return new Bonus(value, eProperty.Constitution, Category); }
-
-		public Bonus Bonus(int value, eProperty property)
+		public ePropertyCategory Value { get; }
+		public PropertyComponent Constitution { get { return new PropertyComponent(Value, eProperty.Constitution); } }
+		
+		public Bonus CreateBonus(int value, eProperty property)
 		{
-			return new Bonus(value, property, Category);
+			return new Bonus(value, property, this.Value);
+		}
+
+		public PropertyComponent ComponentOf(eProperty property)
+		{
+			return new PropertyComponent(this.Value, property);
 		}
 	}
 

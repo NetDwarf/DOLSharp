@@ -11,7 +11,7 @@ namespace DOL.UnitTests.Gameserver
 		{
 			var boni = createBoni();
 
-			int actual = boni.ValueOf(ePropertyCategory.Ability, eProperty.Constitution);
+			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
 		}
@@ -20,10 +20,10 @@ namespace DOL.UnitTests.Gameserver
 		public void ValueOf_Constitution_OneBase_PropertyAbilityConstitutionIsOne()
 		{
 			var boni = createBoni();
-			
-			boni.GetIndexer(ePropertyCategory.Ability)[eProperty.Constitution] = 1;
 
-			int actual = boni.ValueOf(ePropertyCategory.Ability, eProperty.Constitution);
+			boni.AbilityBoni[eProperty.Constitution] = 1;
+
+			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -32,11 +32,11 @@ namespace DOL.UnitTests.Gameserver
 		public void Add_OneAbilityConstitution_Init_PropertyAbilityConstitutionIsOne()
 		{
 			var boni = createBoni();
-			var bonusProp = Bonus.Ability.Constitution(1);
+			var bonusProp = Bonus.Ability.Constitution.Create(1);
 
 			boni.Add(bonusProp);
 
-			int actual = boni.ValueOf(ePropertyCategory.Ability, eProperty.Constitution);
+			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -45,11 +45,11 @@ namespace DOL.UnitTests.Gameserver
 		public void Remove_OneAbilityConstitution_Init_PropertyAbilityConstitutionIsOne()
 		{
 			var boni = createBoni();
-			var bonusProp = Bonus.Ability.Constitution(1);
+			var bonusProp = Bonus.Ability.Constitution.Create(1);
 
 			boni.Remove(bonusProp);
 
-			int actual = boni.ValueOf(ePropertyCategory.Ability, eProperty.Constitution);
+			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
 			int expected = -1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -58,13 +58,35 @@ namespace DOL.UnitTests.Gameserver
 		public void Clear_Ability_WithOneConstitutionAbility_PropertyAbilityConstitutionIsOne()
 		{
 			var boni = createBoni();
-			var bonusProp = Bonus.Ability.Constitution(1);
+			var bonusProp = Bonus.Ability.Constitution.Create(1);
 			boni.Add(bonusProp);
 
-			boni.Clear(ePropertyCategory.Ability);
+			boni.Clear(Bonus.Ability);
 
-			int actual = boni.ValueOf(ePropertyCategory.Ability, eProperty.Constitution);
+			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
 			int expected = 0;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void ValueOf_AbilityConstitution_Init_Zero()
+		{
+			var boni = createBoni();
+
+			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
+			int expected = 0;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void ValueOf_AbilityConstitution_AddedOneAbilityConsitution_One()
+		{
+			var boni = createBoni();
+
+			boni.Add(Bonus.Ability.Constitution.Create(1));
+
+			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
+			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
 

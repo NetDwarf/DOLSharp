@@ -4683,14 +4683,14 @@ namespace DOL.GS
 		#endregion
 		#region Property/Bonus/Buff/PropertyCalculator fields
 
-		protected Boni boni;
+		public Boni Boni { get; }
 		
 		/// <summary>
 		/// Ability bonus property
 		/// </summary>
 		public virtual IPropertyIndexer AbilityBonus
 		{
-			get { return boni.GetIndexer(ePropertyCategory.Ability); }
+			get { return Boni.AbilityBoni; }
 		}
 
 		/// <summary>
@@ -4698,7 +4698,7 @@ namespace DOL.GS
 		/// </summary>
 		public virtual IPropertyIndexer ItemBonus
 		{
-			get { return boni.GetIndexer(ePropertyCategory.Item); }
+			get { return Boni.ItemBoni; }
 		}
 
 
@@ -4708,7 +4708,7 @@ namespace DOL.GS
 		/// </summary>
 		public IPropertyIndexer BaseBuffBonusCategory
 		{
-			get { return boni.GetIndexer(ePropertyCategory.BaseBuff); }
+			get { return Boni.BaseBuffBoni; }
 		}
 
 		/// <summary>
@@ -4717,7 +4717,7 @@ namespace DOL.GS
 		/// </summary>
 		public IPropertyIndexer SpecBuffBonusCategory
 		{
-			get { return boni.GetIndexer(ePropertyCategory.SpecBuff); }
+			get { return Boni.SpecBuffBoni; }
 		}
 
 		/// <summary>
@@ -4726,7 +4726,7 @@ namespace DOL.GS
 		/// </summary>
 		public IPropertyIndexer DebuffCategory
 		{
-			get { return boni.GetIndexer(ePropertyCategory.Debuff); }
+			get { return Boni.DebuffBoni; }
 		}
 
 		/// <summary>
@@ -4735,7 +4735,7 @@ namespace DOL.GS
 		/// </summary>
 		public IPropertyIndexer BuffBonusCategory4
 		{
-			get { return boni.GetIndexer(ePropertyCategory.ExtraBuff); }
+			get { return Boni.ExtraBuffBoni; }
 		}
 
 		/// <summary>
@@ -4757,7 +4757,7 @@ namespace DOL.GS
 		/// </summary>
 		public IPropertyIndexer SpecDebuffCategory
 		{
-			get { return boni.GetIndexer(ePropertyCategory.SpecDebuff); }
+			get { return Boni.SpecDebuffBoni; }
 		}
 		
 		/// <summary>
@@ -6867,7 +6867,7 @@ namespace DOL.GS
 		public GameLiving()
 			: base()
 		{
-			boni = new Boni();
+			Boni = new Boni();
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);
 			m_groundTarget = new Point3D(0, 0, 0);
