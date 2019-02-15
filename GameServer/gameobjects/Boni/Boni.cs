@@ -9,6 +9,8 @@ namespace DOL.GS
 		{
 			switch (category)
 			{
+				case ePropertyCategory.Base:
+					return BaseBoni;
 				case ePropertyCategory.Ability:
 					return AbilityBoni;
 				case ePropertyCategory.Item:
@@ -27,7 +29,7 @@ namespace DOL.GS
 					throw new ArgumentException();
 			}
 		}
-
+		public BasePropertyIndexer BaseBoni { get; } = new BasePropertyIndexer();
 		public IPropertyIndexer AbilityBoni { get; } = new PropertyIndexer();
 		public IPropertyIndexer ItemBoni { get; } = new PropertyIndexer();
 		public IPropertyIndexer BaseBuffBoni { get; } = new PropertyIndexer();
@@ -44,17 +46,23 @@ namespace DOL.GS
 
 		public void Remove(Bonus bonus)
 		{
-			var malus = new Bonus(-1 * bonus.Value, bonus.Property, bonus.Category);
+			var malus = new Bonus(-1 * bonus.Value, bonus.Category, bonus.Property);
 			Add(malus);
 		}
 
-		public int GetValueOf(PropertyComponent component)
+		public void SetTo(Bonus bonus)
+		{
+			var indexer = GetIndexer(bonus.Category);
+			indexer[bonus.Property] = bonus.Value;
+		}
+
+		public int GetValueOf(BonusKind component)
 		{
 			var indexer = GetIndexer(component.Category);
 			return indexer[component.Property];
 		}
 
-		public void Clear(PropertyCategory category)
+		public void Clear(BonusCategory category)
 		{
 			var indexer = GetIndexer(category.Value);
 			indexer.Clear();
@@ -63,7 +71,7 @@ namespace DOL.GS
 
 	public class Bonus
 	{
-		public Bonus(int value, eProperty prop,ePropertyCategory category)
+		public Bonus(int value, ePropertyCategory category, eProperty prop)
 		{
 			this.Value = value;
 			this.Property = prop;
@@ -74,21 +82,22 @@ namespace DOL.GS
 		public eProperty Property { get; }
 		public ePropertyCategory Category { get; }
 
-		public static PropertyCategory Ability { get { return new PropertyCategory(ePropertyCategory.Ability); } }
-		public static PropertyCategory Item { get { return new PropertyCategory(ePropertyCategory.Item); } }
-		public static PropertyCategory BaseBuff { get { return new PropertyCategory(ePropertyCategory.BaseBuff); } }
-		public static PropertyCategory SpecBuff { get { return new PropertyCategory(ePropertyCategory.SpecBuff); } }
-		public static PropertyCategory Extrabuff { get { return new PropertyCategory(ePropertyCategory.ExtraBuff); } }
-		public static PropertyCategory Debuff { get { return new PropertyCategory(ePropertyCategory.Debuff); } }
-		public static PropertyCategory SpecDebuff { get { return new PropertyCategory(ePropertyCategory.SpecDebuff); } }
+		public static BonusCategory Base { get { return new BonusCategory(ePropertyCategory.Base); } }
+		public static BonusCategory Ability { get { return new BonusCategory(ePropertyCategory.Ability); } }
+		public static BonusCategory Item { get { return new BonusCategory(ePropertyCategory.Item); } }
+		public static BonusCategory BaseBuff { get { return new BonusCategory(ePropertyCategory.BaseBuff); } }
+		public static BonusCategory SpecBuff { get { return new BonusCategory(ePropertyCategory.SpecBuff); } }
+		public static BonusCategory Extrabuff { get { return new BonusCategory(ePropertyCategory.ExtraBuff); } }
+		public static BonusCategory Debuff { get { return new BonusCategory(ePropertyCategory.Debuff); } }
+		public static BonusCategory SpecDebuff { get { return new BonusCategory(ePropertyCategory.SpecDebuff); } }
 	}
 
-	public class PropertyComponent
+	public class BonusKind
 	{
 		public ePropertyCategory Category { get; }
 		public eProperty Property { get; }
 
-		public PropertyComponent(ePropertyCategory category, eProperty property)
+		public BonusKind(ePropertyCategory category, eProperty property)
 		{
 			Category = category;
 			Property = property;
@@ -96,33 +105,42 @@ namespace DOL.GS
 
 		public Bonus Create(int value)
 		{
-			return new Bonus(value, Property, Category);
+			return new Bonus(value, Category, Property);
 		}
 	}
 
-	public class PropertyCategory
+	public class BonusCategory
 	{
-		public PropertyCategory(ePropertyCategory category)
+		public BonusCategory(ePropertyCategory category)
 		{
 			this.Value = category;
 		}
 
 		public ePropertyCategory Value { get; }
-		public PropertyComponent Constitution { get { return new PropertyComponent(Value, eProperty.Constitution); } }
-		
-		public Bonus CreateBonus(int value, eProperty property)
+
+		public virtual BonusKind Strength { get { return new BonusKind(Value, eProperty.Strength); } }
+		public virtual BonusKind Constitution { get { return new BonusKind(Value, eProperty.Constitution); } }
+		public virtual BonusKind Dexterity { get { return new BonusKind(Value, eProperty.Dexterity); } }
+		public virtual BonusKind Quickness { get { return new BonusKind(Value, eProperty.Quickness); } }
+		public virtual BonusKind Empathy { get { return new BonusKind(Value, eProperty.Empathy); } }
+		public virtual BonusKind Intelligence { get { return new BonusKind(Value, eProperty.Intelligence); } }
+		public virtual BonusKind Piety { get { return new BonusKind(Value, eProperty.Piety); } }
+		public virtual BonusKind Charisma { get { return new BonusKind(Value, eProperty.Charisma); } }
+
+		public Bonus Create(int value, eProperty property)
 		{
-			return new Bonus(value, property, this.Value);
+			return new Bonus(value, this.Value, property);
 		}
 
-		public PropertyComponent ComponentOf(eProperty property)
+		public BonusKind ComponentOf(eProperty property)
 		{
-			return new PropertyComponent(this.Value, property);
+			return new BonusKind(this.Value, property);
 		}
 	}
 
 	public enum ePropertyCategory
 	{
+		Base,
 		Ability,
 		Item,
 		BaseBuff,

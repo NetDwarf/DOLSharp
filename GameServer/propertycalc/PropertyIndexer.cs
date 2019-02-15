@@ -70,4 +70,63 @@ namespace DOL.GS.PropertyCalc
 			m_propDict = new ReaderWriterDictionary<int, int>();
 		}
 	}
+
+	public sealed class BasePropertyIndexer : IPropertyIndexer
+	{
+		private short[] basePropertyValues;
+
+		public BasePropertyIndexer()
+		{
+			basePropertyValues = new short[(int)eStat._Last - (int)eStat._First + 1];
+		}
+
+		public int this[int index]
+		{
+			get
+			{
+				if (IsStat(index))
+				{
+					return basePropertyValues[index - (int)eStat._First];
+				}
+				else
+				{
+					return 0;
+				}
+			}
+			set
+			{
+				if (IsStat(index))
+				{
+					basePropertyValues[index - (int)eStat._First] = (short)value;
+				}
+			}
+		}
+
+		public int this[eProperty property]
+		{
+			get
+			{
+				return this[(int)property];
+			}
+			set
+			{
+				this[(int)property] = value;
+			}
+		}
+
+		public void Clear()
+		{
+			basePropertyValues = new short[basePropertyValues.Length];
+		}
+
+		public short[] ToShortArray()
+		{
+			return basePropertyValues;
+		}
+
+		private bool IsStat(int index)
+		{
+			return index >= (int)eStat._First && index <= (int)eStat._Last;
+		}
+	}
 }

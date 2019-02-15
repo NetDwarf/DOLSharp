@@ -79,13 +79,25 @@ namespace DOL.UnitTests.Gameserver
 		}
 
 		[Test]
-		public void ValueOf_AbilityConstitution_AddedOneAbilityConsitution_One()
+		public void ValueOf_AbilityConstitution_AddedOneAbilityConstitution_One()
 		{
 			var boni = createBoni();
 
 			boni.Add(Bonus.Ability.Constitution.Create(1));
 
 			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
+			int expected = 1;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void ValueOf_BaseConstitution_AddedOneBaseConstitution_One()
+		{
+			var boni = createBoni();
+
+			boni.Add(Bonus.Base.Constitution.Create(1));
+
+			int actual = boni.GetValueOf(Bonus.Base.Constitution);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}

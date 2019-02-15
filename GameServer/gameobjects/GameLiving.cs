@@ -4865,24 +4865,23 @@ namespace DOL.GS
 
 		#endregion
 		#region Stats, Resists
-		/// <summary>
-		/// The name of the states
-		/// </summary>
+
+		[Obsolete("Will be deleted without substitution")]
 		public static readonly string[] STAT_NAMES = new string[]{"Unknown Stat","Strength", "Dexterity", "Constitution", "Quickness", "Intelligence",
 			"Piety", "Empathy", "Charisma"};
 
 		/// <summary>
 		/// base values for char stats
 		/// </summary>
-		protected readonly short[] m_charStat = new short[8];
+		protected readonly short[] m_charStat;
 		/// <summary>
 		/// get a unmodified char stat value
 		/// </summary>
 		/// <param name="stat"></param>
 		/// <returns></returns>
-		public virtual int GetBaseStat(eStat stat)
+		public int GetBaseStat(eStat stat)
 		{
-			return m_charStat[stat - eStat._First];
+			return Boni.BaseBoni[(eProperty)stat];
 		}
 		/// <summary>
 		/// changes a base stat value
@@ -4891,7 +4890,8 @@ namespace DOL.GS
 		/// <param name="amount"></param>
 		public virtual void ChangeBaseStat(eStat stat, short amount)
 		{
-			m_charStat[stat - eStat._First] += amount;
+			var bonus = Bonus.Base.Create(amount, (eProperty)stat);
+			Boni.Add(bonus);
 		}
 
 		/// <summary>
@@ -6868,6 +6868,7 @@ namespace DOL.GS
 			: base()
 		{
 			Boni = new Boni();
+			m_charStat = Boni.BaseBoni.ToShortArray();
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);
 			m_groundTarget = new Point3D(0, 0, 0);

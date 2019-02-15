@@ -463,96 +463,68 @@ namespace DOL.GS
 			int oldstat = GetBaseStat(stat);
 			base.ChangeBaseStat(stat, val);
 			int newstat = GetBaseStat(stat);
-			GameNPC npc = this;
-			if (this != null && oldstat != newstat)
+			if (oldstat != newstat)
 			{
 				switch (stat)
 				{
-					case eStat.STR: npc.Strength = (short)newstat; break;
-					case eStat.DEX: npc.Dexterity = (short)newstat; break;
-					case eStat.CON: npc.Constitution = (short)newstat; break;
-					case eStat.QUI: npc.Quickness = (short)newstat; break;
-					case eStat.INT: npc.Intelligence = (short)newstat; break;
-					case eStat.PIE: npc.Piety = (short)newstat; break;
-					case eStat.EMP: npc.Empathy = (short)newstat; break;
-					case eStat.CHR: npc.Charisma = (short)newstat; break;
+						case eStat.STR: Strength = (short)newstat; break;
+						case eStat.DEX: Dexterity = (short)newstat; break;
+						case eStat.CON: Constitution = (short)newstat; break;
+						case eStat.QUI: Quickness = (short)newstat; break;
+						case eStat.INT: Intelligence = (short)newstat; break;
+						case eStat.PIE: Piety = (short)newstat; break;
+						case eStat.EMP: Empathy = (short)newstat; break;
+						case eStat.CHR: Charisma = (short)newstat; break;
 				}
 			}
 		}
 
-		/// <summary>
-		/// Gets NPC's constitution
-		/// </summary>
 		public virtual short Constitution
 		{
-			get
-			{
-				return m_charStat[eStat.CON - eStat._First];
-			}
-			set { m_charStat[eStat.CON - eStat._First] = value; }
+			get { return (short)Boni.GetValueOf(Bonus.Base.Constitution); }
+			set { Boni.SetTo(Bonus.Base.Constitution.Create(value)); }
 		}
-
-		/// <summary>
-		/// Gets NPC's dexterity
-		/// </summary>
+		
 		public virtual short Dexterity
 		{
-			get { return m_charStat[eStat.DEX - eStat._First]; }
-			set { m_charStat[eStat.DEX - eStat._First] = value; }
+			get { return (short)Boni.GetValueOf(Bonus.Base.Dexterity); }
+			set { Boni.SetTo(Bonus.Base.Dexterity.Create(value)); }
 		}
-
-		/// <summary>
-		/// Gets NPC's strength
-		/// </summary>
+		
 		public virtual short Strength
 		{
-			get { return m_charStat[eStat.STR - eStat._First]; }
-			set { m_charStat[eStat.STR - eStat._First] = value; }
+			get { return (short)Boni.GetValueOf(Bonus.Base.Dexterity); }
+			set { Boni.SetTo(Bonus.Base.Dexterity.Create(value)); }
 		}
-
-		/// <summary>
-		/// Gets NPC's quickness
-		/// </summary>
+		
 		public virtual short Quickness
 		{
-			get { return m_charStat[eStat.QUI - eStat._First]; }
-			set { m_charStat[eStat.QUI - eStat._First] = value; }
+			get { return (short)Boni.GetValueOf(Bonus.Base.Quickness); }
+			set { Boni.SetTo(Bonus.Base.Quickness.Create(value)); }
 		}
-
-		/// <summary>
-		/// Gets NPC's intelligence
-		/// </summary>
+		
 		public virtual short Intelligence
 		{
-			get { return m_charStat[eStat.INT - eStat._First]; }
-			set { m_charStat[eStat.INT - eStat._First] = value; }
+			get { return (short)Boni.GetValueOf(Bonus.Base.Intelligence); }
+			set { Boni.SetTo(Bonus.Base.Intelligence.Create(value)); }
 		}
-
-		/// <summary>
-		/// Gets NPC's piety
-		/// </summary>
+		
 		public virtual short Piety
 		{
-			get { return m_charStat[eStat.PIE - eStat._First]; }
-			set { m_charStat[eStat.PIE - eStat._First] = value; }
+			get { return (short)Boni.GetValueOf(Bonus.Base.Piety); }
+			set { Boni.SetTo(Bonus.Base.Piety.Create(value)); }
 		}
-
-		/// <summary>
-		/// Gets NPC's empathy
-		/// </summary>
+		
 		public virtual short Empathy
 		{
-			get { return m_charStat[eStat.EMP - eStat._First]; }
-			set { m_charStat[eStat.EMP - eStat._First] = value; }
+			get { return (short)Boni.GetValueOf(Bonus.Base.Empathy); }
+			set { Boni.SetTo(Bonus.Base.Empathy.Create(value)); }
 		}
 
-		/// <summary>
-		/// Gets NPC's charisma
-		/// </summary>
 		public virtual short Charisma
 		{
-			get { return m_charStat[eStat.CHR - eStat._First]; }
-			set { m_charStat[eStat.CHR - eStat._First] = value; }
+			get { return (short)Boni.GetValueOf(Bonus.Base.Charisma); }
+			set { Boni.SetTo(Bonus.Base.Charisma.Create(value)); }
 		}
 		#endregion
 

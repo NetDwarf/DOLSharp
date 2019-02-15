@@ -143,7 +143,18 @@ namespace DOL.UnitTests.Gameserver
             Assert.AreEqual(81, actual);
         }
 
-        private static GamePlayer createPlayer()
+		[Test]
+		public void ChangeBaseStat_AddOneCon_PlayerHasOneConstitution()
+		{
+			var player = createPlayer();
+
+			player.ChangeBaseStat(eStat.CON, 1);
+
+			int actual = player.Constitution;
+			Assert.AreEqual(1, actual);
+		}
+
+		private static GamePlayer createPlayer()
         {
             return GamePlayer.CreateTestableGamePlayer();
         }
