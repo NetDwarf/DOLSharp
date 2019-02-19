@@ -4739,16 +4739,12 @@ namespace DOL.GS
 		}
 
 		/// <summary>
-		/// Array for first multiplicative buff boni
-		/// </summary>
-		protected IMultiplicativeProperties m_buffMult1Bonus = new MultiplicativePropertiesHybrid();
-		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
 		public IMultiplicativeProperties BuffBonusMultCategory1
 		{
-			get { return m_buffMult1Bonus; }
+			get { return Boni.MultiplicativeBuff; }
 		}
 
 		/// <summary>
@@ -4870,10 +4866,6 @@ namespace DOL.GS
 		public static readonly string[] STAT_NAMES = new string[]{"Unknown Stat","Strength", "Dexterity", "Constitution", "Quickness", "Intelligence",
 			"Piety", "Empathy", "Charisma"};
 
-		/// <summary>
-		/// base values for char stats
-		/// </summary>
-		protected readonly short[] m_charStat;
 		/// <summary>
 		/// get a unmodified char stat value
 		/// </summary>
@@ -6867,8 +6859,7 @@ namespace DOL.GS
 		public GameLiving()
 			: base()
 		{
-			Boni = new Boni();
-			m_charStat = Boni.BaseBoni.ToShortArray();
+			Boni = new Boni(this);
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);
 			m_groundTarget = new Point3D(0, 0, 0);

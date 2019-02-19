@@ -61,29 +61,9 @@ namespace DOL.UnitTests.GameServer
             int expected = 3 + 4;
             Assert.AreEqual(expected, actual);
         }
-
-        [Test]
-        public void CalcValueFromBuffs_LivingIsNull_ReturnZero()
-        {
-            StatCalculator statCalc = createStatCalculator();
-
-            int actual = statCalc.CalcValueFromBuffs(null, eProperty.Constitution);
-            
-            Assert.AreEqual(0, actual);
-        }
         #endregion
 
         #region CalcValueFromItems
-        [Test]
-        public void CalcValueFromItems_LivingIsNull_ReturnZero()
-        {
-            StatCalculator statCalc = createStatCalculator();
-
-            int actual = statCalc.CalcValueFromItems(null, eProperty.Constitution);
-
-            Assert.AreEqual(0, actual);
-        }
-
         [Test]
         public void CalcValueFromItems_Level50Player100ConstFromItems_ReturnCapAt75()
         {
@@ -175,7 +155,7 @@ namespace DOL.UnitTests.GameServer
             npc.Intelligence = 100;
             StatCalculator statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValue(npc, eProperty.Intelligence);
+			int actual = statCalc.CalcValue(npc, eProperty.Intelligence);
 
             Assert.AreEqual(100, actual);
         }
@@ -185,7 +165,7 @@ namespace DOL.UnitTests.GameServer
         {
             var player = Create.FakePlayer(new CharacterClassAnimist());
             player.Level = 50;
-            player.BaseBuffBonusCategory[(int)eProperty.Acuity] = 50;
+            player.BaseBuffBonusCategory[eProperty.Acuity] = 50;
             StatCalculator statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Intelligence);

@@ -40,6 +40,8 @@
     <Compile Include="Fakes.cs" />
     <Compile Include="UT_BaseStatIndexer.cs" />
     <Compile Include="UT_Boni.cs" />
+    <Compile Include="UT_Bonus.cs" />
+    <Compile Include="UT_BonusProperty.cs" />
     <Compile Include="UT_GameEffectList.cs" />
     <Compile Include="UT_GameNPC.cs" />
     <Compile Include="UT_GamePlayer.cs" />

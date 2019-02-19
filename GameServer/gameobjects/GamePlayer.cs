@@ -12508,14 +12508,14 @@ namespace DOL.GS
 			#endregion
 
 			// stats first
-			m_charStat[eStat.STR - eStat._First] = (short)DBCharacter.Strength;
-			m_charStat[eStat.DEX - eStat._First] = (short)DBCharacter.Dexterity;
-			m_charStat[eStat.CON - eStat._First] = (short)DBCharacter.Constitution;
-			m_charStat[eStat.QUI - eStat._First] = (short)DBCharacter.Quickness;
-			m_charStat[eStat.INT - eStat._First] = (short)DBCharacter.Intelligence;
-			m_charStat[eStat.PIE - eStat._First] = (short)DBCharacter.Piety;
-			m_charStat[eStat.EMP - eStat._First] = (short)DBCharacter.Empathy;
-			m_charStat[eStat.CHR - eStat._First] = (short)DBCharacter.Charisma;
+			Boni.BaseBoni[(eProperty)(eStat.STR - eStat._First)] = (short)DBCharacter.Strength;
+			Boni.BaseBoni[(eProperty)(eStat.DEX - eStat._First)] = (short)DBCharacter.Dexterity;
+			Boni.BaseBoni[(eProperty)(eStat.CON - eStat._First)] = (short)DBCharacter.Constitution;
+			Boni.BaseBoni[(eProperty)(eStat.QUI - eStat._First)] = (short)DBCharacter.Quickness;
+			Boni.BaseBoni[(eProperty)(eStat.INT - eStat._First)] = (short)DBCharacter.Intelligence;
+			Boni.BaseBoni[(eProperty)(eStat.PIE - eStat._First)] = (short)DBCharacter.Piety;
+			Boni.BaseBoni[(eProperty)(eStat.EMP - eStat._First)] = (short)DBCharacter.Empathy;
+			Boni.BaseBoni[(eProperty)(eStat.CHR - eStat._First)] = (short)DBCharacter.Charisma;
 
 			SetCharacterClass(DBCharacter.Class);
 

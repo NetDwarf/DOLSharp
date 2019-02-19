@@ -122,7 +122,7 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer(new CharacterClassAnimist());
             player.Level = 50;
-            player.BaseBuffBonusCategory[(int)eProperty.Acuity] = 50;
+            player.BaseBuffBonusCategory[eProperty.Acuity] = 50;
 
             int actual = player.Intelligence;
 
