@@ -119,14 +119,50 @@ namespace DOL.GS.PropertyCalc
 			basePropertyValues = new short[basePropertyValues.Length];
 		}
 
-		public short[] ToShortArray()
-		{
-			return basePropertyValues;
-		}
-
 		private bool IsStat(int index)
 		{
 			return index >= (int)eStat._First && index <= (int)eStat._Last;
+		}
+	}
+
+	public sealed class IndexerBoniAdapter : IPropertyIndexer
+	{
+		private Boni boni;
+		private ePropertyCategory category;
+
+		public IndexerBoniAdapter(Boni boni, ePropertyCategory category)
+		{
+			this.boni = boni;
+			this.category = category;
+		}
+
+		public int this[int index]
+		{
+			get
+			{
+				return boni.GetValueOf(new BonusComponent(category, (eProperty)index));
+			}
+			set
+			{
+				boni.SetTo(new Bonus(value, category, (eProperty)index));
+			}
+		}
+
+		public int this[eProperty property]
+		{
+			get
+			{
+				return this[(int)property];
+			}
+			set
+			{
+				this[(int)property] = value;
+			}
+		}
+
+		public void Clear()
+		{
+			boni.Clear(new BonusCategory(category));
 		}
 	}
 }

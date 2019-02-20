@@ -17,11 +17,11 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void GetValueOf_Constitution_OneBase_AbilityConstitutionIsOne()
+		public void GetValueOf_Constitution_OneAbility_AbilityConstitutionIsOne()
 		{
 			var boni = createBoni();
 
-			boni.AbilityBoni[eProperty.Constitution] = 1;
+			boni.SetTo(Bonus.Ability.Create(1, eProperty.Constitution));
 
 			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
 			int expected = 1;
@@ -98,50 +98,6 @@ namespace DOL.UnitTests.GameServer
 			boni.Add(Bonus.Base.Constitution.Create(1));
 
 			int actual = boni.GetValueOf(Bonus.Base.Constitution);
-			int expected = 1;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void GetProperty_Constitution_OneBaseConstitutionAdded_BaseIsOne()
-		{
-			var boni = createBoni();
-			boni.Add(Bonus.Base.Constitution.Create(1));
-
-			int actual = boni.GetProperty(eProperty.Constitution).Base;
-			int expected = 1;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void GetProperty_Constitution_1dot25ConstitutionAdded_ConstitutionIs1dot25()
-		{
-			var boni = createBoni();
-			boni.MultiplicativeBuff.Set((int)eProperty.Constitution, "", 1.25);
-
-			double actual = boni.GetProperty(eProperty.Constitution).Multiplier;
-			double expected = 1.25;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void GetProperty_Intelligence_OneBaseIntelligenceAdded_BaseIsOne()
-		{
-			var boni = createBoni();
-			boni.Add(Bonus.Base.Intelligence.Create(1));
-
-			int actual = boni.GetProperty(eProperty.Intelligence).Base;
-			int expected = 1;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void GetProperty_Constitution_OneAbilityConstitutionAdded_AbilityIsOne()
-		{
-			var boni = createBoni();
-			boni.Add(Bonus.Ability.Constitution.Create(1));
-
-			int actual = boni.GetProperty(eProperty.Constitution).Ability;
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}

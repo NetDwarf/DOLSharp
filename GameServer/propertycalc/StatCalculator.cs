@@ -28,11 +28,10 @@ namespace DOL.GS.PropertyCalc
         public override int CalcValue(GameLiving living, eProperty property)
         {
             var boni = living.Boni;
-			var bonusProperty = boni.GetProperty(property);
-			
-			int baseBonus = bonusProperty.Base;
-			int abilityBonus = bonusProperty.Ability;
-			int debuff = bonusProperty.Debuff;
+
+			int baseBonus = boni.GetValueOf(Bonus.Base.ComponentOf(property));
+			int abilityBonus = boni.GetValueOf(Bonus.Ability.ComponentOf(property));
+			int debuff = boni.GetValueOf(Bonus.Debuff.ComponentOf(property));
 			int deathConDebuff = 0;
 
             int itemBonus = CalcValueFromItems(living, property);
@@ -48,12 +47,11 @@ namespace DOL.GS.PropertyCalc
 			if (living is GamePlayer)
 			{
 				GamePlayer player = living as GamePlayer;
-				var playerBoni = player.Boni;
 				if (property == (eProperty)(player.CharacterClass.ManaStat))
 				{
 					if (player.CharacterClass.ID != (int)eCharacterClass.Scout && player.CharacterClass.ID != (int)eCharacterClass.Hunter && player.CharacterClass.ID != (int)eCharacterClass.Ranger)
 					{
-						abilityBonus += playerBoni.GetProperty(eProperty.Acuity).Ability; //player.AbilityBonus[(int)eProperty.Acuity];
+						abilityBonus += player.Boni.GetValueOf(Bonus.Ability.ComponentOf(eProperty.Acuity));
 					}
 				}
 
@@ -75,7 +73,7 @@ namespace DOL.GS.PropertyCalc
 			}
 
 			int stat = unbuffedBonus + buffBonus + abilityBonus;
-			stat = (int)(stat * bonusProperty.Multiplier);
+			stat = (int)(stat * boni.MultiplicativeBuff.Get((int)property));
 
 			stat -= (property == eProperty.Constitution)? deathConDebuff : 0;
 
@@ -85,17 +83,16 @@ namespace DOL.GS.PropertyCalc
         public override int CalcValueFromBuffs(GameLiving living, eProperty property)
         {
 			var boni = living.Boni;
-			var bonusProperty = boni.GetProperty(property);
 
-			int baseBuffBonus = bonusProperty.BaseBuff;
-			int specBuffBonus = bonusProperty.SpecBuff;
+			int baseBuffBonus = boni.GetValueOf(Bonus.BaseBuff.ComponentOf(property));
+			int specBuffBonus = boni.GetValueOf(Bonus.SpecBuff.ComponentOf(property));
 
-            if (living is GamePlayer)
+			if (living is GamePlayer)
             {
                 GamePlayer player = living as GamePlayer;
                 if (property == (eProperty)(player.CharacterClass.ManaStat))
                     if (player.CharacterClass.ClassType == eClassType.ListCaster)
-                        specBuffBonus += player.Boni.GetProperty(eProperty.Acuity).BaseBuff;
+                        specBuffBonus += player.Boni.GetValueOf(Bonus.BaseBuff.ComponentOf(eProperty.Acuity));
             }
 
             int baseBuffBonusCap = (living is GamePlayer) ? (int)(living.Level * 1.25) : Int16.MaxValue;
@@ -110,13 +107,12 @@ namespace DOL.GS.PropertyCalc
         public override int CalcValueFromItems(GameLiving living, eProperty property)
         {
 			var boni = living.Boni;
-			var bonusProperty = boni.GetProperty(property);
 
-			int itemBonus = bonusProperty.Item;
-            int itemBonusCap = (int)(living.Level * 1.5);
-			int itemBonusCapIncrease = boni.GetProperty(eProperty.StatCapBonus_First - eProperty.Stat_First + property).Item;
+			int itemBonus = boni.GetValueOf(Bonus.Item.ComponentOf(property));
+			int itemBonusCap = (int)(living.Level * 1.5);
+			int itemBonusCapIncrease = boni.GetValueOf(Bonus.ItemOvercap.ComponentOf(property));
 			int itemBonusCapIncreaseCap = living.Level / 2 + 1;
-			int MythicalitemBonusCapIncrease = boni.GetProperty(eProperty.MythicalStatCapBonus_First - eProperty.Stat_First + property).Item;
+			int MythicalitemBonusCapIncrease = boni.GetValueOf(Bonus.Mythical.ComponentOf(property));
 			int MythicalitemBonusCapIncreaseCap = 52;
 
 			if (living is GamePlayer)
@@ -127,9 +123,9 @@ namespace DOL.GS.PropertyCalc
 				{
 					if (player.CharacterClass.ID != (int)eCharacterClass.Scout && player.CharacterClass.ID != (int)eCharacterClass.Hunter && player.CharacterClass.ID != (int)eCharacterClass.Ranger)
 					{
-						itemBonus += boni.GetProperty(eProperty.Acuity).Item;
-						itemBonusCapIncrease += boni.GetProperty(eProperty.AcuCapBonus).Item;
-						MythicalitemBonusCapIncrease += boni.GetProperty(eProperty.MythicalAcuCapBonus).Item;
+						itemBonus += boni.GetValueOf(Bonus.Item.ComponentOf(eProperty.Acuity));
+						itemBonusCapIncrease += boni.GetValueOf(Bonus.Item.ComponentOf(eProperty.AcuCapBonus));
+						MythicalitemBonusCapIncrease += boni.GetValueOf(Bonus.Item.ComponentOf(eProperty.MythicalAcuCapBonus));
 					}
 				}
 			}

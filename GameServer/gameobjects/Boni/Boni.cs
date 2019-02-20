@@ -6,6 +6,7 @@ namespace DOL.GS
 	public class Boni
 	{
 		private GameLiving owner;
+		private BonusProperty[] properties = new BonusProperty[(int)eProperty.MaxProperty + 1];
 
 		public IPropertyIndexer BaseBoni { get; } = new BasePropertyIndexer();
 		public IPropertyIndexer AbilityBoni { get; } = new PropertyIndexer();
@@ -20,12 +21,16 @@ namespace DOL.GS
 		public Boni(GameLiving owner)
 		{
 			this.owner = owner;
+			for (int i=0;i<properties.Length;i++)
+			{
+				properties[i] = new BonusProperty(owner, (eProperty)i);
+			}
 		}
 
 		public void Add(Bonus bonus)
 		{
-			var indexer = GetIndexer(bonus.Category);
-			indexer[bonus.Type] += bonus.Value;
+			int oldValue = GetValueOf(new BonusComponent(bonus.Category, bonus.Type));
+			SetTo(new Bonus(oldValue + bonus.Value, bonus.Category, bonus.Type));
 		}
 
 		public void Remove(Bonus bonus)
@@ -36,40 +41,49 @@ namespace DOL.GS
 
 		public void SetTo(Bonus bonus)
 		{
-			var indexer = GetIndexer(bonus.Category);
-			indexer[bonus.Type] = bonus.Value;
-		}
-
-		public BonusProperty GetProperty(eProperty property)
-		{
-			if (false)
+			if (IsStat(bonus.Type))
 			{
-
+				properties[(int)bonus.Type].Set(bonus.Value, bonus.Category);
 			}
 			else
 			{
-				var bonusProperty = new BonusProperty(owner, property);
-				foreach (var category in BonusCategory.IndexerCategories)
-				{
-					int componentValue = GetValueOf(new BonusComponent(category, property));
-					bonusProperty.Add(componentValue, new BonusCategory(category));
-				}
-				bonusProperty.SetMultiplier(MultiplicativeBuff.Get((int)property));
-
-				return bonusProperty;
+				var indexer = GetIndexer(bonus.Category);
+				indexer[bonus.Type] = bonus.Value;
 			}
 		}
 
 		public int GetValueOf(BonusComponent component)
 		{
+			if(IsStat(component.Property))
+			{
+				return properties[(int)component.Property].Get(component.Category);
+			}
 			var indexer = GetIndexer(component.Category);
 			return indexer[component.Property];
 		}
 
+		private bool IsStat(eProperty property)
+		{
+			return (property >= eProperty.Stat_First && property <= eProperty.Stat_Last) || property == eProperty.Acuity;
+		}
+
+		private bool IsStatOvercap(eProperty property)
+		{
+			return property >= eProperty.StrCapBonus && property <= eProperty.AcuCapBonus;
+		}
+
+		private bool IsMythicalStat(eProperty property)
+		{
+			return property >= eProperty.MythicalStatCapBonus_First && property <= eProperty.MythicalStatCapBonus_Last;
+		}
+
 		public void Clear(BonusCategory category)
 		{
-			var indexer = GetIndexer(category.Value);
-			indexer.Clear();
+			for (int i=0;i<=(int)eProperty.MaxProperty;i++)
+			{
+
+				SetTo(new Bonus(0, category.Value , (eProperty)i));
+			}
 		}
 
 		private IPropertyIndexer GetIndexer(ePropertyCategory category)
@@ -105,8 +119,39 @@ namespace DOL.GS
 
 		public BonusComponent(ePropertyCategory category, eProperty property)
 		{
-			Category = category;
-			Property = property;
+			bool isItem = category == ePropertyCategory.Item;
+			bool isItemStatOvercap = isItem && property >= eProperty.StrCapBonus && property <= eProperty.AcuCapBonus;
+			bool isMythical = isItem && property >= eProperty.MythicalStatCapBonus_First && property <= eProperty.MythicalStatCapBonus_Last;
+
+			if (isItemStatOvercap)
+			{
+				if (property == eProperty.AcuCapBonus)
+				{
+					Property = eProperty.Acuity;
+				}
+				else
+				{
+					Property = property - eProperty.StrCapBonus + eProperty.Stat_First;
+				}
+				Category = ePropertyCategory.ItemOvercap;
+			}
+			else if (isMythical)
+			{
+				if (property == eProperty.MythicalAcuCapBonus)
+				{
+					Property = eProperty.Acuity;
+				}
+				else
+				{
+					Property = property - eProperty.MythicalStatCapBonus_First + eProperty.Stat_First;
+				}
+				Category = ePropertyCategory.Mythical;
+			}
+			else
+			{
+				Category = category;
+				Property = property;
+			}
 		}
 
 		public Bonus Create(int value)
@@ -165,6 +210,8 @@ namespace DOL.GS
 		Base,
 		Ability,
 		Item,
+		ItemOvercap,
+		Mythical,
 		BaseBuff,
 		SpecBuff,
 		ExtraBuff,

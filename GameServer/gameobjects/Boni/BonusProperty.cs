@@ -12,6 +12,8 @@ namespace DOL.GS
 		public int Base { get { return Get(ePropertyCategory.Base); } }
 		public int Ability { get { return Get(ePropertyCategory.Ability); } }
 		public int Item { get { return Get(ePropertyCategory.Item); } }
+		public int ItemOvercap { get { return Get(ePropertyCategory.ItemOvercap); } }
+		public int Mythical { get { return Get(ePropertyCategory.Mythical); } }
 		public int BaseBuff { get { return Get(ePropertyCategory.BaseBuff); } }
 		public int SpecBuff { get { return Get(ePropertyCategory.SpecBuff); } }
 		public int ExtraBuff { get { return Get(ePropertyCategory.ExtraBuff); } }

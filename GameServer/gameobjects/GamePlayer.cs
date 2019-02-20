@@ -12508,14 +12508,15 @@ namespace DOL.GS
 			#endregion
 
 			// stats first
-			Boni.BaseBoni[(eProperty)(eStat.STR - eStat._First)] = (short)DBCharacter.Strength;
-			Boni.BaseBoni[(eProperty)(eStat.DEX - eStat._First)] = (short)DBCharacter.Dexterity;
-			Boni.BaseBoni[(eProperty)(eStat.CON - eStat._First)] = (short)DBCharacter.Constitution;
-			Boni.BaseBoni[(eProperty)(eStat.QUI - eStat._First)] = (short)DBCharacter.Quickness;
-			Boni.BaseBoni[(eProperty)(eStat.INT - eStat._First)] = (short)DBCharacter.Intelligence;
-			Boni.BaseBoni[(eProperty)(eStat.PIE - eStat._First)] = (short)DBCharacter.Piety;
-			Boni.BaseBoni[(eProperty)(eStat.EMP - eStat._First)] = (short)DBCharacter.Empathy;
-			Boni.BaseBoni[(eProperty)(eStat.CHR - eStat._First)] = (short)DBCharacter.Charisma;
+			Boni.SetTo(Bonus.Base.Create((short)DBCharacter.Strength, eProperty.Strength));
+			Boni.SetTo(Bonus.Base.Create((short)DBCharacter.Strength, eProperty.Strength));
+			Boni.SetTo(Bonus.Base.Create((short)DBCharacter.Dexterity, eProperty.Dexterity));
+			Boni.SetTo(Bonus.Base.Create((short)DBCharacter.Constitution, eProperty.Constitution));
+			Boni.SetTo(Bonus.Base.Create((short)DBCharacter.Quickness, eProperty.Quickness));
+			Boni.SetTo(Bonus.Base.Create((short)DBCharacter.Intelligence, eProperty.Intelligence));
+			Boni.SetTo(Bonus.Base.Create((short)DBCharacter.Piety, eProperty.Piety));
+			Boni.SetTo(Bonus.Base.Create((short)DBCharacter.Empathy, eProperty.Empathy));
+			Boni.SetTo(Bonus.Base.Create((short)DBCharacter.Charisma, eProperty.Charisma));
 
 			SetCharacterClass(DBCharacter.Class);
 

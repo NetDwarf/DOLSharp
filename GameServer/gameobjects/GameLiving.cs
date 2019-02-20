@@ -4684,13 +4684,18 @@ namespace DOL.GS
 		#region Property/Bonus/Buff/PropertyCalculator fields
 
 		public Boni Boni { get; }
+
+		private IPropertyIndexer createIndexer(ePropertyCategory category)
+		{
+			return new IndexerBoniAdapter(Boni, category);
+		}
 		
 		/// <summary>
 		/// Ability bonus property
 		/// </summary>
 		public virtual IPropertyIndexer AbilityBonus
 		{
-			get { return Boni.AbilityBoni; }
+			get { return createIndexer(ePropertyCategory.Ability); }
 		}
 
 		/// <summary>
@@ -4698,7 +4703,7 @@ namespace DOL.GS
 		/// </summary>
 		public virtual IPropertyIndexer ItemBonus
 		{
-			get { return Boni.ItemBoni; }
+			get { return createIndexer(ePropertyCategory.Item); }
 		}
 
 
@@ -4708,7 +4713,7 @@ namespace DOL.GS
 		/// </summary>
 		public IPropertyIndexer BaseBuffBonusCategory
 		{
-			get { return Boni.BaseBuffBoni; }
+			get { return createIndexer(ePropertyCategory.BaseBuff); }
 		}
 
 		/// <summary>
@@ -4717,16 +4722,7 @@ namespace DOL.GS
 		/// </summary>
 		public IPropertyIndexer SpecBuffBonusCategory
 		{
-			get { return Boni.SpecBuffBoni; }
-		}
-
-		/// <summary>
-		/// Property Buff bonus category
-		/// what it means depends from the PropertyCalculator for a property element
-		/// </summary>
-		public IPropertyIndexer DebuffCategory
-		{
-			get { return Boni.DebuffBoni; }
+			get { return createIndexer(ePropertyCategory.SpecBuff); }
 		}
 
 		/// <summary>
@@ -4735,7 +4731,25 @@ namespace DOL.GS
 		/// </summary>
 		public IPropertyIndexer BuffBonusCategory4
 		{
-			get { return Boni.ExtraBuffBoni; }
+			get { return createIndexer(ePropertyCategory.ExtraBuff); }
+		}
+
+		/// <summary>
+		/// Property Buff bonus category
+		/// what it means depends from the PropertyCalculator for a property element
+		/// </summary>
+		public IPropertyIndexer DebuffCategory
+		{
+			get { return createIndexer(ePropertyCategory.Debuff); }
+		}
+
+		/// <summary>
+		/// Property Buff bonus category
+		/// what it means depends from the PropertyCalculator for a property element
+		/// </summary>
+		public IPropertyIndexer SpecDebuffCategory
+		{
+			get { return createIndexer(ePropertyCategory.SpecDebuff); }
 		}
 
 		/// <summary>
@@ -4745,15 +4759,6 @@ namespace DOL.GS
 		public IMultiplicativeProperties BuffBonusMultCategory1
 		{
 			get { return Boni.MultiplicativeBuff; }
-		}
-
-		/// <summary>
-		/// Property Buff bonus category
-		/// what it means depends from the PropertyCalculator for a property element
-		/// </summary>
-		public IPropertyIndexer SpecDebuffCategory
-		{
-			get { return Boni.SpecDebuffBoni; }
 		}
 		
 		/// <summary>
@@ -4866,24 +4871,16 @@ namespace DOL.GS
 		public static readonly string[] STAT_NAMES = new string[]{"Unknown Stat","Strength", "Dexterity", "Constitution", "Quickness", "Intelligence",
 			"Piety", "Empathy", "Charisma"};
 
-		/// <summary>
-		/// get a unmodified char stat value
-		/// </summary>
-		/// <param name="stat"></param>
-		/// <returns></returns>
+		[Obsolete("Use Boni.GetValueOf(BonusComponent) instead!")]
 		public int GetBaseStat(eStat stat)
 		{
-			return Boni.BaseBoni[(eProperty)stat];
+			return Boni.GetValueOf(Bonus.Base.ComponentOf((eProperty)stat));
 		}
-		/// <summary>
-		/// changes a base stat value
-		/// </summary>
-		/// <param name="stat"></param>
-		/// <param name="amount"></param>
+
+		[Obsolete("Use Boni.Add(Bonus) instead!")]
 		public virtual void ChangeBaseStat(eStat stat, short amount)
 		{
-			var bonus = Bonus.Base.Create(amount, (eProperty)stat);
-			Boni.Add(bonus);
+			Boni.Add(Bonus.Base.Create(amount, (eProperty)stat));
 		}
 
 		/// <summary>
