@@ -4689,64 +4689,46 @@ namespace DOL.GS
 		{
 			return new IndexerBoniAdapter(Boni, category);
 		}
-		
-		/// <summary>
-		/// Ability bonus property
-		/// </summary>
+
+		private const string useBoniInstead = "Use Boni.GetValueOf(BonusComponent) or Boni.SetTo(Bonus) instead.";
+
+		[Obsolete(useBoniInstead)]
 		public virtual IPropertyIndexer AbilityBonus
 		{
 			get { return createIndexer(ePropertyCategory.Ability); }
 		}
 
-		/// <summary>
-		/// Property Item Bonus field
-		/// </summary>
+		[Obsolete(useBoniInstead)]
 		public virtual IPropertyIndexer ItemBonus
 		{
 			get { return createIndexer(ePropertyCategory.Item); }
 		}
 
-
-		/// <summary>
-		/// Property Buff bonus category
-		/// what it means depends from the PropertyCalculator for a property element
-		/// </summary>
+		[Obsolete(useBoniInstead)]
 		public IPropertyIndexer BaseBuffBonusCategory
 		{
 			get { return createIndexer(ePropertyCategory.BaseBuff); }
 		}
 
-		/// <summary>
-		/// Property Buff bonus category
-		/// what it means depends from the PropertyCalculator for a property element
-		/// </summary>
+		[Obsolete(useBoniInstead)]
 		public IPropertyIndexer SpecBuffBonusCategory
 		{
 			get { return createIndexer(ePropertyCategory.SpecBuff); }
 		}
 
-		/// <summary>
-		/// Property Buff bonus category
-		/// what it means depends from the PropertyCalculator for a property element
-		/// </summary>
+		[Obsolete(useBoniInstead)]
 		public IPropertyIndexer BuffBonusCategory4
 		{
 			get { return createIndexer(ePropertyCategory.ExtraBuff); }
 		}
 
-		/// <summary>
-		/// Property Buff bonus category
-		/// what it means depends from the PropertyCalculator for a property element
-		/// </summary>
+		[Obsolete(useBoniInstead)]
 		public IPropertyIndexer DebuffCategory
 		{
 			get { return createIndexer(ePropertyCategory.Debuff); }
 		}
 
-		/// <summary>
-		/// Property Buff bonus category
-		/// what it means depends from the PropertyCalculator for a property element
-		/// </summary>
+		[Obsolete(useBoniInstead)]
 		public IPropertyIndexer SpecDebuffCategory
 		{
 			get { return createIndexer(ePropertyCategory.SpecDebuff); }

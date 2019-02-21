@@ -1,5 +1,4 @@
 ﻿using DOL.GS.PropertyCalc;
-using System;
 
 namespace DOL.GS
 {
@@ -8,22 +7,14 @@ namespace DOL.GS
 		private GameLiving owner;
 		private BonusProperty[] properties = new BonusProperty[(int)eProperty.MaxProperty + 1];
 
-		public IPropertyIndexer BaseBoni { get; } = new BasePropertyIndexer();
-		public IPropertyIndexer AbilityBoni { get; } = new PropertyIndexer();
-		public IPropertyIndexer ItemBoni { get; } = new PropertyIndexer();
-		public IPropertyIndexer BaseBuffBoni { get; } = new PropertyIndexer();
-		public IPropertyIndexer SpecBuffBoni { get; } = new PropertyIndexer();
-		public IPropertyIndexer ExtraBuffBoni { get; } = new PropertyIndexer();
-		public IPropertyIndexer DebuffBoni { get; } = new PropertyIndexer();
-		public IPropertyIndexer SpecDebuffBoni { get; } = new PropertyIndexer();
 		public IMultiplicativeProperties MultiplicativeBuff { get; } = new MultiplicativePropertiesHybrid();
 
 		public Boni(GameLiving owner)
 		{
 			this.owner = owner;
-			for (int i=0;i<properties.Length;i++)
+			for (int i = 0; i < properties.Length; i++)
 			{
-				properties[i] = new BonusProperty(owner, (eProperty)i);
+				properties[i] = new BonusProperty(owner,(eProperty)i);
 			}
 		}
 
@@ -41,73 +32,24 @@ namespace DOL.GS
 
 		public void SetTo(Bonus bonus)
 		{
-			if (IsStat(bonus.Type))
-			{
-				properties[(int)bonus.Type].Set(bonus.Value, bonus.Category);
-			}
-			else
-			{
-				var indexer = GetIndexer(bonus.Category);
-				indexer[bonus.Type] = bonus.Value;
-			}
+			Get(bonus.Type).Set(bonus.Value, bonus.Category);
 		}
 
 		public int GetValueOf(BonusComponent component)
 		{
-			if(IsStat(component.Property))
-			{
-				return properties[(int)component.Property].Get(component.Category);
-			}
-			var indexer = GetIndexer(component.Category);
-			return indexer[component.Property];
+			return Get(component.Property).Get(component.Category);
 		}
 
-		private bool IsStat(eProperty property)
+		private BonusProperty Get(eProperty property)
 		{
-			return (property >= eProperty.Stat_First && property <= eProperty.Stat_Last) || property == eProperty.Acuity;
-		}
-
-		private bool IsStatOvercap(eProperty property)
-		{
-			return property >= eProperty.StrCapBonus && property <= eProperty.AcuCapBonus;
-		}
-
-		private bool IsMythicalStat(eProperty property)
-		{
-			return property >= eProperty.MythicalStatCapBonus_First && property <= eProperty.MythicalStatCapBonus_Last;
+			return properties[(int)property];
 		}
 
 		public void Clear(BonusCategory category)
 		{
-			for (int i=0;i<=(int)eProperty.MaxProperty;i++)
+			for (int i = 0; i <= (int)eProperty.MaxProperty; i++)
 			{
-
-				SetTo(new Bonus(0, category.Value , (eProperty)i));
-			}
-		}
-
-		private IPropertyIndexer GetIndexer(ePropertyCategory category)
-		{
-			switch (category)
-			{
-				case ePropertyCategory.Base:
-					return BaseBoni;
-				case ePropertyCategory.Ability:
-					return AbilityBoni;
-				case ePropertyCategory.Item:
-					return ItemBoni;
-				case ePropertyCategory.BaseBuff:
-					return BaseBuffBoni;
-				case ePropertyCategory.SpecBuff:
-					return SpecBuffBoni;
-				case ePropertyCategory.ExtraBuff:
-					return ExtraBuffBoni;
-				case ePropertyCategory.Debuff:
-					return DebuffBoni;
-				case ePropertyCategory.SpecDebuff:
-					return SpecDebuffBoni;
-				default:
-					throw new ArgumentException();
+				SetTo(new Bonus(0, category.Name, (eProperty)i));
 			}
 		}
 	}
@@ -162,21 +104,21 @@ namespace DOL.GS
 
 	public class BonusCategory
 	{
-		public ePropertyCategory Value { get; }
+		public ePropertyCategory Name { get; }
 
-		public BonusComponent Strength { get { return new BonusComponent(Value, eProperty.Strength); } }
-		public BonusComponent Constitution { get { return new BonusComponent(Value, eProperty.Constitution); } }
-		public BonusComponent Dexterity { get { return new BonusComponent(Value, eProperty.Dexterity); } }
-		public BonusComponent Quickness { get { return new BonusComponent(Value, eProperty.Quickness); } }
-		public BonusComponent Empathy { get { return new BonusComponent(Value, eProperty.Empathy); } }
-		public BonusComponent Intelligence { get { return new BonusComponent(Value, eProperty.Intelligence); } }
-		public BonusComponent Piety { get { return new BonusComponent(Value, eProperty.Piety); } }
-		public BonusComponent Charisma { get { return new BonusComponent(Value, eProperty.Charisma); } }
+		public BonusComponent Strength { get { return new BonusComponent(Name, eProperty.Strength); } }
+		public BonusComponent Constitution { get { return new BonusComponent(Name, eProperty.Constitution); } }
+		public BonusComponent Dexterity { get { return new BonusComponent(Name, eProperty.Dexterity); } }
+		public BonusComponent Quickness { get { return new BonusComponent(Name, eProperty.Quickness); } }
+		public BonusComponent Empathy { get { return new BonusComponent(Name, eProperty.Empathy); } }
+		public BonusComponent Intelligence { get { return new BonusComponent(Name, eProperty.Intelligence); } }
+		public BonusComponent Piety { get { return new BonusComponent(Name, eProperty.Piety); } }
+		public BonusComponent Charisma { get { return new BonusComponent(Name, eProperty.Charisma); } }
 
 
 		public BonusCategory(ePropertyCategory category)
 		{
-			this.Value = category;
+			this.Name = category;
 		}
 
 		public static ePropertyCategory[] IndexerCategories {
@@ -196,12 +138,12 @@ namespace DOL.GS
 
 		public Bonus Create(int value, eProperty property)
 		{
-			return new Bonus(value, this.Value, property);
+			return new Bonus(value, this.Name, property);
 		}
 
 		public BonusComponent ComponentOf(eProperty property)
 		{
-			return new BonusComponent(this.Value, property);
+			return new BonusComponent(this.Name, property);
 		}
 	}
 

@@ -2,6 +2,7 @@
 using DOL.GS;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DOL.UnitTests.GameServer
 {
@@ -80,8 +81,6 @@ namespace DOL.UnitTests.GameServer
 		{
 			var actual = ePropertyCategory.__Last;
 			var expected = Enum.GetValues(typeof(ePropertyCategory)).Cast<ePropertyCategory>().Last<ePropertyCategory>();
-			var test = Enum.GetValues(typeof(ePropertyCategory));
-			var dings = new int[] { 0, 5, 42, 3, 41, 2};
 
 			Assert.AreEqual(actual, expected);
 		}

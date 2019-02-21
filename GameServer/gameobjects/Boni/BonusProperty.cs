@@ -29,7 +29,7 @@ namespace DOL.GS
 
 		public void Add(int value, BonusCategory category)
 		{
-			int componentIndex = (int)category.Value;
+			int componentIndex = (int)category.Name;
 			componentValues[componentIndex] += value;
 		}
 
@@ -45,7 +45,12 @@ namespace DOL.GS
 
 		public int Get(ePropertyCategory category)
 		{
-			int componentIndex = (int)category;
+			return Get(new BonusCategory(category));
+		}
+
+		public int Get(BonusCategory category)
+		{
+			int componentIndex = (int)category.Name;
 			return componentValues[componentIndex];
 		}
 

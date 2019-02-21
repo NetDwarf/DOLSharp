@@ -4,31 +4,6 @@ using NUnit.Framework;
 
 namespace DOL.UnitTests.GameServer
 {
-    [TestFixture]
-    class UT_PropertyIndexer
-    {
-        [Test]
-        public void IndexGetter_UninitializedValue_ReturnZero()
-        {
-            var propIndexer = new PropertyIndexer();
-
-            int actual = propIndexer[0];
-
-            Assert.AreEqual(0, actual);
-        }
-
-        [Test]
-        public void IndexSetter_AddOneToUninitializedElement_ReturnOne()
-        {
-            var propIndexer = new PropertyIndexer();
-
-            propIndexer[0] += 1;
-            int actual = propIndexer[0];
-
-            Assert.AreEqual(1, actual);
-        }
-    }
-
 	[TestFixture]
 	class UT_IndexerBoniAdapter
 	{
