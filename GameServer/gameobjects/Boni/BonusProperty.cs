@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace DOL.GS
+﻿namespace DOL.GS
 {
-	public class BonusProperty
+	public class BonusProperty : IBonusProperty
 	{
 		GameLiving owner;
 		private int[] componentValues = new int[(int)ePropertyCategory.__Last + 1];
@@ -58,6 +56,36 @@ namespace DOL.GS
 		{
 			int componentIndex = (int)category;
 			componentValues[componentIndex] = value;
+		}
+
+		private static readonly IBonusProperty nullProperty = new NullProperty();
+		public static IBonusProperty Dummy()
+		{
+			return nullProperty;
+		}
+	}
+
+	public interface IBonusProperty
+	{
+		eProperty Type { get; }
+
+		int Get(BonusCategory category);
+
+		void Set(int value, ePropertyCategory category);
+	}
+
+	public class NullProperty : IBonusProperty
+	{
+		public eProperty Type { get { return eProperty.Undefined; } }
+
+		public int Get(BonusCategory category)
+		{
+			return 0;
+		}
+
+		public void Set(int value, ePropertyCategory category)
+		{
+
 		}
 	}
 }

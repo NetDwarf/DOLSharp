@@ -1,21 +1,18 @@
 ﻿using DOL.GS.PropertyCalc;
+using System.Collections.Generic;
 
 namespace DOL.GS
 {
 	public class Boni
 	{
 		private GameLiving owner;
-		private BonusProperty[] properties = new BonusProperty[(int)eProperty.MaxProperty + 1];
+		private List<IBonusProperty> properties = new List<IBonusProperty>();
 
 		public IMultiplicativeProperties MultiplicativeBuff { get; } = new MultiplicativePropertiesHybrid();
 
 		public Boni(GameLiving owner)
 		{
 			this.owner = owner;
-			for (int i = 0; i < properties.Length; i++)
-			{
-				properties[i] = new BonusProperty(owner,(eProperty)i);
-			}
 		}
 
 		public void Add(Bonus bonus)
@@ -32,17 +29,30 @@ namespace DOL.GS
 
 		public void SetTo(Bonus bonus)
 		{
+			var propIndex = properties.FindIndex(s => s.Type == bonus.Type);
+			if(propIndex < 0)
+			{
+				var bonusProperty = new BonusProperty(owner, bonus.Type);
+				bonusProperty.Set(bonus.Value, bonus.Category);
+				properties.Add(bonusProperty);
+			}
+			else
+			{
+				properties[propIndex].Set(bonus.Value, bonus.Category);
+			}
 			Get(bonus.Type).Set(bonus.Value, bonus.Category);
 		}
 
 		public int GetValueOf(BonusComponent component)
 		{
-			return Get(component.Property).Get(component.Category);
+			return Get(component.Property).Get(new BonusCategory(component.Category));
 		}
 
-		private BonusProperty Get(eProperty property)
+		private IBonusProperty Get(eProperty property)
 		{
-			return properties[(int)property];
+			var propIndex = properties.FindIndex(s => s.Type == property);
+			if(propIndex < 0) { return BonusProperty.Dummy(); }
+			return properties[propIndex];
 		}
 
 		public void Clear(BonusCategory category)
@@ -100,6 +110,13 @@ namespace DOL.GS
 		{
 			return new Bonus(value, Category, Property);
 		}
+
+		public override bool Equals(object obj)
+		{
+			var comp2 = obj as BonusComponent;
+			if(comp2 is null) { return false; }
+			return this.Category == comp2.Category && this.Property == comp2.Property;
+		}
 	}
 
 	public class BonusCategory
@@ -121,20 +138,6 @@ namespace DOL.GS
 			this.Name = category;
 		}
 
-		public static ePropertyCategory[] IndexerCategories {
-			get
-			{
-				return new ePropertyCategory[] { ePropertyCategory.Base,
-					ePropertyCategory.Ability,
-					ePropertyCategory.Item,
-					ePropertyCategory.BaseBuff,
-					ePropertyCategory.SpecBuff,
-					ePropertyCategory.ExtraBuff,
-					ePropertyCategory.Debuff,
-					ePropertyCategory.SpecDebuff};
-			}
-		}
-
 
 		public Bonus Create(int value, eProperty property)
 		{
@@ -147,7 +150,7 @@ namespace DOL.GS
 		}
 	}
 
-	public enum ePropertyCategory
+	public enum ePropertyCategory : byte
 	{
 		Base,
 		Ability,

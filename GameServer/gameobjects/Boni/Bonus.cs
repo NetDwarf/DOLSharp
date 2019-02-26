@@ -2,17 +2,17 @@
 {
 	public class Bonus
 	{
-		BonusComponent component;
-
 		public Bonus(int value, ePropertyCategory category, eProperty prop)
 		{
-			this.component = new BonusComponent(category, prop);
+			var component = new BonusComponent(category, prop);
+			this.Type = component.Property;
+			this.Category = component.Category;
 			this.Value = value;
 		}
 
 		public int Value { get;}
-		public eProperty Type { get { return component.Property; } }
-		public ePropertyCategory Category { get { return component.Category; } }
+		public eProperty Type { get; }
+		public ePropertyCategory Category { get; }
 
 		public static BonusCategory Base { get { return new BonusCategory(ePropertyCategory.Base); } }
 		public static BonusCategory Ability { get { return new BonusCategory(ePropertyCategory.Ability); } }

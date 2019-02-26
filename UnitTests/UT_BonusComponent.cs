@@ -18,5 +18,14 @@ namespace DOL.UnitTests.GameServer
 			Assert.AreEqual(expectedCategory, actualCategory);
 			Assert.AreEqual(expectedProperty, actualProperty);
 		}
+
+		[Test]
+		public void Equals_WithSameCategoryAndProperty_True()
+		{
+			var component1 = new BonusComponent(ePropertyCategory.Base, eProperty.Constitution);
+			var component2 = new BonusComponent(ePropertyCategory.Base, eProperty.Constitution);
+
+			Assert.IsTrue(component1.Equals(component2));
+		}
 	}
 }

@@ -38,6 +38,8 @@
   <ItemGroup>
     <Compile Include="Factory.cs" />
     <Compile Include="Fakes.cs" />
+    <Compile Include="PropertyCalculator\UT_MeleeDamagePercentCalculator.cs" />
+    <Compile Include="PropertyCalculator\UT_MeleeSpeedPercentCalculator.cs" />
     <Compile Include="UT_Boni.cs" />
     <Compile Include="UT_Bonus.cs" />
     <Compile Include="UT_BonusComponent.cs" />
@@ -47,7 +49,7 @@
     <Compile Include="UT_GamePlayer.cs" />
     <Compile Include="UT_IndexerBoniAdapter.cs" />
     <Compile Include="UT_SpellHandler.cs" />
-    <Compile Include="UT_StatCalculator.cs" />
+    <Compile Include="PropertyCalculator\UT_StatCalculator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">

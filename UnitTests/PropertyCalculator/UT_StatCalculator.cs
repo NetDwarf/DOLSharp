@@ -2,7 +2,7 @@
 using DOL.GS;
 using DOL.GS.PropertyCalc;
 
-namespace DOL.UnitTests.GameServer
+namespace DOL.UnitTests.GameServer.PropertyCalc
 {
     [TestFixture]
     public class UT_StatCalculator
@@ -293,9 +293,9 @@ namespace DOL.UnitTests.GameServer
 
             Assert.AreEqual(12, actual);
         }
-        #endregion
-
-        public static StatCalculator createStatCalculator()
+		#endregion
+		
+		public static StatCalculator createStatCalculator()
         {
             return new StatCalculator();
         }
