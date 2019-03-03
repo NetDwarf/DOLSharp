@@ -4740,7 +4740,7 @@ namespace DOL.GS
 		/// </summary>
 		public IMultiplicativeProperties BuffBonusMultCategory1
 		{
-			get { return Boni.MultiplicativeBuff; }
+			get { return new MultiplicativePropertiesBoniAdapter(Boni); }
 		}
 		
 		/// <summary>

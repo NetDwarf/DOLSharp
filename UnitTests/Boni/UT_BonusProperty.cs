@@ -14,7 +14,7 @@ namespace DOL.UnitTests.GameServer
 		{
 			var bonusProp = createBonusProperty();
 
-			int actual = bonusProp.Base;
+			int actual = bonusProp.Get(Bonus.Base);
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
 		}
@@ -26,7 +26,7 @@ namespace DOL.UnitTests.GameServer
 
 			bonusProp.Add(1, Bonus.Base);
 
-			int actual = bonusProp.Base;
+			int actual = bonusProp.Get(Bonus.Base);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -38,7 +38,7 @@ namespace DOL.UnitTests.GameServer
 
 			bonusProp.Remove(1, Bonus.Base);
 
-			int actual = bonusProp.Base;
+			int actual = bonusProp.Get(Bonus.Base);
 			int expected = -1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -50,7 +50,7 @@ namespace DOL.UnitTests.GameServer
 
 			bonusProp.Add(1, Bonus.Ability);
 
-			int actual = bonusProp.Ability;
+			int actual = bonusProp.Get(Bonus.Ability);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -62,7 +62,7 @@ namespace DOL.UnitTests.GameServer
 
 			bonusProp.Set(1, ePropertyCategory.Ability);
 
-			int actual = bonusProp.Ability;
+			int actual = bonusProp.Get(Bonus.Ability);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}

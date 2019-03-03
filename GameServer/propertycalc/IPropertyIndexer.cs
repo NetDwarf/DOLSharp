@@ -25,6 +25,5 @@ namespace DOL.GS.PropertyCalc
 	{
 		int this[int index] { get; set; }
 		int this[eProperty index] { get; set; }
-		void Clear();
 	}
 }

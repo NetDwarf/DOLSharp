@@ -38,16 +38,18 @@
   <ItemGroup>
     <Compile Include="Factory.cs" />
     <Compile Include="Fakes.cs" />
+    <Compile Include="PropertyCalculator\UT_MaxSpeedCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_MeleeDamagePercentCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_MeleeSpeedPercentCalculator.cs" />
-    <Compile Include="UT_Boni.cs" />
-    <Compile Include="UT_Bonus.cs" />
-    <Compile Include="UT_BonusComponent.cs" />
-    <Compile Include="UT_BonusProperty.cs" />
+    <Compile Include="Boni\UT_Boni.cs" />
+    <Compile Include="Boni\UT_Bonus.cs" />
+    <Compile Include="Boni\UT_BonusComponent.cs" />
+    <Compile Include="Boni\UT_BonusProperty.cs" />
     <Compile Include="UT_GameEffectList.cs" />
     <Compile Include="UT_GameNPC.cs" />
     <Compile Include="UT_GamePlayer.cs" />
     <Compile Include="UT_IndexerBoniAdapter.cs" />
+    <Compile Include="UT_MultiplicativePropertiesHybrid.cs" />
     <Compile Include="UT_SpellHandler.cs" />
     <Compile Include="PropertyCalculator\UT_StatCalculator.cs" />
   </ItemGroup>

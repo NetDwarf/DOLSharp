@@ -54,10 +54,5 @@ namespace DOL.GS.PropertyCalc
 				this[(int)property] = value;
 			}
 		}
-
-		public void Clear()
-		{
-			boni.Clear(new BonusCategory(category));
-		}
 	}
 }

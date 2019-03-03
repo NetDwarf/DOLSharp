@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 
 namespace DOL.GS.PropertyCalc
@@ -115,6 +116,36 @@ namespace DOL.GS.PropertyCalc
 			PropertyEntry entry = (PropertyEntry)m_properties[index];
 			if (entry == null) return 1.0;
 			return entry.cachedValue;
+		}
+	}
+
+	public class MultiplicativePropertiesBoniAdapter : IMultiplicativeProperties
+	{
+		private Boni boni;
+		private Dictionary<object, double> multiplicatorValues = new Dictionary<object, double>();
+
+		public MultiplicativePropertiesBoniAdapter(Boni boni)
+		{
+			this.boni = boni;
+		}
+
+		public double Get(int index)
+		{
+			return boni.GetValueOf(new BonusComponent(ePropertyCategory.Multiplier, (eProperty)index))/1000.0;
+		}
+
+		public void Remove(int index, object key)
+		{
+			int perMilleValue = (int)(multiplicatorValues[key]*1000);
+			multiplicatorValues.Remove(key);
+			boni.RemoveMultiplier(perMilleValue,(eProperty)index);
+		}
+
+		public void Set(int index, object key, double value)
+		{
+			int perMilleValue = (int)(value * 1000);
+			multiplicatorValues.Add(key, value);
+			boni.AddMultiplier(perMilleValue, (eProperty)index);
 		}
 	}
 }

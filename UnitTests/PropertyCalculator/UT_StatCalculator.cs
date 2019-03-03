@@ -286,7 +286,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var player = Create.FakePlayer();
             player.AbilityBonus[eProperty.Dexterity] = 50;
-            player.BuffBonusMultCategory1.Set((int)eProperty.Dexterity, "", 0.25);
+            player.BuffBonusMultCategory1.Set((int)eProperty.Dexterity, new object(), 0.25);
             StatCalculator statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Dexterity);

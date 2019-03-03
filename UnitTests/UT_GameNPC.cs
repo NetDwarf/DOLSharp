@@ -45,6 +45,53 @@ namespace DOL.UnitTests.GameServer
 			Assert.AreEqual(2, actual);
 		}
 
+		[Test]
+		public void GetModifiedBase_FromMatterResist_Init_Zero()
+		{
+			var npc = createNPC();
+
+			int actual = npc.GetModifiedBase(eProperty.Resist_Matter);
+
+			int expected = 0;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void GetModifiedBase_FromMatter_NPCHasOneMatterBaseBuff_One()
+		{
+			var npc = createNPC();
+			npc.Boni.SetTo(Bonus.BaseBuff.Create(1, eProperty.Resist_Matter));
+
+			int actual = npc.GetModifiedBase(eProperty.Resist_Matter);
+
+			int expected = 1;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void GetModifiedBase_FromMatter_NPCHasOneItemMatterResist_One()
+		{
+			var npc = createNPC();
+			npc.Boni.SetTo(Bonus.Item.Create(1, eProperty.Resist_Matter));
+
+			int actual = npc.GetModifiedBase(eProperty.Resist_Matter);
+
+			int expected = 1;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void GetModifiedBase_FromNatural_NPCHasOneNaturalBaseBuff_Zero()
+		{
+			var npc = createNPC();
+			npc.Boni.SetTo(Bonus.BaseBuff.Create(1, eProperty.Resist_Natural));
+
+			int actual = npc.GetModifiedBase(eProperty.Resist_Natural);
+
+			int expected = 0;
+			Assert.AreEqual(expected, actual);
+		}
+
 		private static GameNPC createNPC()
 		{
 			var brain = Substitute.For<ABrain>();

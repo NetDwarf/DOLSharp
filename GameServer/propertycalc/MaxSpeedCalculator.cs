@@ -47,7 +47,7 @@ namespace DOL.GS.PropertyCalc
 		{
 			if (living.IsMezzed || living.IsStunned) return 0;
 
-			double speed = living.BuffBonusMultCategory1.Get((int)property);
+			double speed = living.Boni.GetValueOf(Bonus.Multiplier.ComponentOf(property)) * 0.001;
 
 			if (living is GamePlayer)
 			{

@@ -21,8 +21,9 @@
 		public static BonusCategory Mythical { get { return new BonusCategory(ePropertyCategory.Mythical); } }
 		public static BonusCategory BaseBuff { get { return new BonusCategory(ePropertyCategory.BaseBuff); } }
 		public static BonusCategory SpecBuff { get { return new BonusCategory(ePropertyCategory.SpecBuff); } }
-		public static BonusCategory Extrabuff { get { return new BonusCategory(ePropertyCategory.ExtraBuff); } }
+		public static BonusCategory ExtraBuff { get { return new BonusCategory(ePropertyCategory.ExtraBuff); } }
 		public static BonusCategory Debuff { get { return new BonusCategory(ePropertyCategory.Debuff); } }
 		public static BonusCategory SpecDebuff { get { return new BonusCategory(ePropertyCategory.SpecDebuff); } }
+		public static BonusCategory Multiplier { get { return new BonusCategory(ePropertyCategory.Multiplier); } }
 	}
 }

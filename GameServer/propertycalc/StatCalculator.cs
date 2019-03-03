@@ -73,7 +73,7 @@ namespace DOL.GS.PropertyCalc
 			}
 
 			int stat = unbuffedBonus + buffBonus + abilityBonus;
-			stat = (int)(stat * boni.MultiplicativeBuff.Get((int)property));
+			stat = (int)(stat * boni.GetValueOf(new BonusComponent(ePropertyCategory.Multiplier,property)) / 1000.0);
 
 			stat -= (property == eProperty.Constitution)? deathConDebuff : 0;
 

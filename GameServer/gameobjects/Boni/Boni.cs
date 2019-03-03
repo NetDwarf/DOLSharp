@@ -8,8 +8,6 @@ namespace DOL.GS
 		private GameLiving owner;
 		private List<IBonusProperty> properties = new List<IBonusProperty>();
 
-		public IMultiplicativeProperties MultiplicativeBuff { get; } = new MultiplicativePropertiesHybrid();
-
 		public Boni(GameLiving owner)
 		{
 			this.owner = owner;
@@ -29,18 +27,20 @@ namespace DOL.GS
 
 		public void SetTo(Bonus bonus)
 		{
-			var propIndex = properties.FindIndex(s => s.Type == bonus.Type);
-			if(propIndex < 0)
-			{
-				var bonusProperty = new BonusProperty(owner, bonus.Type);
-				bonusProperty.Set(bonus.Value, bonus.Category);
-				properties.Add(bonusProperty);
-			}
-			else
-			{
-				properties[propIndex].Set(bonus.Value, bonus.Category);
-			}
-			Get(bonus.Type).Set(bonus.Value, bonus.Category);
+			var bonusProperty = Get(bonus.Type, true);
+			bonusProperty.Set(bonus.Value, bonus.Category);
+		}
+
+		public void AddMultiplier(int perMilleValue, eProperty property)
+		{
+			var bonusProperty = Get(property, true);
+			bonusProperty.AddMultiplier(perMilleValue);
+		}
+
+		public void RemoveMultiplier(int perMilleValue, eProperty property)
+		{
+			var bonusProperty = Get(property);
+			bonusProperty.RemoveMultiplier(perMilleValue);
 		}
 
 		public int GetValueOf(BonusComponent component)
@@ -50,8 +50,25 @@ namespace DOL.GS
 
 		private IBonusProperty Get(eProperty property)
 		{
+			return Get(property, false);
+		}
+
+		private IBonusProperty Get(eProperty property, bool createIfNotExists)
+		{
 			var propIndex = properties.FindIndex(s => s.Type == property);
-			if(propIndex < 0) { return BonusProperty.Dummy(); }
+			if (propIndex < 0)
+			{
+				if (createIfNotExists)
+				{
+					var bonusProperty = new BonusProperty(owner, property);
+					properties.Add(bonusProperty);
+					return bonusProperty;
+				}
+				else
+				{
+					return BonusProperty.Dummy();
+				}
+			}
 			return properties[propIndex];
 		}
 
@@ -131,6 +148,7 @@ namespace DOL.GS
 		public BonusComponent Intelligence { get { return new BonusComponent(Name, eProperty.Intelligence); } }
 		public BonusComponent Piety { get { return new BonusComponent(Name, eProperty.Piety); } }
 		public BonusComponent Charisma { get { return new BonusComponent(Name, eProperty.Charisma); } }
+		public BonusComponent Acuity { get { return new BonusComponent(Name, eProperty.Acuity); } }
 
 
 		public BonusCategory(ePropertyCategory category)
@@ -162,6 +180,7 @@ namespace DOL.GS
 		ExtraBuff,
 		Debuff,
 		SpecDebuff,
-		__Last = SpecDebuff,
+		Multiplier,
+		__Last = Multiplier,
 	}
 }

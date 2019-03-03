@@ -28,23 +28,23 @@ namespace DOL.UnitTests.GameServer
             return modifiedSpecLevel;
         }
 
-        public override int GetModified(eProperty property)
-        {
-            switch (property)
-            {
-                case eProperty.Intelligence:
-                    return modifiedIntelligence;
-                case eProperty.SpellLevel:
-                    return modifiedSpellLevel;
-                case eProperty.ToHitBonus:
-                    return modiefiedToHitBonus;
-                case eProperty.LivingEffectiveLevel:
-                    return modifiedEffectiveLevel;
-                default: throw new ArgumentException("There is no property with that name");
-            }
-        }
+		public override int GetModified(eProperty property)
+		{
+			switch (property)
+			{
+				case eProperty.Intelligence:
+					return modifiedIntelligence;
+				case eProperty.SpellLevel:
+					return modifiedSpellLevel;
+				case eProperty.ToHitBonus:
+					return modiefiedToHitBonus;
+				case eProperty.LivingEffectiveLevel:
+					return modifiedEffectiveLevel;
+				default: throw new ArgumentException("There is no property with that name");
+			}
+		}
 
-        public override int TotalConstitutionLostAtDeath
+		public override int TotalConstitutionLostAtDeath
         {
             get { return totalConLostOnDeath; }
             set { totalConLostOnDeath = value; }
