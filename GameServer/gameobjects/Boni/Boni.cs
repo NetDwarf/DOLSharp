@@ -1,4 +1,4 @@
-﻿using DOL.GS.PropertyCalc;
+﻿using System;
 using System.Collections.Generic;
 
 namespace DOL.GS
@@ -60,7 +60,8 @@ namespace DOL.GS
 			{
 				if (createIfNotExists)
 				{
-					var bonusProperty = new BonusProperty(owner, property);
+					IBonusProperty bonusProperty;
+					bonusProperty = new BonusProperty(owner, property);
 					properties.Add(bonusProperty);
 					return bonusProperty;
 				}
@@ -80,7 +81,7 @@ namespace DOL.GS
 			}
 		}
 	}
-
+	
 	public class BonusComponent
 	{
 		public ePropertyCategory Category { get; }

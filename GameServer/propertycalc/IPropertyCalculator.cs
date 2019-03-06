@@ -17,6 +17,8 @@
  *
  */
 
+using System;
+
 namespace DOL.GS.PropertyCalc
 {
 	/// <summary>
@@ -42,6 +44,8 @@ namespace DOL.GS.PropertyCalc
 		/// <param name="property"></param>
 		/// <returns></returns>
 		int CalcValue(GameLiving living, eProperty property);
+
+		[Obsolete("Use Boni instead!")]
 		int CalcValueBase(GameLiving living, eProperty property);
 
         /// <summary>

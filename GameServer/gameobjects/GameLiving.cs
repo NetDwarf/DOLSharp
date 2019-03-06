@@ -4768,7 +4768,7 @@ namespace DOL.GS
 			return 0;
 		}
 
-		//Eden : secondary resists, such AoM, vampiir magic resistance etc, should not apply in CC duration, disease, debuff etc, using a new function
+		[Obsolete("Use Boni instead!")]
 		public virtual int GetModifiedBase(eProperty property)
 		{
 			if (m_propertyCalc != null && m_propertyCalc[(int)property] != null)
@@ -4908,10 +4908,34 @@ namespace DOL.GS
 		{
 			return GetModified(GetResistTypeForDamage(damageType));
 		}
-
+		
+		[Obsolete("Use Boni instead!")]
 		public virtual int GetResistBase(eDamageType damageType)
 		{
-			return GetModifiedBase(GetResistTypeForDamage(damageType));
+			var property = GetResistTypeForDamage(damageType);
+			if (property >= eProperty.Resist_First && property <=eProperty.Resist_Last)
+			{
+				var propertyCalc = m_propertyCalc[(int)property];
+
+				int debuff = DebuffCategory[property];
+				int racialBonus = (this is GamePlayer) ? SkillBase.GetRaceResist(((this as GamePlayer).Race), (eResist)property) : 0;
+				int itemBonus = propertyCalc.CalcValueFromItems(this, property);
+				int buffBonus = propertyCalc.CalcValueFromBuffs(this, property);
+				buffBonus -= Math.Abs(debuff);
+				if (buffBonus < 0)
+				{
+					itemBonus += buffBonus / 2;
+					buffBonus = 0;
+					if (itemBonus < 0) itemBonus = 0;
+				}
+
+				int hardCap = 70;
+				return Math.Min(itemBonus + buffBonus + racialBonus, hardCap);
+			}
+			else
+			{
+				return 0;
+			}
 		}
 
 		/// <summary>

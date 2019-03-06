@@ -2,6 +2,7 @@
 using NSubstitute;
 using DOL.GS;
 using DOL.AI;
+using System;
 
 namespace DOL.UnitTests.GameServer
 {
@@ -46,47 +47,47 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void GetModifiedBase_FromMatterResist_Init_Zero()
+		public void GetResistBase_FromMatterResist_Init_Zero()
 		{
 			var npc = createNPC();
 
-			int actual = npc.GetModifiedBase(eProperty.Resist_Matter);
+			int actual = npc.GetResistBase(eDamageType.Matter);
 
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void GetModifiedBase_FromMatter_NPCHasOneMatterBaseBuff_One()
+		public void GetResistBase_FromMatter_NPCHasOneMatterBaseBuff_One()
 		{
 			var npc = createNPC();
 			npc.Boni.SetTo(Bonus.BaseBuff.Create(1, eProperty.Resist_Matter));
 
-			int actual = npc.GetModifiedBase(eProperty.Resist_Matter);
+			int actual = npc.GetResistBase(eDamageType.Matter);
 
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void GetModifiedBase_FromMatter_NPCHasOneItemMatterResist_One()
+		public void GetResistBase_FromMatter_NPCHasOneItemMatterResist_One()
 		{
 			var npc = createNPC();
 			npc.Boni.SetTo(Bonus.Item.Create(1, eProperty.Resist_Matter));
 
-			int actual = npc.GetModifiedBase(eProperty.Resist_Matter);
+			int actual = npc.GetResistBase(eDamageType.Matter);
 
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void GetModifiedBase_FromNatural_NPCHasOneNaturalBaseBuff_Zero()
+		public void GetResistBase_FromNatural_NPCHasOneNaturalBaseBuff_Zero()
 		{
 			var npc = createNPC();
 			npc.Boni.SetTo(Bonus.BaseBuff.Create(1, eProperty.Resist_Natural));
 
-			int actual = npc.GetModifiedBase(eProperty.Resist_Natural);
+			int actual = npc.GetResistBase(eDamageType.Natural);
 
 			int expected = 0;
 			Assert.AreEqual(expected, actual);

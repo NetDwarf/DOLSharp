@@ -117,7 +117,6 @@ namespace DOL.GS
 			InitializeRaceResists();
 		}
 
-
 		public static void LoadSkills()
 		{
 			lock (m_loadingLock)

@@ -53,7 +53,8 @@ namespace DOL.GS.PropertyCalc
 		{
 			return 0;
 		}
-
+		
+		[Obsolete("Use Boni instead!")]
 		public virtual int CalcValueBase(GameLiving living, eProperty property) 
 		{
 			return 0;

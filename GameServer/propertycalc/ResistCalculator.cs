@@ -45,38 +45,52 @@ namespace DOL.GS.PropertyCalc
         /// <returns>The actual resist amount.</returns>
         public override int CalcValue(GameLiving living, eProperty property)
         {
-            int propertyIndex = (int)property;
-
-            // Abilities/racials/debuffs.
-
-            int debuff = living.DebuffCategory[propertyIndex];
-			int abilityBonus = living.AbilityBonus[propertyIndex];
-			int racialBonus = SkillBase.GetRaceResist( living.Race, (eResist)property );
-
-            // Items and buffs.
-
-            int itemBonus = CalcValueFromItems(living, property);
-            int buffBonus = CalcValueFromBuffs(living, property);
-
-            // Apply debuffs. 100% Effectiveness for player buffs, but only 50%
-            // effectiveness for item bonuses.
-
-            buffBonus -= Math.Abs(debuff);
-
-            if (buffBonus < 0)
-            {
-                itemBonus += buffBonus / 2;
-                buffBonus = 0;
-                if (itemBonus < 0)
-                    itemBonus = 0;
-            }
-
-            // Add up and apply hardcap.
-
-            return Math.Min(itemBonus + buffBonus + abilityBonus + racialBonus, HardCap);
+			return CalcValue(living, property, false);
 		}
 
-        public override int CalcValueBase(GameLiving living, eProperty property)
+		public int CalcValue(GameLiving living, eProperty property, bool ignoreRaceResist)
+		{
+			int propertyIndex = (int)property;
+
+			// Abilities/racials/debuffs.
+
+			int debuff = living.DebuffCategory[propertyIndex];
+			int abilityBonus = living.AbilityBonus[propertyIndex];
+			int racialBonus;
+			if (ignoreRaceResist == true)
+			{
+				racialBonus = 0;
+			}
+			else
+			{
+				racialBonus = SkillBase.GetRaceResist(living.Race, (eResist)property);
+			}
+
+			// Items and buffs.
+
+			int itemBonus = CalcValueFromItems(living, property);
+			int buffBonus = CalcValueFromBuffs(living, property);
+
+			// Apply debuffs. 100% Effectiveness for player buffs, but only 50%
+			// effectiveness for item bonuses.
+
+			buffBonus -= Math.Abs(debuff);
+
+			if (buffBonus < 0)
+			{
+				itemBonus += buffBonus / 2;
+				buffBonus = 0;
+				if (itemBonus < 0)
+					itemBonus = 0;
+			}
+
+			// Add up and apply hardcap.
+			int hardCap = 70;
+			return Math.Min(itemBonus + buffBonus + abilityBonus + racialBonus, hardCap);
+		}
+
+		[Obsolete("Use Boni instead!")]
+		public override int CalcValueBase(GameLiving living, eProperty property)
         {
             int propertyIndex = (int)property;
             int debuff = living.DebuffCategory[propertyIndex];
@@ -90,7 +104,9 @@ namespace DOL.GS.PropertyCalc
                 buffBonus = 0;
                 if (itemBonus < 0) itemBonus = 0;
             }
-            return Math.Min(itemBonus + buffBonus + racialBonus, HardCap);
+
+			int hardCap = 70;
+            return Math.Min(itemBonus + buffBonus + racialBonus, hardCap);
         }
 
         /// <summary>
@@ -103,7 +119,8 @@ namespace DOL.GS.PropertyCalc
         {
             int buffBonus = living.BaseBuffBonusCategory[(int)property]
 				+ living.BuffBonusCategory4[(int)property];
-            return Math.Min(buffBonus, BuffBonusCap);
+			int buffBonusCap = 24;
+            return Math.Min(buffBonus, buffBonusCap);
         }
 
         /// <summary>
@@ -119,37 +136,8 @@ namespace DOL.GS.PropertyCalc
             // Item bonus cap and cap increase from Mythirians.
 
             int itemBonusCap = living.Level / 2 + 1;
-            int itemBonusCapIncrease = GetItemBonusCapIncrease(living, property);
-            return Math.Min(itemBonus, itemBonusCap + itemBonusCapIncrease);
-        }
-
-        /// <summary>
-        /// Returns the resist cap increase for the given living and the given
-        /// resist type. It is hardcapped at 5% for the time being.
-        /// </summary>
-        /// <param name="living">The living the cap increase is to be determined for.</param>
-        /// <param name="property">The resist type.</param>
-        /// <returns></returns>
-        public static int GetItemBonusCapIncrease(GameLiving living, eProperty property)
-        {
-            if (living == null) return 0;
-            return Math.Min(living.ItemBonus[(int)(eProperty.ResCapBonus_First - eProperty.Resist_First + property)], 5);
-        }
-
-        /// <summary>
-        /// Cap for player cast resist buffs.
-        /// </summary>
-        public static int BuffBonusCap
-        {
-            get { return 24; }
-        }
-
-        /// <summary>
-        /// Hard cap for resists.
-        /// </summary>
-        public static int HardCap
-        {
-            get { return 70; }
+            int itemBonusCapIncrease = Math.Min(living.ItemBonus[(int)(eProperty.ResCapBonus_First - eProperty.Resist_First + property)], 5);
+			return Math.Min(itemBonus, itemBonusCap + itemBonusCapIncrease);
         }
 	}
 	
@@ -178,7 +166,8 @@ namespace DOL.GS.PropertyCalc
         public override int CalcValueFromBuffs(GameLiving living, eProperty property)
         {
             int buffBonus = living.BaseBuffBonusCategory[(int)property] + living.BuffBonusCategory4[(int)property];
-            return Math.Min(buffBonus, BuffBonusCap);
+			int buffBonusCap = 25;
+			return Math.Min(buffBonus, buffBonusCap);
         }
         public override int CalcValueFromItems(GameLiving living, eProperty property)
         {
@@ -186,8 +175,5 @@ namespace DOL.GS.PropertyCalc
             int itemBonusCap = living.Level / 2 + 1;
             return Math.Min(itemBonus, itemBonusCap);
         }
-        public static int BuffBonusCap { get { return 25; } }
-
-        public static int HardCap { get { return 70; } }
 	}
 }

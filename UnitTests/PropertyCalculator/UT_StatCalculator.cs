@@ -48,7 +48,19 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             Assert.AreEqual(expected, actual);
         }
 
-        [Test]
+		[Test]
+		public void CalcValueFromBuffs_Level50AnimistIntelligence_With50AcuityFromBuffs_50()
+		{
+			var player = Create.FakePlayer(new CharacterClassAnimist());
+			player.Level = 50;
+			player.BaseBuffBonusCategory[eProperty.Acuity] = 50;
+			StatCalculator statCalc = createStatCalculator();
+
+			int actual = statCalc.CalcValueFromBuffs(player, eProperty.Intelligence);
+			Assert.AreEqual(50, actual);
+		}
+
+		[Test]
         public void CalcValueFromBuffs_BaseBuff3AndSpecBuff4_Return7()
         {
             var npc = Create.FakeNPC();
@@ -58,7 +70,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
             int actual = statCalc.CalcValueFromBuffs(npc, eProperty.Constitution);
 
-            int expected = 3 + 4;
+            int expected = 7;
             Assert.AreEqual(expected, actual);
         }
         #endregion
@@ -173,7 +185,21 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             Assert.AreEqual(50, actual);
         }
 
-        [Test]
+		[Test]
+		public void CalcValue_IntelligenceL50Animist_30BaseBuffAcuityAnd20SpecBuffIntelligence_50()
+		{
+			var player = Create.FakePlayer(new CharacterClassAnimist());
+			player.Level = 50;
+			player.BaseBuffBonusCategory[eProperty.Acuity] = 30;
+			player.SpecBuffBonusCategory[eProperty.Intelligence] = 20;
+			StatCalculator statCalc = createStatCalculator();
+
+			int actual = statCalc.CalcValue(player, eProperty.Intelligence);
+
+			Assert.AreEqual(50, actual);
+		}
+
+		[Test]
         public void CalcValue_200ConstitutionAbilityBonus_Return200()
         {
             var player = Create.FakePlayer();

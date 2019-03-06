@@ -17,7 +17,7 @@ namespace DOL.GS
 
 	public class BonusProperty : IBonusProperty
 	{
-		GameLiving owner;
+		private GameLiving owner;
 		private int[] componentValues = new int[(int)ePropertyCategory.__Last + 1];
 		private List<int> perMilleMultiplier = new List<int>();
 
