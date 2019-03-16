@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using DOL.GS;
 using DOL.GS.PropertyCalc;
-using NSubstitute;
 
 namespace DOL.UnitTests.GameServer.PropertyCalc
 {

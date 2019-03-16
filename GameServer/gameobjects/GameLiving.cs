@@ -4683,7 +4683,7 @@ namespace DOL.GS
 		#endregion
 		#region Property/Bonus/Buff/PropertyCalculator fields
 
-		public Boni Boni { get; }
+		public virtual Boni Boni { get; }
 
 		private IPropertyIndexer createIndexer(ePropertyCategory category)
 		{

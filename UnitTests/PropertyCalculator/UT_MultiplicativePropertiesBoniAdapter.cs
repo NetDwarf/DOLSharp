@@ -2,15 +2,15 @@
 using DOL.GS;
 using NUnit.Framework;
 	
-namespace DOL.UnitTests.GameServer
+namespace DOL.UnitTests.GameServer.PropertyCalc
 {
 	[TestFixture]
-	class UT_MultiplicativePropertiesHybrid
+	class UT_MultiplicativePropertiesBoniAdapter
 	{
 		[Test]
 		public void Get_Init_100Percent()
 		{
-			var property = createMultiplicativeProperty();
+			var property = createMultiplicativeBoniAdapter();
 
 			double actual = property.Get((int)eProperty.Undefined);
 			double expected = 1.0;
@@ -20,7 +20,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void Set_125PercentMaxSpeed_SpeedIs125Percent()
 		{
-			var property = createMultiplicativeProperty();
+			var property = createMultiplicativeBoniAdapter();
 
 			property.Set((int)eProperty.MaxSpeed, new object(), 1.25);
 
@@ -32,7 +32,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void Set_125PercentMaxSpeed_To200PercentMaxSpeed_SpeedIs250Percent()
 		{
-			var property = createMultiplicativeProperty();
+			var property = createMultiplicativeBoniAdapter();
 			property.Set((int)eProperty.MaxSpeed, new object(), 2.00);
 
 			property.Set((int)eProperty.MaxSpeed, new object(), 1.25);
@@ -45,7 +45,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void Remove_SetBonus_100Percent()
 		{
-			var property = createMultiplicativeProperty();
+			var property = createMultiplicativeBoniAdapter();
 			var obj = new object();
 			property.Set((int)eProperty.Undefined, obj, 1.25);
 
@@ -59,7 +59,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void Remove_BonusWithWrongReference_Remains125Percent()
 		{
-			var property = createMultiplicativeProperty();
+			var property = createMultiplicativeBoniAdapter();
 			property.Set((int)eProperty.Undefined, new object(), 1.25);
 
 			property.Remove((int)eProperty.Undefined, new object());
@@ -69,9 +69,10 @@ namespace DOL.UnitTests.GameServer
 			Assert.AreEqual(expected, actual, 0.001);
 		}
 
-		private static MultiplicativePropertiesHybrid createMultiplicativeProperty()
+		private static IMultiplicativeProperties createMultiplicativeBoniAdapter()
 		{
-			return new MultiplicativePropertiesHybrid();
+			var boni = new Boni(null);
+			return new MultiplicativePropertiesBoniAdapter(boni);
 		}
 	}
 }

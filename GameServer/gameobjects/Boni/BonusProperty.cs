@@ -9,10 +9,10 @@ namespace DOL.GS
 
 		int Get(BonusCategory category);
 
-		void Set(int value, ePropertyCategory category);
+		void Add(int value, BonusCategory category);
+		void Remove(int value, BonusCategory category);
 
-		void AddMultiplier(int perMilleValue);
-		void RemoveMultiplier(int perMilleValue);
+		void Set(int value, ePropertyCategory category);
 	}
 
 	public class BonusProperty : IBonusProperty
@@ -31,13 +31,28 @@ namespace DOL.GS
 
 		public void Add(int value, BonusCategory category)
 		{
-			int componentIndex = (int)category.Name;
-			componentValues[componentIndex] += value;
+			if(!category.Equals(Bonus.Multiplier))
+			{
+				int componentIndex = (int)category.Name;
+				componentValues[componentIndex] += value;
+			}
+			else
+			{
+				perMilleMultiplier.Add(value);
+			}
 		}
 
 		public void Remove(int value, BonusCategory category)
 		{
-			Add(-1 * value, category);
+			if (!category.Equals(Bonus.Multiplier))
+			{
+				Add(-1 * value, category);
+			}
+			else
+			{
+				bool successfullyRemoved = perMilleMultiplier.Remove(value);
+				if (!successfullyRemoved) { throw new ArgumentOutOfRangeException(); }
+			}
 		}
 
 		public int Get(BonusCategory category)
@@ -57,24 +72,33 @@ namespace DOL.GS
 
 		public void Set(int value, ePropertyCategory category)
 		{
-			int componentIndex = (int)category;
-			componentValues[componentIndex] = value;
-		}
+			if (category != ePropertyCategory.Multiplier)
+			{
+				int componentIndex = (int)category;
+				componentValues[componentIndex] = value;
+			}
+			else
+			{
+				perMilleMultiplier = new List<int>();
+				perMilleMultiplier.Add(value);
+			}
 
-		public void AddMultiplier(int perMillevalue)
-		{
-			perMilleMultiplier.Add(perMillevalue);
 		}
-
-		public void RemoveMultiplier(int perMilleValue)
-		{
-			perMilleMultiplier.Remove(perMilleValue);
-		}
-
+		
 		private static readonly IBonusProperty nullProperty = new NullProperty();
 		public static IBonusProperty Dummy()
 		{
 			return nullProperty;
+		}
+	}
+
+	public class PlayerBonusProperty : BonusProperty
+	{
+		protected GamePlayer owner;
+
+		public PlayerBonusProperty(GamePlayer owner, eProperty property) :base(owner, property)
+		{
+			this.owner = owner;
 		}
 	}
 
@@ -91,17 +115,17 @@ namespace DOL.GS
 			return 0;
 		}
 
+		public void Add(int value, BonusCategory category)
+		{
+			//do nothing
+		}
+
+		public void Remove(int value, BonusCategory category)
+		{
+			//do nothing
+		}
+
 		public void Set(int value, ePropertyCategory category)
-		{
-			//do nothing
-		}
-
-		public void AddMultiplier(int perMilleValue)
-		{
-			//do nothing
-		}
-
-		public void RemoveMultiplier(int perMilleValue)
 		{
 			//do nothing
 		}

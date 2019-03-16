@@ -6,7 +6,7 @@ namespace DOL.GS
 	public class Boni
 	{
 		private GameLiving owner;
-		private List<IBonusProperty> properties = new List<IBonusProperty>();
+		protected List<IBonusProperty> properties = new List<IBonusProperty>();
 
 		public Boni(GameLiving owner)
 		{
@@ -15,14 +15,14 @@ namespace DOL.GS
 
 		public void Add(Bonus bonus)
 		{
-			int oldValue = GetValueOf(new BonusComponent(bonus.Category, bonus.Type));
-			SetTo(new Bonus(oldValue + bonus.Value, bonus.Category, bonus.Type));
+			var bonusProperty = Get(bonus.Type, true);
+			bonusProperty.Add(bonus.Value, new BonusCategory(bonus.Category));
 		}
 
 		public void Remove(Bonus bonus)
 		{
-			var malus = new Bonus(-1 * bonus.Value, bonus.Category, bonus.Type);
-			Add(malus);
+			var bonusProperty = Get(bonus.Type, true);
+			bonusProperty.Remove(bonus.Value, new BonusCategory(bonus.Category));
 		}
 
 		public void SetTo(Bonus bonus)
@@ -34,13 +34,13 @@ namespace DOL.GS
 		public void AddMultiplier(int perMilleValue, eProperty property)
 		{
 			var bonusProperty = Get(property, true);
-			bonusProperty.AddMultiplier(perMilleValue);
+			bonusProperty.Add(perMilleValue, Bonus.Multiplier);
 		}
 
 		public void RemoveMultiplier(int perMilleValue, eProperty property)
 		{
 			var bonusProperty = Get(property);
-			bonusProperty.RemoveMultiplier(perMilleValue);
+			bonusProperty.Remove(perMilleValue, Bonus.Multiplier);
 		}
 
 		public int GetValueOf(BonusComponent component)
@@ -48,12 +48,12 @@ namespace DOL.GS
 			return Get(component.Property).Get(new BonusCategory(component.Category));
 		}
 
-		private IBonusProperty Get(eProperty property)
+		protected IBonusProperty Get(eProperty property)
 		{
 			return Get(property, false);
 		}
 
-		private IBonusProperty Get(eProperty property, bool createIfNotExists)
+		protected virtual IBonusProperty Get(eProperty property, bool createIfNotExists)
 		{
 			var propIndex = properties.FindIndex(s => s.Type == property);
 			if (propIndex < 0)
@@ -81,107 +81,34 @@ namespace DOL.GS
 			}
 		}
 	}
-	
-	public class BonusComponent
+
+	public class PlayerBoni : Boni
 	{
-		public ePropertyCategory Category { get; }
-		public eProperty Property { get; }
+		private GamePlayer owner;
 
-		public BonusComponent(ePropertyCategory category, eProperty property)
+		public PlayerBoni(GamePlayer owner) : base(owner)
 		{
-			bool isItem = category == ePropertyCategory.Item;
-			bool isItemStatOvercap = isItem && property >= eProperty.StrCapBonus && property <= eProperty.AcuCapBonus;
-			bool isMythical = isItem && property >= eProperty.MythicalStatCapBonus_First && property <= eProperty.MythicalStatCapBonus_Last;
+			this.owner = owner;
+		}
 
-			if (isItemStatOvercap)
+		protected override IBonusProperty Get(eProperty property, bool createIfNotExists)
+		{
+			var propIndex = properties.FindIndex(s => s.Type == property);
+			if (propIndex < 0)
 			{
-				if (property == eProperty.AcuCapBonus)
+				if (createIfNotExists)
 				{
-					Property = eProperty.Acuity;
+					IBonusProperty bonusProperty;
+					bonusProperty = new PlayerBonusProperty(owner, property);
+					properties.Add(bonusProperty);
+					return bonusProperty;
 				}
 				else
 				{
-					Property = property - eProperty.StrCapBonus + eProperty.Stat_First;
+					return BonusProperty.Dummy();
 				}
-				Category = ePropertyCategory.ItemOvercap;
 			}
-			else if (isMythical)
-			{
-				if (property == eProperty.MythicalAcuCapBonus)
-				{
-					Property = eProperty.Acuity;
-				}
-				else
-				{
-					Property = property - eProperty.MythicalStatCapBonus_First + eProperty.Stat_First;
-				}
-				Category = ePropertyCategory.Mythical;
-			}
-			else
-			{
-				Category = category;
-				Property = property;
-			}
+			return properties[propIndex];
 		}
-
-		public Bonus Create(int value)
-		{
-			return new Bonus(value, Category, Property);
-		}
-
-		public override bool Equals(object obj)
-		{
-			var comp2 = obj as BonusComponent;
-			if(comp2 is null) { return false; }
-			return this.Category == comp2.Category && this.Property == comp2.Property;
-		}
-	}
-
-	public class BonusCategory
-	{
-		public ePropertyCategory Name { get; }
-
-		public BonusComponent Strength { get { return new BonusComponent(Name, eProperty.Strength); } }
-		public BonusComponent Constitution { get { return new BonusComponent(Name, eProperty.Constitution); } }
-		public BonusComponent Dexterity { get { return new BonusComponent(Name, eProperty.Dexterity); } }
-		public BonusComponent Quickness { get { return new BonusComponent(Name, eProperty.Quickness); } }
-		public BonusComponent Empathy { get { return new BonusComponent(Name, eProperty.Empathy); } }
-		public BonusComponent Intelligence { get { return new BonusComponent(Name, eProperty.Intelligence); } }
-		public BonusComponent Piety { get { return new BonusComponent(Name, eProperty.Piety); } }
-		public BonusComponent Charisma { get { return new BonusComponent(Name, eProperty.Charisma); } }
-		public BonusComponent Acuity { get { return new BonusComponent(Name, eProperty.Acuity); } }
-
-
-		public BonusCategory(ePropertyCategory category)
-		{
-			this.Name = category;
-		}
-
-
-		public Bonus Create(int value, eProperty property)
-		{
-			return new Bonus(value, this.Name, property);
-		}
-
-		public BonusComponent ComponentOf(eProperty property)
-		{
-			return new BonusComponent(this.Name, property);
-		}
-	}
-
-	public enum ePropertyCategory : byte
-	{
-		Base,
-		Ability,
-		Item,
-		ItemOvercap,
-		Mythical,
-		BaseBuff,
-		SpecBuff,
-		ExtraBuff,
-		Debuff,
-		SpecDebuff,
-		Multiplier,
-		__Last = Multiplier,
 	}
 }

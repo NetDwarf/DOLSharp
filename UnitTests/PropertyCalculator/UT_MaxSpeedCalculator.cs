@@ -24,8 +24,8 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var npc = Create.FakeNPC();
 			var movementSpeedCalculator = createMovementSpeedCalculator();
-
-			npc.Boni.AddMultiplier(1250,eProperty.MaxSpeed);
+			
+			npc.Boni.Add(Bonus.Multiplier.ComponentOf(eProperty.MaxSpeed).Create(1250));
 
 			int actual = movementSpeedCalculator.CalcValue(npc, eProperty.MaxSpeed);
 			int expected = 250;
