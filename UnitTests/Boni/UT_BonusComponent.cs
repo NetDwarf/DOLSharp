@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using DOL.GS;
+using System.Collections.Generic;
 
 namespace DOL.UnitTests.GameServer
 {
@@ -26,6 +27,18 @@ namespace DOL.UnitTests.GameServer
 			var component2 = new BonusComponent(ePropertyCategory.Base, eProperty.Constitution);
 
 			Assert.IsTrue(component1.Equals(component2));
+		}
+
+		[Test]
+		public void Equals_test()
+		{
+			var component1 = new BonusComponent(ePropertyCategory.Base, eProperty.Constitution);
+			var component2 = new BonusComponent(ePropertyCategory.Base, eProperty.Constitution);
+
+			List<BonusComponent> list = new List<BonusComponent>();
+			list.Add(component1);
+
+			Assert.IsTrue(list.Contains(component2));
 		}
 	}
 }

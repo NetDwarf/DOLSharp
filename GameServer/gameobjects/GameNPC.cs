@@ -481,49 +481,49 @@ namespace DOL.GS
 
 		public virtual short Constitution
 		{
-			get { return (short)Boni.GetValueOf(Bonus.Base.Constitution); }
+			get { return (short)Boni.RawValueOf(Bonus.Base.Constitution); }
 			set { Boni.SetTo(Bonus.Base.Constitution.Create(value)); }
 		}
 		
 		public virtual short Dexterity
 		{
-			get { return (short)Boni.GetValueOf(Bonus.Base.Dexterity); }
+			get { return (short)Boni.RawValueOf(Bonus.Base.Dexterity); }
 			set { Boni.SetTo(Bonus.Base.Dexterity.Create(value)); }
 		}
 		
 		public virtual short Strength
 		{
-			get { return (short)Boni.GetValueOf(Bonus.Base.Dexterity); }
+			get { return (short)Boni.RawValueOf(Bonus.Base.Dexterity); }
 			set { Boni.SetTo(Bonus.Base.Dexterity.Create(value)); }
 		}
 		
 		public virtual short Quickness
 		{
-			get { return (short)Boni.GetValueOf(Bonus.Base.Quickness); }
+			get { return (short)Boni.RawValueOf(Bonus.Base.Quickness); }
 			set { Boni.SetTo(Bonus.Base.Quickness.Create(value)); }
 		}
 		
 		public virtual short Intelligence
 		{
-			get { return (short)Boni.GetValueOf(Bonus.Base.Intelligence); }
+			get { return (short)Boni.RawValueOf(Bonus.Base.Intelligence); }
 			set { Boni.SetTo(Bonus.Base.Intelligence.Create(value)); }
 		}
 		
 		public virtual short Piety
 		{
-			get { return (short)Boni.GetValueOf(Bonus.Base.Piety); }
+			get { return (short)Boni.RawValueOf(Bonus.Base.Piety); }
 			set { Boni.SetTo(Bonus.Base.Piety.Create(value)); }
 		}
 		
 		public virtual short Empathy
 		{
-			get { return (short)Boni.GetValueOf(Bonus.Base.Empathy); }
+			get { return (short)Boni.RawValueOf(Bonus.Base.Empathy); }
 			set { Boni.SetTo(Bonus.Base.Empathy.Create(value)); }
 		}
 
 		public virtual short Charisma
 		{
-			get { return (short)Boni.GetValueOf(Bonus.Base.Charisma); }
+			get { return (short)Boni.RawValueOf(Bonus.Base.Charisma); }
 			set { Boni.SetTo(Bonus.Base.Charisma.Create(value)); }
 		}
 		#endregion

@@ -32,7 +32,7 @@ namespace DOL.GS.PropertyCalc
 
 		public double Get(int index)
 		{
-			return boni.GetValueOf(new BonusComponent(ePropertyCategory.Multiplier, (eProperty)index))/1000.0;
+			return boni.RawValueOf(new BonusComponent(ePropertyCategory.Multiplier, (eProperty)index))/1000.0;
 		}
 
 		public void Remove(int index, object key)

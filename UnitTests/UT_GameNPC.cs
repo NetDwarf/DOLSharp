@@ -71,18 +71,6 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void GetResistBase_FromMatter_NPCHasOneItemMatterResist_One()
-		{
-			var npc = createNPC();
-			npc.Boni.SetTo(Bonus.Item.Create(1, eProperty.Resist_Matter));
-
-			int actual = npc.GetResistBase(eDamageType.Matter);
-
-			int expected = 1;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
 		public void GetResistBase_FromNatural_NPCHasOneNaturalBaseBuff_Zero()
 		{
 			var npc = createNPC();

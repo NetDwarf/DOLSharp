@@ -7,12 +7,12 @@ using System.Collections.Generic;
 namespace DOL.UnitTests.GameServer
 {
 	[TestFixture]
-	class UT_BonusProperty
+	class UT_BonusComponents
 	{
 		[Test]
 		public void Base_Init_Zero()
 		{
-			var bonusProp = createBonusProperty();
+			var bonusProp = createBonusComponents();
 
 			int actual = bonusProp.Get(Bonus.Base);
 			int expected = 0;
@@ -22,7 +22,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void Add_OneBase_BaseIsOne()
 		{
-			var bonusProp = createBonusProperty();
+			var bonusProp = createBonusComponents();
 
 			bonusProp.Add(1, Bonus.Base);
 
@@ -34,7 +34,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void Remove_OneBaseToInit_BaseIsMinusOne()
 		{
-			var bonusProp = createBonusProperty();
+			var bonusProp = createBonusComponents();
 
 			bonusProp.Remove(1, Bonus.Base);
 
@@ -46,7 +46,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void Add_OneAbilityToInit_AbilityIsOne()
 		{
-			var bonusProp = createBonusProperty();
+			var bonusProp = createBonusComponents();
 
 			bonusProp.Add(1, Bonus.Ability);
 
@@ -58,7 +58,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void Set_OneAbility_AbilityIsOne()
 		{
-			var bonusProp = createBonusProperty();
+			var bonusProp = createBonusComponents();
 
 			bonusProp.Set(1, ePropertyCategory.Ability);
 
@@ -67,9 +67,9 @@ namespace DOL.UnitTests.GameServer
 			Assert.AreEqual(expected, actual);
 		}
 
-		private static BonusProperty createBonusProperty()
+		private static BonusComponents createBonusComponents()
 		{
-			return new BonusProperty(Create.FakeNPC(), eProperty.Undefined);
+			return new BonusComponents(eProperty.Undefined);
 		}
 	}
 

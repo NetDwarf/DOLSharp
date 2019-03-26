@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using DOL.GS;
 using DOL.GS.PropertyCalc;
+using DOL.GS.PlayerClass;
 
 namespace DOL.UnitTests.GameServer.PropertyCalc
 {
@@ -73,10 +74,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             int expected = 7;
             Assert.AreEqual(expected, actual);
         }
-        #endregion
+		#endregion
 
-        #region CalcValueFromItems
-        [Test]
+		#region CalcValueFromItems
+		[Test]
         public void CalcValueFromItems_Level50Player100ConstFromItems_ReturnCapAt75()
         {
             var player = Create.FakePlayer();
@@ -184,20 +185,6 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
             Assert.AreEqual(50, actual);
         }
-
-		[Test]
-		public void CalcValue_IntelligenceL50Animist_30BaseBuffAcuityAnd20SpecBuffIntelligence_50()
-		{
-			var player = Create.FakePlayer(new CharacterClassAnimist());
-			player.Level = 50;
-			player.BaseBuffBonusCategory[eProperty.Acuity] = 30;
-			player.SpecBuffBonusCategory[eProperty.Intelligence] = 20;
-			StatCalculator statCalc = createStatCalculator();
-
-			int actual = statCalc.CalcValue(player, eProperty.Intelligence);
-
-			Assert.AreEqual(50, actual);
-		}
 
 		[Test]
         public void CalcValue_200ConstitutionAbilityBonus_Return200()
@@ -320,7 +307,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             Assert.AreEqual(12, actual);
         }
 		#endregion
-		
+
 		public static StatCalculator createStatCalculator()
         {
             return new StatCalculator();

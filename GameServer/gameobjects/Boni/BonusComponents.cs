@@ -3,29 +3,26 @@ using System.Collections.Generic;
 
 namespace DOL.GS
 {
-	public interface IBonusProperty
+	public interface IBonusCompound
 	{
 		eProperty Type { get; }
 
 		int Get(BonusCategory category);
+		void Set(int value, ePropertyCategory category);
 
 		void Add(int value, BonusCategory category);
 		void Remove(int value, BonusCategory category);
-
-		void Set(int value, ePropertyCategory category);
 	}
 
-	public class BonusProperty : IBonusProperty
+	public class BonusComponents : IBonusCompound
 	{
-		private GameLiving owner;
 		private int[] componentValues = new int[(int)ePropertyCategory.__Last + 1];
 		private List<int> perMilleMultiplier = new List<int>();
 
 		public eProperty Type { get; }
 
-		public BonusProperty(GameLiving owner, eProperty property)
+		public BonusComponents(eProperty property)
 		{
-			this.owner = owner;
 			this.Type = property;
 		}
 
@@ -55,7 +52,7 @@ namespace DOL.GS
 			}
 		}
 
-		public int Get(BonusCategory category)
+		public virtual int Get(BonusCategory category)
 		{
 			if(category.Name == ePropertyCategory.Multiplier)
 			{
@@ -84,25 +81,15 @@ namespace DOL.GS
 			}
 
 		}
-		
-		private static readonly IBonusProperty nullProperty = new NullProperty();
-		public static IBonusProperty Dummy()
+
+		private static readonly IBonusCompound nullProperty = new NullBonusComponents();
+		public static IBonusCompound Dummy()
 		{
 			return nullProperty;
 		}
 	}
 
-	public class PlayerBonusProperty : BonusProperty
-	{
-		protected GamePlayer owner;
-
-		public PlayerBonusProperty(GamePlayer owner, eProperty property) :base(owner, property)
-		{
-			this.owner = owner;
-		}
-	}
-
-	public class NullProperty : IBonusProperty
+	public class NullBonusComponents : IBonusCompound
 	{
 		public eProperty Type { get { return eProperty.Undefined; } }
 		
@@ -128,6 +115,11 @@ namespace DOL.GS
 		public void Set(int value, ePropertyCategory category)
 		{
 			//do nothing
+		}
+
+		public int GetEffective(BonusCategory category)
+		{
+			return Get(category);
 		}
 	}
 }

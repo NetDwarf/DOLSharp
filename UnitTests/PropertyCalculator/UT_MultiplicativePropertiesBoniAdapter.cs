@@ -71,7 +71,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 		private static IMultiplicativeProperties createMultiplicativeBoniAdapter()
 		{
-			var boni = new Boni(null);
+			var boni = new Boni();
 			return new MultiplicativePropertiesBoniAdapter(boni);
 		}
 	}

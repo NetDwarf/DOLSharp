@@ -4690,7 +4690,7 @@ namespace DOL.GS
 			return new IndexerBoniAdapter(Boni, category);
 		}
 
-		private const string useBoniInstead = "Use Boni.GetValueOf(BonusComponent) or Boni.SetTo(Bonus) instead.";
+		private const string useBoniInstead = "Use Boni.RawValueOf(BonusComponent) or Boni.SetTo/.Add(Bonus) instead.";
 
 		[Obsolete(useBoniInstead)]
 		public virtual IPropertyIndexer AbilityBonus
@@ -4856,7 +4856,7 @@ namespace DOL.GS
 		[Obsolete("Use Boni.GetValueOf(BonusComponent) instead!")]
 		public int GetBaseStat(eStat stat)
 		{
-			return Boni.GetValueOf(Bonus.Base.ComponentOf((eProperty)stat));
+			return Boni.RawValueOf(Bonus.Base.ComponentOf((eProperty)stat));
 		}
 
 		[Obsolete("Use Boni.Add(Bonus) instead!")]
@@ -6862,7 +6862,7 @@ namespace DOL.GS
 		public GameLiving()
 			: base()
 		{
-			Boni = new Boni(this);
+			Boni = new Boni();
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);
 			m_groundTarget = new Point3D(0, 0, 0);

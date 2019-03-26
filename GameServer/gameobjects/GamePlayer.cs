@@ -15615,7 +15615,7 @@ namespace DOL.GS
 
         private GamePlayer(ICharacterClass charClass) : base()
 		{
-			Boni = new PlayerBoni(this);
+			Boni = new Boni();
 			m_characterClass = charClass;
         }
 		/// <summary>
@@ -15626,7 +15626,7 @@ namespace DOL.GS
 		public GamePlayer(GameClient client, DOLCharacters dbChar)
 			: base()
 		{
-			Boni = new PlayerBoni(this);
+			Boni = new Boni();
 			IsJumping = false;
 			m_steed = new WeakRef(null);
 			m_rangeAttackAmmo = new WeakRef(null);

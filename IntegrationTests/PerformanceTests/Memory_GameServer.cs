@@ -87,7 +87,7 @@ namespace DOL.PerformanceTests.Memory
 			Boni[] boniArray = new Boni[10000];
 			for (int i = 0; i < boniArray.Length; i++)
 			{
-				boniArray[i] = new Boni(null);
+				boniArray[i] = new Boni();
 				for (int j = 1; j <= 8; j++)
 				{
 					boniArray[i].Add(Bonus.Base.ComponentOf((eProperty)j).Create(60));
@@ -97,6 +97,25 @@ namespace DOL.PerformanceTests.Memory
 			long memoryConsumption = after - before;
 			Console.WriteLine("10000 Boni with 8 base properties set consume " + memoryConsumption + " bytes");
 			Assert.Less(memoryConsumption, 20 * 1000 * 1000);
+		}
+
+		[Test]
+		public void BonusCaps_HundredTimes_LessThan1MegaByte()
+		{
+			long beforeInit = GC.GetTotalMemory(true);
+			var foo = new PropertyCaps(null);
+			long afterInit = GC.GetTotalMemory(true);
+			PropertyCaps[] capsArray = new PropertyCaps[100];
+			for (int i = 0; i < capsArray.Length; i++)
+			{
+				capsArray[i] = new PropertyCaps(null);
+			}
+			long after = GC.GetTotalMemory(true);
+			long initMemoryConsumption = afterInit - beforeInit;
+			long memoryConsumption = after - afterInit;
+			Console.WriteLine("BonusCaps init consumes " + initMemoryConsumption + " bytes");
+			Console.WriteLine("100 more BonusCaps consume " + memoryConsumption + " bytes");
+			Assert.Less(after - beforeInit, 1 * 1000 * 1000);
 		}
 	}
 }

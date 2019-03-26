@@ -365,7 +365,8 @@
     <Compile Include="gameobjects\Atlantis\Teleporter\SummonedDjinn.cs" />
     <Compile Include="gameobjects\Boni\Boni.cs" />
     <Compile Include="gameobjects\Boni\Bonus.cs" />
-    <Compile Include="gameobjects\Boni\BonusProperty.cs" />
+    <Compile Include="gameobjects\Boni\BonusCaps.cs" />
+    <Compile Include="gameobjects\Boni\BonusComponents.cs" />
     <Compile Include="gameobjects\CharacterClasses\Albion\CharacterClassNecromancer.cs">
       <SubType>Code</SubType>
     </Compile>

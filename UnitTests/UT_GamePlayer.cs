@@ -1,5 +1,7 @@
 ﻿using DOL.GS;
+using DOL.GS.PlayerClass;
 using NUnit.Framework;
+using System;
 
 namespace DOL.UnitTests.GameServer
 {
@@ -194,7 +196,31 @@ namespace DOL.UnitTests.GameServer
             Assert.AreEqual(50, actual);
         }
 
-        private static GamePlayer createPlayer()
+		[Test]
+		public void Piety_L50ClericWith30ItemAcuity_30()
+		{
+			var player = createPlayer(new ClassCleric());
+			player.Level = 50;
+			player.ItemBonus[eProperty.Acuity] = 30;
+
+			int actual = player.Piety;
+
+			Assert.AreEqual(30, actual);
+		}
+
+		[Test]
+		public void Piety_L50ClericWith30SpecBuffAcuity_One()
+		{
+			var player = createPlayer(new ClassCleric());
+			player.Level = 50;
+			player.BaseBuffBonusCategory[eProperty.Acuity] = 30;
+
+			int actual = player.Piety;
+
+			Assert.AreEqual(1, actual);
+		}
+
+		private static GamePlayer createPlayer()
         {
             return GamePlayer.CreateTestableGamePlayer();
         }

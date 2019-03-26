@@ -29,9 +29,9 @@ namespace DOL.GS.PropertyCalc
         {
             var boni = living.Boni;
 
-			int baseBonus = boni.GetValueOf(Bonus.Base.ComponentOf(property));
-			int abilityBonus = boni.GetValueOf(Bonus.Ability.ComponentOf(property));
-			int debuff = boni.GetValueOf(Bonus.Debuff.ComponentOf(property));
+			int baseBonus = boni.RawValueOf(Bonus.Base.ComponentOf(property));
+			int abilityBonus = boni.RawValueOf(Bonus.Ability.ComponentOf(property));
+			int debuff = boni.RawValueOf(Bonus.Debuff.ComponentOf(property));
 			int deathConDebuff = 0;
 
             int itemBonus = CalcValueFromItems(living, property);
@@ -51,7 +51,7 @@ namespace DOL.GS.PropertyCalc
 				{
 					if (player.CharacterClass.ID != (int)eCharacterClass.Scout && player.CharacterClass.ID != (int)eCharacterClass.Hunter && player.CharacterClass.ID != (int)eCharacterClass.Ranger)
 					{
-						abilityBonus += player.Boni.GetValueOf(Bonus.Ability.ComponentOf(eProperty.Acuity));
+						abilityBonus += player.Boni.RawValueOf(Bonus.Ability.ComponentOf(eProperty.Acuity));
 					}
 				}
 
@@ -73,7 +73,7 @@ namespace DOL.GS.PropertyCalc
 			}
 
 			int stat = unbuffedBonus + buffBonus + abilityBonus;
-			stat = (int)(stat * boni.GetValueOf(new BonusComponent(ePropertyCategory.Multiplier,property)) / 1000.0);
+			stat = (int)(stat * boni.RawValueOf(new BonusComponent(ePropertyCategory.Multiplier,property)) / 1000.0);
 
 			stat -= (property == eProperty.Constitution)? deathConDebuff : 0;
 
@@ -84,15 +84,15 @@ namespace DOL.GS.PropertyCalc
         {
 			var boni = living.Boni;
 
-			int baseBuffBonus = boni.GetValueOf(Bonus.BaseBuff.ComponentOf(property));
-			int specBuffBonus = boni.GetValueOf(Bonus.SpecBuff.ComponentOf(property));
+			int baseBuffBonus = boni.RawValueOf(Bonus.BaseBuff.ComponentOf(property));
+			int specBuffBonus = boni.RawValueOf(Bonus.SpecBuff.ComponentOf(property));
 
 			if (living is GamePlayer)
             {
                 GamePlayer player = living as GamePlayer;
                 if (property == (eProperty)(player.CharacterClass.ManaStat))
                     if (player.CharacterClass.ClassType == eClassType.ListCaster)
-                        specBuffBonus += player.Boni.GetValueOf(Bonus.BaseBuff.ComponentOf(eProperty.Acuity));
+                        specBuffBonus += player.Boni.RawValueOf(Bonus.BaseBuff.ComponentOf(eProperty.Acuity));
             }
 
             int baseBuffBonusCap = (living is GamePlayer) ? (int)(living.Level * 1.25) : Int16.MaxValue;
@@ -108,11 +108,11 @@ namespace DOL.GS.PropertyCalc
         {
 			var boni = living.Boni;
 
-			int itemBonus = boni.GetValueOf(Bonus.Item.ComponentOf(property));
+			int itemBonus = boni.RawValueOf(Bonus.Item.ComponentOf(property));
 			int itemBonusCap = (int)(living.Level * 1.5);
-			int itemBonusCapIncrease = boni.GetValueOf(Bonus.ItemOvercap.ComponentOf(property));
+			int itemBonusCapIncrease = boni.RawValueOf(Bonus.ItemOvercap.ComponentOf(property));
 			int itemBonusCapIncreaseCap = living.Level / 2 + 1;
-			int MythicalitemBonusCapIncrease = boni.GetValueOf(Bonus.Mythical.ComponentOf(property));
+			int MythicalitemBonusCapIncrease = boni.RawValueOf(Bonus.Mythical.ComponentOf(property));
 			int MythicalitemBonusCapIncreaseCap = 52;
 
 			if (living is GamePlayer)
@@ -123,9 +123,9 @@ namespace DOL.GS.PropertyCalc
 				{
 					if (player.CharacterClass.ID != (int)eCharacterClass.Scout && player.CharacterClass.ID != (int)eCharacterClass.Hunter && player.CharacterClass.ID != (int)eCharacterClass.Ranger)
 					{
-						itemBonus += boni.GetValueOf(Bonus.Item.ComponentOf(eProperty.Acuity));
-						itemBonusCapIncrease += boni.GetValueOf(Bonus.Item.ComponentOf(eProperty.AcuCapBonus));
-						MythicalitemBonusCapIncrease += boni.GetValueOf(Bonus.Item.ComponentOf(eProperty.MythicalAcuCapBonus));
+						itemBonus += boni.RawValueOf(Bonus.Item.ComponentOf(eProperty.Acuity));
+						itemBonusCapIncrease += boni.RawValueOf(Bonus.Item.ComponentOf(eProperty.AcuCapBonus));
+						MythicalitemBonusCapIncrease += boni.RawValueOf(Bonus.Item.ComponentOf(eProperty.MythicalAcuCapBonus));
 					}
 				}
 			}

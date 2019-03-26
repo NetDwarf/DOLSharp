@@ -11,7 +11,7 @@ namespace DOL.UnitTests.GameServer
 		{
 			var boni = createBoni();
 
-			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
+			int actual = boni.RawValueOf(Bonus.Ability.Constitution);
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
 		}
@@ -23,7 +23,7 @@ namespace DOL.UnitTests.GameServer
 
 			boni.SetTo(Bonus.Ability.Create(1, eProperty.Constitution));
 
-			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
+			int actual = boni.RawValueOf(Bonus.Ability.Constitution);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -36,7 +36,7 @@ namespace DOL.UnitTests.GameServer
 
 			boni.Add(bonusProp);
 
-			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
+			int actual = boni.RawValueOf(Bonus.Ability.Constitution);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -49,7 +49,7 @@ namespace DOL.UnitTests.GameServer
 
 			boni.Remove(bonusProp);
 
-			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
+			int actual = boni.RawValueOf(Bonus.Ability.Constitution);
 			int expected = -1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -63,7 +63,7 @@ namespace DOL.UnitTests.GameServer
 
 			boni.Clear(Bonus.Ability);
 
-			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
+			int actual = boni.RawValueOf(Bonus.Ability.Constitution);
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
 		}
@@ -73,7 +73,7 @@ namespace DOL.UnitTests.GameServer
 		{
 			var boni = createBoni();
 
-			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
+			int actual = boni.RawValueOf(Bonus.Ability.Constitution);
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
 		}
@@ -85,7 +85,7 @@ namespace DOL.UnitTests.GameServer
 
 			boni.Add(Bonus.Ability.Constitution.Create(1));
 
-			int actual = boni.GetValueOf(Bonus.Ability.Constitution);
+			int actual = boni.RawValueOf(Bonus.Ability.Constitution);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -97,14 +97,14 @@ namespace DOL.UnitTests.GameServer
 
 			boni.Add(Bonus.Base.Constitution.Create(1));
 
-			int actual = boni.GetValueOf(Bonus.Base.Constitution);
+			int actual = boni.RawValueOf(Bonus.Base.Constitution);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
 
 		private Boni createBoni()
 		{
-			return new Boni(Create.FakeNPC());
+			return new Boni();
 		}
 	}
 }
