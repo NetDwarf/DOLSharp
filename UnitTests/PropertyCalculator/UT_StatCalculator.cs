@@ -14,7 +14,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var npc = Create.FakeNPC();
             npc.BaseBuffBonusCategory[eProperty.Constitution] = 100;
-            StatCalculator statCalc = createStatCalculator();
+			var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValueFromBuffs(npc, eProperty.Constitution);
 
@@ -55,7 +55,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var player = Create.FakePlayer(new CharacterClassAnimist());
 			player.Level = 50;
 			player.BaseBuffBonusCategory[eProperty.Acuity] = 50;
-			StatCalculator statCalc = createStatCalculator();
+			var statCalc = createStatCalculator();
 
 			int actual = statCalc.CalcValueFromBuffs(player, eProperty.Intelligence);
 			Assert.AreEqual(50, actual);
@@ -67,7 +67,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             var npc = Create.FakeNPC();
             npc.BaseBuffBonusCategory[eProperty.Constitution] = 3;
             npc.SpecBuffBonusCategory[eProperty.Constitution] = 4;
-            StatCalculator statCalc = createStatCalculator();
+			var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValueFromBuffs(npc, eProperty.Constitution);
 
@@ -83,7 +83,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             var player = Create.FakePlayer();
             player.Level = 50;
             player.ItemBonus[eProperty.Constitution] = 100;
-            StatCalculator statCalc = createStatCalculator();
+			var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValueFromItems(player, eProperty.Constitution);
 
@@ -97,7 +97,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             var player = Create.FakePlayer(new CharacterClassAnimist());
             player.Level = 50;
             player.ItemBonus[eProperty.Acuity] = 50;
-            StatCalculator statCalc = createStatCalculator();
+			var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValueFromItems(player, eProperty.Intelligence);
             
@@ -111,7 +111,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             player.Level = 50;
             player.ItemBonus[eProperty.MythicalConCapBonus] = 100;
             player.ItemBonus[eProperty.Constitution] = 150;
-            StatCalculator statCalc = createStatCalculator();
+			var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValueFromItems(player, eProperty.Constitution);
 
@@ -126,7 +126,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             player.ItemBonus[eProperty.MythicalConCapBonus] = 5;
             player.ItemBonus[eProperty.ConCapBonus] = 100;
             player.ItemBonus[eProperty.Constitution] = 150;
-            StatCalculator statCalc = createStatCalculator();
+			var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValueFromItems(player, eProperty.Constitution);
 
@@ -140,7 +140,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             player.Level = 50;
             player.ItemBonus[eProperty.Constitution] = 100;
             player.ItemBonus[eProperty.ConCapBonus] = 10;
-            StatCalculator statCalc = createStatCalculator();
+			var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValueFromItems(player, eProperty.Constitution);
 
@@ -154,7 +154,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var npc = Create.FakeNPC();
             npc.Constitution = 100;
-            StatCalculator statCalc = createStatCalculator();
+			var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(npc, eProperty.Constitution);
 
@@ -166,7 +166,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var npc = Create.FakeNPC();
             npc.Intelligence = 100;
-            StatCalculator statCalc = createStatCalculator();
+            var statCalc = createStatCalculator();
 
 			int actual = statCalc.CalcValue(npc, eProperty.Intelligence);
 
@@ -179,7 +179,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             var player = Create.FakePlayer(new CharacterClassAnimist());
             player.Level = 50;
             player.BaseBuffBonusCategory[eProperty.Acuity] = 50;
-            StatCalculator statCalc = createStatCalculator();
+            var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Intelligence);
 
@@ -191,7 +191,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var player = Create.FakePlayer();
             player.AbilityBonus[eProperty.Constitution] = 200;
-            StatCalculator statCalc = createStatCalculator();
+            var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Constitution);
 
@@ -203,7 +203,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var player = Create.FakePlayer();
             player.DebuffCategory[eProperty.Constitution] = 200;
-            StatCalculator statCalc = createStatCalculator();
+            var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Constitution);
 
@@ -216,7 +216,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             var player = Create.FakePlayer();
             player.AbilityBonus[eProperty.Constitution] = 200;
             player.DebuffCategory[eProperty.Constitution] = 50;
-            StatCalculator statCalc = createStatCalculator();
+            var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Constitution);
 
@@ -230,7 +230,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             player.Level = 50;
             player.SpecBuffBonusCategory[eProperty.Constitution] = 70;
             player.DebuffCategory[eProperty.Constitution] = 50;
-            StatCalculator statCalc = createStatCalculator();
+            var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Constitution);
 
@@ -244,7 +244,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             player.Level = 50;
             player.ItemBonus[eProperty.Constitution] = 70;
             player.DebuffCategory[eProperty.Constitution] = 50;
-            StatCalculator statCalc = createStatCalculator();
+            var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Constitution);
 
@@ -259,7 +259,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             player.Level = 50;
 			player.Boni.SetTo(Bonus.Base.Constitution.Create(70));
 			player.DebuffCategory[eProperty.Constitution] = 50;
-            StatCalculator statCalc = createStatCalculator();
+            var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Constitution);
 
@@ -274,7 +274,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             player.Level = 50;
 			player.Boni.SetTo(Bonus.Base.Constitution.Create(70));
             player.TotalConstitutionLostAtDeath = 3;
-            StatCalculator statCalc = createStatCalculator();
+            var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Constitution);
             
@@ -287,7 +287,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             var player = Create.FakePlayer();
             player.AbilityBonus[eProperty.Dexterity] = 70;
             player.TotalConstitutionLostAtDeath = 3;
-            StatCalculator statCalc = createStatCalculator();
+            var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Dexterity);
 
@@ -300,7 +300,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             var player = Create.FakePlayer();
             player.AbilityBonus[eProperty.Dexterity] = 50;
             player.BuffBonusMultCategory1.Set((int)eProperty.Dexterity, new object(), 0.25);
-            StatCalculator statCalc = createStatCalculator();
+            var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Dexterity);
 
@@ -308,7 +308,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 		#endregion
 
-		public static StatCalculator createStatCalculator()
+		public static IPropertyCalculator createStatCalculator()
         {
             return new StatCalculator();
         }

@@ -13,7 +13,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var resistCalc = createResistCalculator();
 			var npc = Create.FakeNPC();
 
-			int actual = resistCalc.CalcValue(npc, eProperty.Resist_First, true);
+			int actual = resistCalc.CalcValue(npc, eProperty.Resist_First);
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
 		}
@@ -25,7 +25,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var npc = Create.FakeNPC();
 			npc.Boni.Add(Bonus.Ability.Create(2, eProperty.Resist_First));
 
-			int actual = resistCalc.CalcValue(npc, eProperty.Resist_First, true);
+			int actual = resistCalc.CalcValue(npc, eProperty.Resist_First);
 			int expected = 2;
 			Assert.AreEqual(expected, actual);
 		}
@@ -37,7 +37,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var player = Create.FakePlayer();
 			player.Boni.Add(Bonus.Item.Create(1, eProperty.Resist_Body));
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body, true);
+			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -49,7 +49,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var npc = Create.FakeNPC();
 			npc.Boni.Add(Bonus.BaseBuff.Create(1, eProperty.Resist_Body));
 
-			int actual = resistCalc.CalcValue(npc, eProperty.Resist_Body, true);
+			int actual = resistCalc.CalcValue(npc, eProperty.Resist_Body);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
@@ -62,7 +62,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			npc.Boni.Add(Bonus.BaseBuff.Create(8, eProperty.Resist_Body));
 			npc.Boni.Add(Bonus.Debuff.Create(6, eProperty.Resist_Body));
 
-			int actual = resistCalc.CalcValue(npc, eProperty.Resist_Body, true);
+			int actual = resistCalc.CalcValue(npc, eProperty.Resist_Body);
 			int expected = 2;
 			Assert.AreEqual(expected, actual);
 		}
@@ -76,7 +76,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Boni.Add(Bonus.Item.Create(6, eProperty.Resist_Body));
 			player.Boni.Add(Bonus.Debuff.Create(6, eProperty.Resist_Body));
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body, true);
+			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body);
 			int expected = 3;
 			Assert.AreEqual(expected, actual);
 		}
@@ -88,7 +88,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var npc = Create.FakeNPC();
 			npc.Boni.Add(Bonus.Ability.Create(100, eProperty.Resist_Body));
 
-			int actual = resistCalc.CalcValue(npc, eProperty.Resist_Body, true);
+			int actual = resistCalc.CalcValue(npc, eProperty.Resist_Body);
 			int expected = 70;
 			Assert.AreEqual(expected, actual);
 		}
@@ -101,7 +101,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Level = 50;
 			player.Boni.Add(Bonus.Item.Create(50, eProperty.Resist_Body));
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body, true);
+			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body);
 			int expected = 26;
 			Assert.AreEqual(expected, actual);
 		}
@@ -115,7 +115,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Boni.Add(Bonus.Item.Create(50, eProperty.Resist_Body));
 			player.Boni.Add(Bonus.Item.Create(5, eProperty.BodyResCapBonus));
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body, true);
+			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body);
 			int expected = 31;
 			Assert.AreEqual(expected, actual);
 		}
@@ -129,7 +129,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Boni.Add(Bonus.Item.Create(50, eProperty.Resist_Body));
 			player.Boni.Add(Bonus.Item.Create(6, eProperty.BodyResCapBonus));
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body, true);
+			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body);
 			int expected = 31;
 			Assert.AreEqual(expected, actual);
 		}
@@ -142,7 +142,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Boni.Add(Bonus.ExtraBuff.Create(15, eProperty.Resist_Body));
 			player.Boni.Add(Bonus.BaseBuff.Create(15, eProperty.Resist_Body));
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body, true);
+			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body);
 			int expected = 24;
 			Assert.AreEqual(expected, actual);
 		}

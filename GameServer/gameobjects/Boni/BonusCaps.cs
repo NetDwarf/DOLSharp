@@ -121,7 +121,7 @@ namespace DOL.GS
 
 		public int For(BonusCategory category)
 		{
-			switch (category.Name)
+			switch (category.ID)
 			{
 				case ePropertyCategory.Base:
 					return Base;

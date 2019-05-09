@@ -8,20 +8,20 @@ namespace DOL.GS
 		eProperty Type { get; }
 
 		int Get(BonusCategory category);
-		void Set(int value, ePropertyCategory category);
+		void Set(int value, BonusCategory category);
 
 		void Add(int value, BonusCategory category);
 		void Remove(int value, BonusCategory category);
 	}
 
-	public class BonusComponents : IBonusCompound
+	public class BonusCompound : IBonusCompound
 	{
 		private int[] componentValues = new int[(int)ePropertyCategory.__Last + 1];
 		private List<int> perMilleMultiplier = new List<int>();
 
 		public eProperty Type { get; }
 
-		public BonusComponents(eProperty property)
+		public BonusCompound(eProperty property)
 		{
 			this.Type = property;
 		}
@@ -30,7 +30,7 @@ namespace DOL.GS
 		{
 			if(!category.Equals(Bonus.Multiplier))
 			{
-				int componentIndex = (int)category.Name;
+				int componentIndex = (int)category.ID;
 				componentValues[componentIndex] += value;
 			}
 			else
@@ -54,7 +54,7 @@ namespace DOL.GS
 
 		public virtual int Get(BonusCategory category)
 		{
-			if(category.Name == ePropertyCategory.Multiplier)
+			if(category.ID == ePropertyCategory.Multiplier)
 			{
 				double result = 1.0;
 				foreach(var perMilleMultiplicator in perMilleMultiplier)
@@ -63,15 +63,15 @@ namespace DOL.GS
 				}
 				return (int)(result * 1000);
 			}
-			int componentIndex = (int)category.Name;
+			int componentIndex = (int)category.ID;
 			return componentValues[componentIndex];
 		}
 
-		public void Set(int value, ePropertyCategory category)
+		public void Set(int value, BonusCategory category)
 		{
-			if (category != ePropertyCategory.Multiplier)
+			if (category.ID != ePropertyCategory.Multiplier)
 			{
-				int componentIndex = (int)category;
+				int componentIndex = (int)category.ID;
 				componentValues[componentIndex] = value;
 			}
 			else
@@ -79,23 +79,22 @@ namespace DOL.GS
 				perMilleMultiplier = new List<int>();
 				perMilleMultiplier.Add(value);
 			}
-
 		}
 
-		private static readonly IBonusCompound nullProperty = new NullBonusComponents();
+		private static readonly IBonusCompound nullProperty = new NullBonusCompound();
 		public static IBonusCompound Dummy()
 		{
 			return nullProperty;
 		}
 	}
 
-	public class NullBonusComponents : IBonusCompound
+	public class NullBonusCompound : IBonusCompound
 	{
 		public eProperty Type { get { return eProperty.Undefined; } }
 		
 		public int Get(BonusCategory category)
 		{
-			if(category.Name == ePropertyCategory.Multiplier)
+			if(category.ID == ePropertyCategory.Multiplier)
 			{
 				return 1000;
 			}
@@ -112,14 +111,9 @@ namespace DOL.GS
 			//do nothing
 		}
 
-		public void Set(int value, ePropertyCategory category)
+		public void Set(int value, BonusCategory category)
 		{
 			//do nothing
-		}
-
-		public int GetEffective(BonusCategory category)
-		{
-			return Get(category);
 		}
 	}
 }

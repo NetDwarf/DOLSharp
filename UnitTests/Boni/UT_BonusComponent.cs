@@ -8,37 +8,24 @@ namespace DOL.UnitTests.GameServer
 	class UT_BonusComponent
 	{
 		[Test]
-		public void Constructor_ItemConstitutionOvercap_ItemOvercapAndConstitution()
+		public void Equals_AnotherComponent_WithSameCategoryAndProperty_True()
 		{
-			var component = new BonusComponent(ePropertyCategory.Item, eProperty.ConCapBonus);
-
-			var actualCategory = component.Category;
-			var expectedCategory = ePropertyCategory.ItemOvercap;
-			var actualProperty = component.Property;
-			var expectedProperty = eProperty.Constitution;
-			Assert.AreEqual(expectedCategory, actualCategory);
-			Assert.AreEqual(expectedProperty, actualProperty);
-		}
-
-		[Test]
-		public void Equals_WithSameCategoryAndProperty_True()
-		{
-			var component1 = new BonusComponent(ePropertyCategory.Base, eProperty.Constitution);
-			var component2 = new BonusComponent(ePropertyCategory.Base, eProperty.Constitution);
+			var constitution = new BonusType(eProperty.Constitution);
+			var component1 = new BonusComponent(Bonus.Base, constitution);
+			var component2 = new BonusComponent(Bonus.Base, constitution);
 
 			Assert.IsTrue(component1.Equals(component2));
 		}
 
 		[Test]
-		public void Equals_test()
+		public void Constructor_ItemConstitutionOvercap_ItemOvercapAndConstitution()
 		{
-			var component1 = new BonusComponent(ePropertyCategory.Base, eProperty.Constitution);
-			var component2 = new BonusComponent(ePropertyCategory.Base, eProperty.Constitution);
+			var constitutionCap = new BonusType(eProperty.ConCapBonus);
 
-			List<BonusComponent> list = new List<BonusComponent>();
-			list.Add(component1);
+			var actual = new BonusComponent(Bonus.Item, constitutionCap);
 
-			Assert.IsTrue(list.Contains(component2));
+			var expected = Bonus.Stat.Constitution.ItemOvercap;
+			Assert.AreEqual(expected, actual);
 		}
 	}
 }

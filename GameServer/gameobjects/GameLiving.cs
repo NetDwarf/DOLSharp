@@ -381,7 +381,19 @@ namespace DOL.GS
 			}
 		}
 
-		protected short m_race;
+		protected short m_race {
+			get
+			{
+				return LivingRace.ID;
+			}
+			set
+			{
+				LivingRace.ID = value;
+			}
+		}
+
+		public LivingRace LivingRace { get; set; } = new LivingRace();
+
 		public virtual short Race
 		{
 			get { return m_race; }
@@ -4685,7 +4697,7 @@ namespace DOL.GS
 
 		public virtual Boni Boni { get; }
 
-		private IPropertyIndexer createIndexer(ePropertyCategory category)
+		private IPropertyIndexer createIndexer(BonusCategory category)
 		{
 			return new IndexerBoniAdapter(Boni, category);
 		}
@@ -4695,43 +4707,43 @@ namespace DOL.GS
 		[Obsolete(useBoniInstead)]
 		public virtual IPropertyIndexer AbilityBonus
 		{
-			get { return createIndexer(ePropertyCategory.Ability); }
+			get { return createIndexer(Bonus.Ability); }
 		}
 
 		[Obsolete(useBoniInstead)]
 		public virtual IPropertyIndexer ItemBonus
 		{
-			get { return createIndexer(ePropertyCategory.Item); }
+			get { return createIndexer(Bonus.Item); }
 		}
 
 		[Obsolete(useBoniInstead)]
 		public IPropertyIndexer BaseBuffBonusCategory
 		{
-			get { return createIndexer(ePropertyCategory.BaseBuff); }
+			get { return createIndexer(Bonus.BaseBuff); }
 		}
 
 		[Obsolete(useBoniInstead)]
 		public IPropertyIndexer SpecBuffBonusCategory
 		{
-			get { return createIndexer(ePropertyCategory.SpecBuff); }
+			get { return createIndexer(Bonus.SpecBuff); }
 		}
 
 		[Obsolete(useBoniInstead)]
 		public IPropertyIndexer BuffBonusCategory4
 		{
-			get { return createIndexer(ePropertyCategory.ExtraBuff); }
+			get { return createIndexer(Bonus.ExtraBuff); }
 		}
 
 		[Obsolete(useBoniInstead)]
 		public IPropertyIndexer DebuffCategory
 		{
-			get { return createIndexer(ePropertyCategory.Debuff); }
+			get { return createIndexer(Bonus.Debuff); }
 		}
 
 		[Obsolete(useBoniInstead)]
 		public IPropertyIndexer SpecDebuffCategory
 		{
-			get { return createIndexer(ePropertyCategory.SpecDebuff); }
+			get { return createIndexer(Bonus.SpecDebuff); }
 		}
 
 		/// <summary>
@@ -4742,7 +4754,9 @@ namespace DOL.GS
 		{
 			get { return new MultiplicativePropertiesBoniAdapter(Boni); }
 		}
-		
+
+		public BonusProperties BonusProperties { get; }
+
 		/// <summary>
 		/// property calculators for each property
 		/// look at PropertyCalculator class for more description
@@ -4757,15 +4771,17 @@ namespace DOL.GS
 		/// <returns></returns>
 		public virtual int GetModified(eProperty property)
 		{
-			if (m_propertyCalc != null && m_propertyCalc[(int)property] != null)
+			try
 			{
 				return m_propertyCalc[(int)property].CalcValue(this, property);
+				//var type = new BonusType(property);
+				//return BonusProperties.ValueOf(type);
 			}
-			else
+			catch(NullReferenceException)
 			{
 				log.ErrorFormat("{0} did not find property calculator for property ID {1}.", Name, (int)property);
+				return 0;
 			}
-			return 0;
 		}
 
 		[Obsolete("Use Boni instead!")]
@@ -6862,6 +6878,7 @@ namespace DOL.GS
 		public GameLiving()
 			: base()
 		{
+			BonusProperties = new BonusProperties(this, m_propertyCalc);
 			Boni = new Boni();
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);

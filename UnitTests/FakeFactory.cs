@@ -22,20 +22,22 @@ namespace DOL.UnitTests.GameServer
 
         public static FakePlayer FakePlayer()
         {
-            return Create.FakePlayer(new DefaultCharacterClass());
+            return FakePlayer(new DefaultCharacterClass());
         }
 
         public static FakePlayer FakePlayer(ICharacterClass charClass)
         {
             var player = new FakePlayer();
+			player.LivingRace = new FakeRace();
             player.characterClass = charClass;
             return player;
         }
 
-        public static FakeNPC FakeNPC()
+        public static GameNPC FakeNPC()
         {
             var brain = Substitute.For<ABrain>();
-            var npc = new FakeNPC(brain);
+            var npc = new GameNPC(brain);
+			npc.LivingRace = new FakeRace();
             return npc;
         }
 

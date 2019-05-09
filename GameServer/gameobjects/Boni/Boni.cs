@@ -8,32 +8,33 @@ namespace DOL.GS
 
 		public void Add(Bonus bonus)
 		{
-			var bonusProperty = GetBonusComponentsOf(bonus.Type, true);
-			bonusProperty.Add(bonus.Value, new BonusCategory(bonus.Category));
+			var bonusCompound = GetBonusComponentsOf(bonus.Type.ID, true);
+			bonusCompound.Add(bonus.Value, bonus.Category);
 		}
 
 		public void Remove(Bonus bonus)
 		{
-			var bonusProperty = GetBonusComponentsOf(bonus.Type, true);
-			bonusProperty.Remove(bonus.Value, new BonusCategory(bonus.Category));
+			var bonusCompound = GetBonusComponentsOf(bonus.Type.ID, true);
+			bonusCompound.Remove(bonus.Value, bonus.Category);
 		}
 
 		public void SetTo(Bonus bonus)
 		{
-			var bonusProperty = GetBonusComponentsOf(bonus.Type, true);
-			bonusProperty.Set(bonus.Value, bonus.Category);
+			var bonusCompound = GetBonusComponentsOf(bonus.Type.ID, true);
+			bonusCompound.Set(bonus.Value, bonus.Category);
 		}
 		
 		public int RawValueOf(BonusComponent component)
 		{
-			return GetBonusComponentsOf(component.Property).Get(new BonusCategory(component.Category));
+			return GetBonusComponentsOf(component.Type.ID).Get(component.Category);
 		}
 
 		public void Clear(BonusCategory category)
 		{
 			for (int i = 0; i <= (int)eProperty.MaxProperty; i++)
 			{
-				SetTo(new Bonus(0, category.Name, (eProperty)i));
+				var bonusType = new BonusType((eProperty)i);
+				SetTo(new Bonus(0, category, bonusType));
 			}
 		}
 
@@ -49,13 +50,13 @@ namespace DOL.GS
 			{
 				if (createIfNotExists)
 				{
-					var bonusProperty = new BonusComponents(property);
+					var bonusProperty = new BonusCompound(property);
 					bonusCompounds.Add(bonusProperty);
 					return bonusProperty;
 				}
 				else
 				{
-					return BonusComponents.Dummy();
+					return BonusCompound.Dummy();
 				}
 			}
 			else

@@ -44,11 +44,6 @@ namespace DOL.GS.PropertyCalc
         /// <param name="property">The resist type.</param>
         /// <returns>The actual resist amount.</returns>
         public override int CalcValue(GameLiving living, eProperty property)
-        {
-			return CalcValue(living, property, false);
-		}
-
-		public int CalcValue(GameLiving living, eProperty property, bool ignoreRaceResist)
 		{
 			int propertyIndex = (int)property;
 
@@ -56,15 +51,7 @@ namespace DOL.GS.PropertyCalc
 
 			int debuff = living.DebuffCategory[propertyIndex];
 			int abilityBonus = living.AbilityBonus[propertyIndex];
-			int racialBonus;
-			if (ignoreRaceResist == true)
-			{
-				racialBonus = 0;
-			}
-			else
-			{
-				racialBonus = SkillBase.GetRaceResist(living.Race, (eResist)property);
-			}
+			int racialBonus = living.LivingRace.GetResist((eResist)property);
 
 			// Items and buffs.
 

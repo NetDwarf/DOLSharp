@@ -2,17 +2,19 @@
 {
 	public class Bonus
 	{
-		public Bonus(int value, ePropertyCategory category, eProperty prop)
+		public Bonus(int value, BonusCategory category, BonusType type)
 		{
-			var component = new BonusComponent(category, prop);
-			this.Type = component.Property;
-			this.Category = component.Category;
+			var component = new BonusComponent(category, type);
+			this.TypeID = component.Type.ID;
+			this.CategoryID = component.Category.ID;
 			this.Value = value;
 		}
 
 		public int Value { get; }
-		public eProperty Type { get; }
-		public ePropertyCategory Category { get; }
+		private eProperty TypeID { get; }
+		private ePropertyCategory CategoryID { get; }
+		public BonusType Type { get { return new BonusType(TypeID); } }
+		public BonusCategory Category { get { return new BonusCategory(CategoryID); } }
 
 		public static BonusCategory Create(ePropertyCategory categoryID) { return new BonusCategory(categoryID); }
 		public static BonusType Create(eProperty typeID) { return new BonusType(typeID); }
@@ -36,106 +38,112 @@
 
 	public class BonusComponent
 	{
-		public ePropertyCategory Category { get; }
-		public eProperty Property { get; }
-		public BonusType Type { get { return new BonusType(Property); } }
-		public BonusCategory BonusCategory { get { return new BonusCategory(Category); } }
+		private eProperty typeID;
+		private ePropertyCategory categoryID;
+
+		public BonusType Type { get { return new BonusType(typeID); } }
+		public BonusCategory Category { get { return new BonusCategory(categoryID); } }
 
 		public BonusComponent(ePropertyCategory category, eProperty property)
-		{
-			bool isItem = category == ePropertyCategory.Item;
-			bool isItemStatOvercap = isItem && property >= eProperty.StrCapBonus && property <= eProperty.AcuCapBonus;
-			bool isMythical = isItem && property >= eProperty.MythicalStatCapBonus_First && property <= eProperty.MythicalStatCapBonus_Last;
-			bool isResistOvercap = isItem && property >= eProperty.ResCapBonus_First && property <= eProperty.ResCapBonus_Last;
+			: this(new BonusCategory(category), new BonusType(property)) { }
 
-			if (isItemStatOvercap)
+		public BonusComponent(BonusCategory category, BonusType type)
+		{
+			bool isItem = category.ID == ePropertyCategory.Item;
+			bool isItemStatOvercap = isItem && type.ID >= eProperty.StrCapBonus && type.ID <= eProperty.AcuCapBonus;
+			bool isMythical = isItem && type.ID >= eProperty.MythicalStatCapBonus_First && type.ID <= eProperty.MythicalStatCapBonus_Last;
+			bool isResistOvercap = isItem && type.ID >= eProperty.ResCapBonus_First && type.ID <= eProperty.ResCapBonus_Last;
+
+			if (type.ID == eProperty.AcuCapBonus)
 			{
-				if (property == eProperty.AcuCapBonus)
-				{
-					Property = eProperty.Acuity;
-				}
-				else
-				{
-					Property = property - eProperty.StrCapBonus + eProperty.Stat_First;
-				}
-				Category = ePropertyCategory.ItemOvercap;
+				typeID = eProperty.Acuity;
+				categoryID = ePropertyCategory.ItemOvercap;
+			}
+			else if (type.ID == eProperty.MythicalAcuCapBonus)
+			{
+				typeID = eProperty.Acuity;
+				categoryID = ePropertyCategory.Mythical;
+			}
+			else if(isItemStatOvercap)
+			{
+				typeID = type.ID - eProperty.StrCapBonus + eProperty.Stat_First;
+				categoryID = ePropertyCategory.ItemOvercap;
 			}
 			else if (isMythical)
 			{
-				if (property == eProperty.MythicalAcuCapBonus)
-				{
-					Property = eProperty.Acuity;
-				}
-				else
-				{
-					Property = property - eProperty.MythicalStatCapBonus_First + eProperty.Stat_First;
-				}
-				Category = ePropertyCategory.Mythical;
+				typeID = type.ID - eProperty.MythicalStatCapBonus_First + eProperty.Stat_First;
+				categoryID = ePropertyCategory.Mythical;
 			}
-			else if(isResistOvercap)
+			else if (isResistOvercap)
 			{
-				Property = property - eProperty.ResCapBonus_First + eProperty.Resist_First;
-				Category = ePropertyCategory.Mythical;
+				typeID = type.ID - eProperty.ResCapBonus_First + eProperty.Resist_First;
+				categoryID = ePropertyCategory.Mythical;
 			}
 			else
 			{
-				Category = category;
-				Property = property;
+				categoryID = category.ID;
+				typeID = type.ID;
 			}
 		}
 
 		public Bonus Create(int value)
 		{
-			return new Bonus(value, Category, Property);
+			return new Bonus(value, Category, Type);
 		}
 
 		public override bool Equals(object obj)
 		{
 			var comp2 = obj as BonusComponent;
 			if (comp2 is null) { return false; }
-			return this.Category == comp2.Category && this.Property == comp2.Property;
+			return this.Category.Equals(comp2.Category) && this.Type.Equals(comp2.Type);
 		}
 	}
 
 	public class BonusCategory
 	{
-		public ePropertyCategory Name { get; }
+		public ePropertyCategory ID { get; }
 
-		public BonusComponent Strength { get { return new BonusComponent(Name, eProperty.Strength); } }
-		public BonusComponent Constitution { get { return new BonusComponent(Name, eProperty.Constitution); } }
-		public BonusComponent Dexterity { get { return new BonusComponent(Name, eProperty.Dexterity); } }
-		public BonusComponent Quickness { get { return new BonusComponent(Name, eProperty.Quickness); } }
-		public BonusComponent Empathy { get { return new BonusComponent(Name, eProperty.Empathy); } }
-		public BonusComponent Intelligence { get { return new BonusComponent(Name, eProperty.Intelligence); } }
-		public BonusComponent Piety { get { return new BonusComponent(Name, eProperty.Piety); } }
-		public BonusComponent Charisma { get { return new BonusComponent(Name, eProperty.Charisma); } }
-		public BonusComponent Acuity { get { return new BonusComponent(Name, eProperty.Acuity); } }
+		public BonusComponent Strength { get { return new BonusComponent(ID, eProperty.Strength); } }
+		public BonusComponent Constitution { get { return new BonusComponent(ID, eProperty.Constitution); } }
+		public BonusComponent Dexterity { get { return new BonusComponent(ID, eProperty.Dexterity); } }
+		public BonusComponent Quickness { get { return new BonusComponent(ID, eProperty.Quickness); } }
+		public BonusComponent Empathy { get { return new BonusComponent(ID, eProperty.Empathy); } }
+		public BonusComponent Intelligence { get { return new BonusComponent(ID, eProperty.Intelligence); } }
+		public BonusComponent Piety { get { return new BonusComponent(ID, eProperty.Piety); } }
+		public BonusComponent Charisma { get { return new BonusComponent(ID, eProperty.Charisma); } }
+		public BonusComponent Acuity { get { return new BonusComponent(ID, eProperty.Acuity); } }
 		
 		public BonusCategory(ePropertyCategory category)
 		{
-			this.Name = category;
+			this.ID = category;
 		}
 		
 		public Bonus Create(int value, eProperty property)
 		{
-			return new Bonus(value, this.Name, property);
+			var type = new BonusType(property);
+			return Create(value, type);
+		}
+
+		public Bonus Create(int value, BonusType type)
+		{
+			return new Bonus(value, this, type);
 		}
 
 		public BonusComponent ComponentOf(eProperty property)
 		{
-			return new BonusComponent(this.Name, property);
+			return new BonusComponent(this.ID, property);
 		}
 
 		public BonusComponent ComponentOf(BonusType type)
 		{
-			return new BonusComponent(this.Name, type.ID);
+			return new BonusComponent(this.ID, type.ID);
 		}
 
 		public override bool Equals(object obj)
 		{
 			var category2 = obj as BonusCategory;
 			if (category2 is null) { return false; }
-			return this.Name == category2.Name;
+			return this.ID == category2.ID;
 		}
 	}
 
@@ -160,7 +168,7 @@
 		public BonusComponent SpecDebuff { get { return new BonusComponent(ePropertyCategory.SpecDebuff, ID); } }
 		public BonusComponent Multiplier { get { return new BonusComponent(ePropertyCategory.Multiplier, ID); } }
 
-		public BonusComponent From(BonusCategory category) { return new BonusComponent(category.Name, ID); }
+		public BonusComponent From(BonusCategory category) { return new BonusComponent(category.ID, ID); }
 
 		public override bool Equals(object obj)
 		{

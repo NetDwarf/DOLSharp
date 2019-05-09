@@ -21,9 +21,9 @@ namespace DOL.GS.PropertyCalc
 	public sealed class IndexerBoniAdapter : IPropertyIndexer
 	{
 		private Boni boni;
-		private ePropertyCategory category;
+		private BonusCategory category;
 
-		public IndexerBoniAdapter(Boni boni, ePropertyCategory category)
+		public IndexerBoniAdapter(Boni boni, BonusCategory category)
 		{
 			this.boni = boni;
 			this.category = category;
@@ -33,11 +33,11 @@ namespace DOL.GS.PropertyCalc
 		{
 			get
 			{
-				return boni.RawValueOf(new BonusComponent(category, (eProperty)index));
+				return boni.RawValueOf(category.ComponentOf((eProperty)index));
 			}
 			set
 			{
-				boni.SetTo(new Bonus(value, category, (eProperty)index));
+				boni.SetTo(category.ComponentOf((eProperty)index).Create(value));
 			}
 		}
 

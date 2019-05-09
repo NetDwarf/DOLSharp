@@ -366,7 +366,8 @@
     <Compile Include="gameobjects\Boni\Boni.cs" />
     <Compile Include="gameobjects\Boni\Bonus.cs" />
     <Compile Include="gameobjects\Boni\BonusCaps.cs" />
-    <Compile Include="gameobjects\Boni\BonusComponents.cs" />
+    <Compile Include="gameobjects\Boni\BonusCompound.cs" />
+    <Compile Include="gameobjects\Boni\BonusProperties.cs" />
     <Compile Include="gameobjects\CharacterClasses\Albion\CharacterClassNecromancer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -381,6 +382,7 @@
     <Compile Include="gameobjects\GameMythirian.cs" />
     <Compile Include="gameobjects\GameNPChelper.cs" />
     <Compile Include="gameobjects\GameSiegeItem.cs" />
+    <Compile Include="gameobjects\Race\LivingRace.cs" />
     <Compile Include="gameutils\ClientExtensions.cs" />
     <Compile Include="gameutils\GameDuel.cs" />
     <Compile Include="gameutils\GamePlayerUtils.cs" />

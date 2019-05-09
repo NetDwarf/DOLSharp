@@ -60,16 +60,16 @@ namespace DOL.UnitTests.GameServer
 		{
 			var bonusProp = createBonusComponents();
 
-			bonusProp.Set(1, ePropertyCategory.Ability);
+			bonusProp.Set(1, Bonus.Ability);
 
 			int actual = bonusProp.Get(Bonus.Ability);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private static BonusComponents createBonusComponents()
+		private static BonusCompound createBonusComponents()
 		{
-			return new BonusComponents(eProperty.Undefined);
+			return new BonusCompound(eProperty.Undefined);
 		}
 	}
 

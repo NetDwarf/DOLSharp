@@ -103,12 +103,12 @@ namespace DOL.PerformanceTests.Memory
 		public void BonusCaps_HundredTimes_LessThan1MegaByte()
 		{
 			long beforeInit = GC.GetTotalMemory(true);
-			var foo = new PropertyCaps(null);
+			var foo = new PropertyCaps(Create.FakePlayer());
 			long afterInit = GC.GetTotalMemory(true);
 			PropertyCaps[] capsArray = new PropertyCaps[100];
 			for (int i = 0; i < capsArray.Length; i++)
 			{
-				capsArray[i] = new PropertyCaps(null);
+				capsArray[i] = new PropertyCaps(Create.FakePlayer());
 			}
 			long after = GC.GetTotalMemory(true);
 			long initMemoryConsumption = afterInit - beforeInit;

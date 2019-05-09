@@ -9,8 +9,7 @@ namespace DOL.UnitTests.GameServer
     {
         public int modifiedSpecLevel;
         public ICharacterClass characterClass;
-        public int modifiedIntelligence;
-        public int modiefiedToHitBonus;
+        public int modifiedToHitBonus;
         public int modifiedSpellLevel;
         public int modifiedEffectiveLevel;
         private int totalConLostOnDeath;
@@ -32,15 +31,14 @@ namespace DOL.UnitTests.GameServer
 		{
 			switch (property)
 			{
-				case eProperty.Intelligence:
-					return modifiedIntelligence;
 				case eProperty.SpellLevel:
 					return modifiedSpellLevel;
 				case eProperty.ToHitBonus:
-					return modiefiedToHitBonus;
+					return modifiedToHitBonus;
 				case eProperty.LivingEffectiveLevel:
 					return modifiedEffectiveLevel;
-				default: throw new ArgumentException("There is no property with that name");
+				default:
+					return base.GetModified(property);
 			}
 		}
 
@@ -51,27 +49,11 @@ namespace DOL.UnitTests.GameServer
         }
     }
 
-    public class FakeNPC : GameNPC
-    {
-        public int modifiedEffectiveLevel;
-
-        public FakeNPC(ABrain defaultBrain) : base(defaultBrain)
-        {
-        }
-
-        public override int GetModified(eProperty property)
-        {
-            switch(property)
-            {
-                case eProperty.LivingEffectiveLevel:
-                    return modifiedEffectiveLevel;
-                case eProperty.MaxHealth:
-                    return 0;
-                case eProperty.Intelligence:
-                    return Intelligence;
-                default:
-                    throw new ArgumentException("There is no property with that name");
-            }
-        }
-    }
+	public class FakeRace : LivingRace
+	{
+		public override int GetResist(eResist resistID)
+		{
+			return 0;
+		}
+	}
 }
