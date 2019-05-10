@@ -34,7 +34,7 @@ namespace DOL.GS
 	public class PropertyCalculatorFactory
 	{
 		private static readonly IPropertyCalculator[] m_propertyCalc = new IPropertyCalculator[(int)eProperty.MaxProperty + 1];
-		private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+		private static readonly log4net.ILog log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 		private static readonly bool loadedAllCalculators;
 		private GameLiving owner;
 

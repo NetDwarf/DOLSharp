@@ -30,34 +30,12 @@ namespace DOL.GS.PropertyCalc
             var boni = living.Boni;
 
 			int baseBonus = boni.RawValueOf(Bonus.Base.ComponentOf(property));
-			int abilityBonus = boni.RawValueOf(Bonus.Ability.ComponentOf(property));
+			int abilityBonus = GetCombinedBonusValue(living, Bonus.Ability.ComponentOf(property));
 			int debuff = boni.RawValueOf(Bonus.Debuff.ComponentOf(property));
-			int deathConDebuff = 0;
 
             int itemBonus = CalcValueFromItems(living, property);
             int buffBonus = CalcValueFromBuffs(living, property);
-
-			// Special cases:
-			// 1) ManaStat (base stat + acuity, players only).
-			// 2) As of patch 1.64: - Acuity - This bonus will increase your casting stat, 
-			//    whatever your casting stat happens to be. If you're a druid, you should get an increase to empathy, 
-			//    while a bard should get an increase to charisma.  http://support.darkageofcamelot.com/kb/article.php?id=540
-			// 3) Constitution lost at death, only affects players.
-
-			if (living is GamePlayer)
-			{
-				GamePlayer player = living as GamePlayer;
-				if (property == (eProperty)(player.CharacterClass.ManaStat))
-				{
-					if (player.CharacterClass.ID != (int)eCharacterClass.Scout && player.CharacterClass.ID != (int)eCharacterClass.Hunter && player.CharacterClass.ID != (int)eCharacterClass.Ranger)
-					{
-						abilityBonus += player.Boni.RawValueOf(Bonus.Ability.ComponentOf(eProperty.Acuity));
-					}
-				}
-
-				deathConDebuff = player.TotalConstitutionLostAtDeath;
-			}
-
+			
 			// Apply debuffs, 100% effectiveness for player buffs, 50% effectiveness
 			// for item and base stats
 
@@ -68,14 +46,17 @@ namespace DOL.GS.PropertyCalc
 			{
 				unbuffedBonus += buffBonus / 2;
 				buffBonus = 0;
-				if (unbuffedBonus < 0)
-					unbuffedBonus = 0;
+				unbuffedBonus = Math.Max(0, unbuffedBonus);
 			}
 
 			int stat = unbuffedBonus + buffBonus + abilityBonus;
-			stat = (int)(stat * boni.RawValueOf(new BonusComponent(ePropertyCategory.Multiplier,property)) / 1000.0);
-
-			stat -= (property == eProperty.Constitution)? deathConDebuff : 0;
+			stat = (int)(stat * boni.RawValueOf(Bonus.Multiplier.ComponentOf(property)) / 1000.0);
+			
+			if (living is GamePlayer && property == eProperty.Constitution)
+			{
+				GamePlayer player = living as GamePlayer;
+				stat -= player.TotalConstitutionLostAtDeath;
+			}
 
 			return Math.Max(1, stat);
         }
@@ -90,16 +71,20 @@ namespace DOL.GS.PropertyCalc
 			if (living is GamePlayer)
             {
                 GamePlayer player = living as GamePlayer;
-                if (property == (eProperty)(player.CharacterClass.ManaStat))
-                    if (player.CharacterClass.ClassType == eClassType.ListCaster)
-                        specBuffBonus += player.Boni.RawValueOf(Bonus.BaseBuff.ComponentOf(eProperty.Acuity));
-            }
+				var manaStat = (eProperty)(player.CharacterClass.ManaStat);
+				bool isListCaster = player.CharacterClass.ClassType == eClassType.ListCaster;
 
-            int baseBuffBonusCap = (living is GamePlayer) ? (int)(living.Level * 1.25) : Int16.MaxValue;
-            int specBuffBonusCap = (living is GamePlayer) ? (int)(living.Level * 1.5 * 1.25) : Int16.MaxValue;
+				if (property == manaStat && isListCaster)
+				{
+					specBuffBonus += player.Boni.RawValueOf(Bonus.BaseBuff.ComponentOf(eProperty.Acuity));
+				}
 
-            baseBuffBonus = Math.Min(baseBuffBonus, baseBuffBonusCap);
-            specBuffBonus = Math.Min(specBuffBonus, specBuffBonusCap);
+				int baseBuffBonusCap = (int)(living.Level * 1.25);
+				int specBuffBonusCap = (int)(living.Level * 1.5 * 1.25);
+
+				baseBuffBonus = Math.Min(baseBuffBonus, baseBuffBonusCap);
+				specBuffBonus = Math.Min(specBuffBonus, specBuffBonusCap);
+			}
 
             return baseBuffBonus + specBuffBonus;
         }
@@ -108,36 +93,40 @@ namespace DOL.GS.PropertyCalc
         {
 			var boni = living.Boni;
 
-			int itemBonus = boni.RawValueOf(Bonus.Item.ComponentOf(property));
-			int itemBonusCap = (int)(living.Level * 1.5);
-			int itemBonusCapIncrease = boni.RawValueOf(Bonus.ItemOvercap.ComponentOf(property));
-			int itemBonusCapIncreaseCap = living.Level / 2 + 1;
-			int MythicalitemBonusCapIncrease = boni.RawValueOf(Bonus.Mythical.ComponentOf(property));
-			int MythicalitemBonusCapIncreaseCap = 52;
+			int itemBonus = GetCombinedBonusValue(living, Bonus.Item.ComponentOf(property));
+			int overcap = GetCombinedBonusValue(living, Bonus.ItemOvercap.ComponentOf(property));
+			int mythicalCapIncrease = GetCombinedBonusValue(living, Bonus.Mythical.ComponentOf(property));
+
+			int baseCap = (int)(living.Level * 1.5);
+			int overcapCap = living.Level / 2 + 1;
+			int capIncreaseHardCap = 52;
+
+			int effectiveOvercap = Math.Min(overcap, overcapCap);
+			int cap = baseCap + Math.Min(effectiveOvercap + mythicalCapIncrease, capIncreaseHardCap);
+            return Math.Min(itemBonus, cap);
+        }
+
+		private int GetCombinedBonusValue(GameLiving living, BonusComponent component)
+		{
+			var boni = living.Boni;
+
+			int rawPropertyValue = boni.RawValueOf(component);
 
 			if (living is GamePlayer)
-            {
+			{
 				GamePlayer player = living as GamePlayer;
+				var property = component.Type.ID;
 
 				if (property == (eProperty)player.CharacterClass.ManaStat)
 				{
 					if (player.CharacterClass.ID != (int)eCharacterClass.Scout && player.CharacterClass.ID != (int)eCharacterClass.Hunter && player.CharacterClass.ID != (int)eCharacterClass.Ranger)
 					{
-						itemBonus += boni.RawValueOf(Bonus.Item.ComponentOf(eProperty.Acuity));
-						itemBonusCapIncrease += boni.RawValueOf(Bonus.Item.ComponentOf(eProperty.AcuCapBonus));
-						MythicalitemBonusCapIncrease += boni.RawValueOf(Bonus.Item.ComponentOf(eProperty.MythicalAcuCapBonus));
+						rawPropertyValue += boni.RawValueOf(component.Category.ComponentOf(eProperty.Acuity));
 					}
 				}
 			}
 
-			itemBonusCapIncrease = Math.Min(itemBonusCapIncrease, itemBonusCapIncreaseCap);
-			if (MythicalitemBonusCapIncrease + itemBonusCapIncrease > 52)
-			{
-				MythicalitemBonusCapIncrease = 52 - itemBonusCapIncrease;
-			}
-
-			int mythicalitemBonusCapIncrease = Math.Min(MythicalitemBonusCapIncrease, MythicalitemBonusCapIncreaseCap);
-            return Math.Min(itemBonus, itemBonusCap + itemBonusCapIncrease + mythicalitemBonusCapIncrease);
-        }
+			return rawPropertyValue;
+		}
 	}
 }
