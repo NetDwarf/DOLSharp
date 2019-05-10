@@ -62,7 +62,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		}
 
 		[Test]
-        public void CalcValueFromBuffs_BaseBuff3AndSpecBuff4_Return7()
+        public void CalcValueFromBuffs_BaseBuff3AndSpecBuff4_7()
         {
             var npc = Create.FakeNPC();
             npc.BaseBuffBonusCategory[eProperty.Constitution] = 3;
@@ -75,37 +75,37 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             Assert.AreEqual(expected, actual);
         }
 		#endregion
-
-		#region CalcValueFromItems
+		
+		#region CalcValue
 		[Test]
-        public void CalcValueFromItems_Level50Player100ConstFromItems_ReturnCapAt75()
+        public void CalcValue_L50Player100ItemBonus_75()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
             player.ItemBonus[eProperty.Constitution] = 100;
 			var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValueFromItems(player, eProperty.Constitution);
+            int actual = statCalc.CalcValue(player, eProperty.Constitution);
 
             int expected = (int)(1.5 * 50);
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void CalcValueFromItems_IntelligenceOfLevel50AnimistWith50AcuityFromItems_Return50()
+        public void CalcValue_Intelligence_L50AnimistWith50AcuityFromItems_50()
         {
             var player = Create.FakePlayer(new CharacterClassAnimist());
             player.Level = 50;
             player.ItemBonus[eProperty.Acuity] = 50;
 			var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValueFromItems(player, eProperty.Intelligence);
+            int actual = statCalc.CalcValue(player, eProperty.Intelligence);
             
             Assert.AreEqual(50, actual);
         }
 
         [Test]
-        public void CalcValueFromItems_Level50Player150ConAnd100MythicalConCap_ReturnCapAt127()
+        public void CalcValue_L50Player150ConAnd100MythicalConCap_127()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
@@ -113,13 +113,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             player.ItemBonus[eProperty.Constitution] = 150;
 			var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValueFromItems(player, eProperty.Constitution);
+            int actual = statCalc.CalcValue(player, eProperty.Constitution);
 
             Assert.AreEqual(127, actual);
         }
 
         [Test]
-        public void CalcValueFromItems_Level50PlayerWith5MythicalConCap100ConCap_ReturnCapAt106()
+        public void CalcValue_L50PlayerWith5MythicalCapAnd100CapBonus_106()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
@@ -128,13 +128,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             player.ItemBonus[eProperty.Constitution] = 150;
 			var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValueFromItems(player, eProperty.Constitution);
+            int actual = statCalc.CalcValue(player, eProperty.Constitution);
 
             Assert.AreEqual(106, actual);
         }
 
         [Test]
-        public void CalcValueFromItems_Level50Player100ConstitutionAnd10ConstCap_Return85()
+        public void CalcValue_L50Player100ItemBonusAnd10CapBonus_85()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
@@ -142,15 +142,12 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
             player.ItemBonus[eProperty.ConCapBonus] = 10;
 			var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValueFromItems(player, eProperty.Constitution);
+            int actual = statCalc.CalcValue(player, eProperty.Constitution);
 
             Assert.AreEqual(85, actual);
         }
-        #endregion
-
-        #region CalcValue
         [Test]
-        public void CalcValue_NPCWith100Constitution_Return100()
+        public void CalcValue_NPCWith100Constitution_100()
         {
             var npc = Create.FakeNPC();
             npc.Constitution = 100;
@@ -162,7 +159,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_NPCWith100Intelligence_Return100()
+        public void CalcValue_NPCWith100Intelligence_100()
         {
             var npc = Create.FakeNPC();
             npc.Intelligence = 100;
@@ -174,7 +171,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_GetIntelligenceFromLevel50AnimistWith50Acuity_Return50()
+        public void CalcValue_Intelligence_L50AnimistWith50Acuity_50()
         {
             var player = Create.FakePlayer(new CharacterClassAnimist());
             player.Level = 50;
@@ -187,7 +184,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
 		[Test]
-        public void CalcValue_200ConstitutionAbilityBonus_Return200()
+        public void CalcValue_200AbilityBonus_200()
         {
             var player = Create.FakePlayer();
             player.AbilityBonus[eProperty.Constitution] = 200;
@@ -199,7 +196,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_200ConstitutionDebuff_Return1()
+        public void CalcValue_200Debuff_Return1()
         {
             var player = Create.FakePlayer();
             player.DebuffCategory[eProperty.Constitution] = 200;
@@ -211,7 +208,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_200ConAbilityBonusAnd50ConDebuff_Return200()
+        public void CalcValue_200AbilityBonusAnd50Debuff_200()
         {
             var player = Create.FakePlayer();
             player.AbilityBonus[eProperty.Constitution] = 200;
@@ -224,7 +221,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_70ConBuffBonusAnd50ConDebuff_Return20()
+        public void CalcValue_70BuffBonusAnd50Debuff_20()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
@@ -238,7 +235,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_70ConItemBonusAnd50ConDebuff_Return45()
+        public void CalcValue_70ConItemBonusAnd50ConDebuff_45()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
@@ -253,7 +250,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_70ConBaseStatAnd50ConDebuff_Return45()
+        public void CalcValue_70ConBaseStatAnd50ConDebuff_45()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
@@ -268,7 +265,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_70ConBaseStatAnd3ConLostOnDeath_Return67()
+        public void CalcValue_Constitution_70ConBaseStatAnd3ConLostOnDeath_67()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
@@ -282,7 +279,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_70DexAbilityBonusAnd3ConLostOnDeath_Return70()
+        public void CalcValue_Dexterity_70DexAbilityAnd3ConLostOnDeath_70()
         {
             var player = Create.FakePlayer();
             player.AbilityBonus[eProperty.Dexterity] = 70;
@@ -295,7 +292,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_50DexAbilityBonusAnd25PercentMultiplicator_Return12()
+        public void CalcValue_50AbilityBonusAnd25PercentMultiplicator_12()
         {
             var player = Create.FakePlayer();
             player.AbilityBonus[eProperty.Dexterity] = 50;
