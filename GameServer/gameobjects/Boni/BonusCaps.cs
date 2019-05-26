@@ -59,6 +59,11 @@ namespace DOL.GS
 			return caps[(int)capCategory];
 		}
 
+		public int ValueOf(BonusComponent component)
+		{
+			return Of(component.Type).For(component.Category);
+		}
+
 		private eCapCategory CapCategoryOf(eProperty property)
 		{
 			var manaStat = (eProperty)owner.CharacterClass.ManaStat;

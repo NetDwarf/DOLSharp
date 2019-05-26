@@ -10,13 +10,13 @@ namespace DOL.UnitTests.GameServer
     [TestFixture]
     class UT_GameNPC
     {
-        [TestFixtureSetUp]
-        public void init()
-        {
-            GameLiving.LoadCalculators();
-        }
+		[TestFixtureSetUp]
+		public void init()
+		{
+			GameLiving.LoadCalculators();
+		}
 
-        [Test]
+		[Test]
         public void GetModified_GameNPCWith75Constitution_Return75()
         {
 			var npc = createGenericNPC();

@@ -50,9 +50,9 @@ namespace DOL.GS
 			{
 				if (createIfNotExists)
 				{
-					var bonusProperty = new BonusCompound(property);
-					bonusCompounds.Add(bonusProperty);
-					return bonusProperty;
+					var bonusCompound = new BonusCompound(property);
+					bonusCompounds.Add(bonusCompound);
+					return bonusCompound;
 				}
 				else
 				{

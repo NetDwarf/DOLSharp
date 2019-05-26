@@ -176,6 +176,14 @@
 			if (type2 is null) { return false; }
 			return this.ID == type2.ID;
 		}
+
+		public bool IsStat
+		{
+			get
+			{
+				return ID >= eProperty.Stat_First && ID <= eProperty.Stat_Last;
+			}
+		}
 	}
 
 	public class StatBonus

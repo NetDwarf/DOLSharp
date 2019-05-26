@@ -4761,8 +4761,8 @@ namespace DOL.GS
 		/// property calculators for each property
 		/// look at PropertyCalculator class for more description
 		/// </summary>
-		internal static readonly IPropertyCalculator[] m_propertyCalc = new IPropertyCalculator[(int)eProperty.MaxProperty+1];
-
+		private static IPropertyCalculator[] m_propertyCalc = new IPropertyCalculator[(int)eProperty.MaxProperty+1];
+		
 		/// <summary>
 		/// retrieve a property value of that living
 		/// this value is modified/capped and ready to use
@@ -4773,9 +4773,9 @@ namespace DOL.GS
 		{
 			try
 			{
-				return m_propertyCalc[(int)property].CalcValue(this, property);
-				//var type = new BonusType(property);
-				//return BonusProperties.ValueOf(type);
+				//return m_propertyCalc[(int)property].CalcValue(this, property);
+				var type = new BonusType(property);
+				return BonusProperties.ValueOf(type);
 			}
 			catch(NullReferenceException)
 			{
@@ -6878,7 +6878,7 @@ namespace DOL.GS
 		public GameLiving()
 			: base()
 		{
-			BonusProperties = new BonusProperties(this, m_propertyCalc);
+			BonusProperties = new BonusProperties(this);
 			Boni = new Boni();
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);

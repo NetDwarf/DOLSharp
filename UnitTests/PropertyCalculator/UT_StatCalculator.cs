@@ -36,7 +36,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValueFromBuffs_Level50PlayerWith100ConstSpecBuff_ReturnCapAt93()
+        public void CalcValueFromBuffs_L50PlayerWith100ConstSpecBuff_ReturnCapAt93()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
@@ -50,7 +50,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
 		[Test]
-		public void CalcValueFromBuffs_Level50AnimistIntelligence_With50AcuityFromBuffs_50()
+		public void CalcValueFromBuffs_L50AnimistIntelligence_With50AcuityBaseBuff_50()
 		{
 			var player = Create.FakePlayer(new CharacterClassAnimist());
 			player.Level = 50;
@@ -171,7 +171,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_Intelligence_L50AnimistWith50Acuity_50()
+        public void CalcValue_L50AnimistIntelligence_With50Acuity_50()
         {
             var player = Create.FakePlayer(new CharacterClassAnimist());
             player.Level = 50;
