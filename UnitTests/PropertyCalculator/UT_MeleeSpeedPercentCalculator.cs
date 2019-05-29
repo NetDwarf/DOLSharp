@@ -103,6 +103,19 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			Assert.AreEqual(expected, actual);
 		}
 
+		[Test]
+		public void CalcValue_NPC_With2BaseBuff_98()
+		{
+			var npc = Create.FakeNPC();
+			npc.Level = 50;
+			npc.Boni.Add(Bonus.BaseBuff.Create(2, eProperty.MeleeSpeed));
+			var speedCalc = createMeleeSpeedCalculator();
+
+			int actual = speedCalc.CalcValue(npc, eProperty.MeleeSpeed);
+			int expected = 98;
+			Assert.AreEqual(expected, actual);
+		}
+
 		private static MeleeSpeedPercentCalculator createMeleeSpeedCalculator()
 		{
 			return new MeleeSpeedPercentCalculator();

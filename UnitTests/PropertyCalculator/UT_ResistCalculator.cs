@@ -82,13 +82,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		}
 
 		[Test]
-		public void HardCap_100AbilityBodyResist_CalcValueIs70()
+		public void CalcValue_100AbilityBodyResist_HardcapAt70()
 		{
 			var resistCalc = createResistCalculator();
-			var npc = Create.FakeNPC();
-			npc.Boni.Add(Bonus.Ability.Create(100, eProperty.Resist_Body));
+			var player = Create.FakePlayer();
+			player.Boni.Add(Bonus.Ability.Create(100, eProperty.Resist_Body));
 
-			int actual = resistCalc.CalcValue(npc, eProperty.Resist_Body);
+			int actual = resistCalc.CalcValue(player, eProperty.Resist_Body);
 			int expected = 70;
 			Assert.AreEqual(expected, actual);
 		}

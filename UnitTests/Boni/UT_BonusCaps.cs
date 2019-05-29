@@ -60,6 +60,16 @@ namespace DOL.UnitTests.GameServer.BonusCap
 			Assert.AreNotSame(statCap1, statCap2);
 		}
 
+		[Test]
+		public void Of_EssenceResist_EssenceResistCap()
+		{
+			var bonusCaps = createBonusCaps();
+
+			var actual = bonusCaps.Of(Bonus.Resist.Essence);
+
+			Assert.That(actual, Is.TypeOf(typeof(EssenceResistCap)));
+		}
+
 		private PropertyCaps createBonusCaps(GamePlayer owner)
 		{
 			return new PropertyCaps(owner);

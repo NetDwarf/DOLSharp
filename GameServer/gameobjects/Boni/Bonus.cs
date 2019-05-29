@@ -184,6 +184,17 @@
 				return ID >= eProperty.Stat_First && ID <= eProperty.Stat_Last;
 			}
 		}
+
+		public bool IsBaseStat { get { return ID >= eProperty.Stat_First && ID <= eProperty.Quickness; } }
+
+		public bool IsAcuityStat { get { return (ID >= eProperty.Intelligence && ID <= eProperty.Stat_Last) || ID == eProperty.Acuity; } }
+
+		public bool IsResist {
+			get
+			{
+				return ID >= eProperty.Resist_First && ID <= eProperty.Resist_Last || ID == eProperty.Resist_Natural;
+			}
+		}
 	}
 
 	public class StatBonus

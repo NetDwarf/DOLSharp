@@ -1,39 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DOL.GS
+﻿namespace DOL.GS
 {
 	public class PropertyCaps
 	{
 		private GamePlayer owner;
-		private IPropertyCap[] caps = new IPropertyCap[(int)eCapCategory.__Last + 1];
-		private static List<eProperty> stats = new List<eProperty>()
-		{
-			eProperty.Constitution,
-			eProperty.Strength,
-			eProperty.Dexterity,
-			eProperty.Quickness,
-		};
-		private static List<eProperty> acuityStats = new List<eProperty>()
-		{
-			eProperty.Empathy,
-			eProperty.Charisma,
-			eProperty.Piety,
-			eProperty.Intelligence,
-			eProperty.Acuity
-		};
-		private static List<eProperty> resists = new List<eProperty>()
-		{
-			eProperty.Resist_Body,
-			eProperty.Resist_Cold,
-			eProperty.Resist_Energy,
-			eProperty.Resist_Heat,
-			eProperty.Resist_Matter,
-			eProperty.Resist_Spirit,
-			eProperty.Resist_Slash,
-			eProperty.Resist_Crush,
-			eProperty.Resist_Thrust,
-		};
+		private IPropertyCap[] caps = new IPropertyCap[(int)eCapCategory.__Last];
 
 		public PropertyCaps(GamePlayer owner)
 		{
@@ -51,11 +21,14 @@ namespace DOL.GS
 				caps[(int)eCapCategory.Acuity] = new AcuityCap(owner);
 			}
 			caps[(int)eCapCategory.Resist] = new ResistCap(owner);
+			caps[(int)eCapCategory.EssenceResist] = new EssenceResistCap(owner);
+			caps[(int)eCapCategory.MeleeDamage] = new MeleeDamageCap(owner);
+			caps[(int)eCapCategory.MeleeSpeed] = new MeleeSpeedCap(owner);
 		}
 
 		public IPropertyCap Of(BonusType bonusType)
 		{
-			var capCategory = CapCategoryOf(bonusType.ID);
+			var capCategory = CapCategoryOf(bonusType);
 			return caps[(int)capCategory];
 		}
 
@@ -64,21 +37,31 @@ namespace DOL.GS
 			return Of(component.Type).For(component.Category);
 		}
 
-		private eCapCategory CapCategoryOf(eProperty property)
+		private eCapCategory CapCategoryOf(BonusType type)
 		{
-			var manaStat = (eProperty)owner.CharacterClass.ManaStat;
-			bool isAcuityManastat = (manaStat == property || property == eProperty.Acuity) && acuityStats.Contains(manaStat);
-			if (stats.Contains(property))
+			if (type.IsBaseStat)
 			{
 				return eCapCategory.Stat;
 			}
-			else if(isAcuityManastat)
+			else if(type.IsAcuityStat)
 			{
 				return eCapCategory.Acuity;
 			}
-			else if(resists.Contains(property))
+			else if(type.ID == eProperty.Resist_Natural)
+			{
+				return eCapCategory.EssenceResist;
+			}
+			else if(type.IsResist)
 			{
 				return eCapCategory.Resist;
+			}
+			else if(type.ID == eProperty.MeleeDamage)
+			{
+				return eCapCategory.MeleeDamage;
+			}
+			else if (type.ID == eProperty.MeleeSpeed)
+			{
+				return eCapCategory.MeleeSpeed;
 			}
 			else
 			{
@@ -106,23 +89,26 @@ namespace DOL.GS
 	public class DefaultBonusCap : IPropertyCap
 	{
 		protected GameLiving owner;
-		private static int defaultCap = int.MaxValue;
+		private static int uncapped = int.MaxValue;
+
+		protected int Uncapped { get { return uncapped; } }
 
 		public DefaultBonusCap(GameLiving owner)
 		{
 			this.owner = owner;
 		}
 
-		public virtual int Base { get; } = defaultCap;
-		public virtual int Ability { get; } = defaultCap;
-		public virtual int Item { get; } = defaultCap;
+		public virtual int Base { get; } = uncapped;
+		public virtual int Ability { get; } = uncapped;
+		public virtual int Item { get; } = uncapped;
 		public virtual int ItemOvercap { get; } = 0;
 		public virtual int Mythical { get; } = 0;
-		public virtual int Buff { get; } = defaultCap;
+		public virtual int Buff { get; } = uncapped;
 		public virtual int BaseBuff { get; } = 0;
 		public virtual int SpecBuff { get; } = 0;
-		public virtual int ExtraBuff { get; } = defaultCap;
-		public virtual int HardCap { get; } = defaultCap;
+		public virtual int ExtraBuff { get; } = uncapped;
+		public virtual int Debuff { get; } = uncapped;
+		public virtual int HardCap { get; } = uncapped;
 
 		public int For(BonusCategory category)
 		{
@@ -144,6 +130,8 @@ namespace DOL.GS
 					return SpecBuff;
 				case ePropertyCategory.ExtraBuff:
 					return ExtraBuff;
+				case ePropertyCategory.Debuff:
+					return Debuff;
 				default:
 					return int.MaxValue;
 			}
@@ -188,6 +176,37 @@ namespace DOL.GS
 		public override int HardCap { get { return 70; } }
 	}
 
+	public class EssenceResistCap : DefaultBonusCap
+	{
+		public EssenceResistCap(GameLiving owner) : base(owner) { }
+
+		public override int Item { get { return (int)(0.5 * owner.Level + 1); } }
+		public override int BaseBuff { get { return 25; } }
+		public override int SpecBuff { get { return 0; } }
+		public override int ExtraBuff { get { return 0; } }
+	}
+
+	public class MeleeDamageCap : DefaultBonusCap
+	{
+		public MeleeDamageCap(GameLiving owner) : base(owner) { }
+		
+		public override int Item { get { return 10; } }
+		public override int BaseBuff { get { return Uncapped; } }
+		public override int SpecBuff { get { return Uncapped; } }
+		public override int ExtraBuff { get { return 0; } }
+		public override int Debuff { get { return 10; } }
+	}
+
+	public class MeleeSpeedCap : DefaultBonusCap
+	{
+		public MeleeSpeedCap(GameLiving owner) : base(owner) { }
+
+		public override int Item { get { return 10; } }
+		public override int BaseBuff { get { return Uncapped; } }
+		public override int SpecBuff { get { return 0; } }
+		public override int ExtraBuff { get { return 0; } }
+	}
+
 	public class NullCap : IPropertyCap
 	{
 		public virtual int Base { get; } = 0;
@@ -213,6 +232,9 @@ namespace DOL.GS
 		Stat,
 		Acuity,
 		Resist,
-		__Last = Resist
+		EssenceResist,
+		MeleeDamage,
+		MeleeSpeed,
+		__Last,
 	}
 }

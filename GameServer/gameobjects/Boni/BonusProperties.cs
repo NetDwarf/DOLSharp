@@ -1,6 +1,7 @@
 ﻿using DOL.GS.PropertyCalc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace DOL.GS
@@ -34,21 +35,31 @@ namespace DOL.GS
 
 		private IBonusProperty CreatePropertyOf(BonusType type)
 		{
-			if(owner is GamePlayer && type.IsStat)
-			{
-				var player = owner as GamePlayer;
-				bool ownerIsArcher = player.CharacterClass.ID == (int)eCharacterClass.Scout || player.CharacterClass.ID == (int)eCharacterClass.Hunter || player.CharacterClass.ID == (int)eCharacterClass.Ranger;
-				bool typeIsManaStat = type.ID == (eProperty)player.CharacterClass.ManaStat;
-				if (typeIsManaStat && !ownerIsArcher)
-				{
-					return new StatProperty(player, type, Bonus.Stat.Acuity);
-				}
+			bool typeIsMeleeDamage = type.ID == eProperty.MeleeDamage;
+			bool typeIsGeneralized = type.IsStat || type.IsResist || typeIsMeleeDamage;
 
-				return new StatProperty(player, type);
-			}
-			else if(type.IsStat)
+			if (type.ID == eProperty.MeleeSpeed)
 			{
-				return new NPCStatProperty(owner, type);
+				return new InvertedPercentProperty(owner, type);
+			}
+			if (typeIsGeneralized)
+			{
+				if (owner is GamePlayer)
+				{
+					var player = owner as GamePlayer;
+					bool ownerIsArcher = player.CharacterClass.ID == (int)eCharacterClass.Scout || player.CharacterClass.ID == (int)eCharacterClass.Hunter || player.CharacterClass.ID == (int)eCharacterClass.Ranger;
+					bool typeIsManaStat = type.ID == (eProperty)player.CharacterClass.ManaStat;
+					if (typeIsManaStat && !ownerIsArcher)
+					{
+						return new BonusProperty(player, type, Bonus.Stat.Acuity);
+					}
+
+					return new BonusProperty(player, type);
+				}
+				else
+				{
+					return new NPCBonusProperty(owner, type);
+				}
 			}
 			return new LegacyBonusProperty(owner, type);
 		}
@@ -61,12 +72,12 @@ namespace DOL.GS
 		int ItemValue { get; }
 	}
 
-	public class StatProperty : IBonusProperty
+	public class BonusProperty : IBonusProperty
 	{
 		private GamePlayer owner;
 		private BonusType[] affectingTypes;
 
-		public StatProperty(GamePlayer owner, params BonusType[] affectingTypes)
+		public BonusProperty(GamePlayer owner, params BonusType[] affectingTypes)
 		{
 			this.owner = owner;
 			this.affectingTypes = affectingTypes;
@@ -78,35 +89,43 @@ namespace DOL.GS
 		{
 			get
 			{
-				int baseBonus = GetRawValueOf(Bonus.Base);
+				int debuff = Math.Abs(GetEffectiveValueOf(Bonus.Debuff));
 				int abilityBonus = GetRawValueOf(Bonus.Ability);
-				int debuff = Math.Abs(GetRawValueOf(Bonus.Debuff));
+				int baseBonus = GetRawValueOf(Bonus.Base);
+				if (PrimaryType.IsResist)
+				{
+					baseBonus = owner.LivingRace.GetResist((eResist)PrimaryType.ID);
+				}
 
 				int itemBonus = ItemValue;
 				int buffBonus = BuffValue;
 
-				// Apply debuffs, 100% effectiveness for player buffs, 50% effectiveness
-				// for item and base stats
+				// Stats and resist debuffs have 100% Effectiveness for player buffs, but only 50%
+				// effectiveness for item bonuses and baseBonus(?).
 
 				int unbuffedBonus = baseBonus + itemBonus;
 				buffBonus -= debuff;
-
-				if (buffBonus < 0)
+				if (buffBonus < 0 && (PrimaryType.IsStat || PrimaryType.IsResist))
 				{
 					unbuffedBonus += buffBonus / 2;
 					buffBonus = 0;
 					unbuffedBonus = Math.Max(0, unbuffedBonus);
 				}
 
-				int stat = unbuffedBonus + buffBonus + abilityBonus;
-				stat = (int)(stat * GetMultiplier());
+				int effectiveBonus = unbuffedBonus + buffBonus + abilityBonus;
+				effectiveBonus = (int)(effectiveBonus * GetMultiplier());
 
 				if (PrimaryType.ID == eProperty.Constitution)
 				{
-					stat -= owner.TotalConstitutionLostAtDeath;
+					effectiveBonus -= owner.TotalConstitutionLostAtDeath;
 				}
 
-				return Math.Max(1, stat);
+				if (PrimaryType.IsStat)
+				{
+					effectiveBonus = Math.Max(1, effectiveBonus);
+				}
+
+				return Math.Min(effectiveBonus, Cap.HardCap);
 			}
 		}
 
@@ -116,8 +135,9 @@ namespace DOL.GS
 			{
 				int baseBuffBonus = GetEffectiveValueOf(Bonus.BaseBuff);
 				int specBuffBonus = GetEffectiveValueOf(Bonus.SpecBuff);
-
-				return baseBuffBonus + specBuffBonus;
+				int extraBuffBonus = GetEffectiveValueOf(Bonus.ExtraBuff);
+				int buffBonus = baseBuffBonus + specBuffBonus + extraBuffBonus;
+				return Math.Min(buffBonus, Cap.Buff);
 			}
 		}
 
@@ -129,9 +149,9 @@ namespace DOL.GS
 				int overcap = GetEffectiveValueOf(Bonus.ItemOvercap);
 				int rawMythicalCapIncrease = GetRawValueOf(Bonus.Mythical);
 
-				int capIncreaseHardcap = GetCapOf(Bonus.Mythical);
-				int baseCap = GetCapOf(Bonus.Item);
-				int capIncrease = Math.Min(capIncreaseHardcap, overcap + rawMythicalCapIncrease);
+				int mythicalCapIncreaseCap = Cap.Mythical;
+				int baseCap = Cap.Item;
+				int capIncrease = Math.Min(mythicalCapIncreaseCap, overcap + rawMythicalCapIncrease);
 				
 				int cap = baseCap + capIncrease;
 				return Math.Min(rawItemBonus, cap);
@@ -141,18 +161,21 @@ namespace DOL.GS
 		private int GetEffectiveValueOf(BonusCategory category)
 		{
 			int rawValue = GetRawValueOf(category);
-			int cap = GetCapOf(category);
+			int cap = Cap.For(category);
 			return Math.Min(cap, rawValue);
 		}
 
-		private int GetCapOf(BonusCategory category)
+		private IPropertyCap Cap
 		{
-			var propertyCaps = new PropertyCaps(owner);
-			int cap = propertyCaps.ValueOf(PrimaryType.From(category));
-			return cap;
+			get
+			{
+				var propertyCaps = new PropertyCaps(owner);
+				var cap = propertyCaps.Of(PrimaryType);
+				return cap;
+			}
 		}
 
-		protected virtual int GetRawValueOf(BonusCategory category)
+		private int GetRawValueOf(BonusCategory category)
 		{
 			var boni = owner.Boni;
 
@@ -166,7 +189,7 @@ namespace DOL.GS
 			return rawValue;
 		}
 
-		protected virtual double GetMultiplier()
+		private double GetMultiplier()
 		{
 			double rawValue = 1.0;
 
@@ -179,12 +202,55 @@ namespace DOL.GS
 		}
 	}
 
-	public class NPCStatProperty : IBonusProperty
+	public class InvertedPercentProperty : IBonusProperty
 	{
 		private GameLiving owner;
 		private BonusType type;
 
-		public NPCStatProperty(GameLiving owner, BonusType type)
+		public InvertedPercentProperty(GameLiving owner, BonusType type)
+		{
+			this.owner = owner;
+			this.type = type;
+		}
+
+		public virtual int Value
+		{
+			get
+			{
+				var baseBonus = 100;
+				var debuff = owner.Boni.RawValueOf(type.From(Bonus.Debuff));
+				return Math.Max(1, 100
+				- BuffValue // less is faster = buff
+				+ debuff // more is slower = debuff
+				- ItemValue);
+			}
+		}
+
+		public int BuffValue
+		{
+			get
+			{
+				return owner.Boni.RawValueOf(type.From(Bonus.BaseBuff));
+			}
+		}
+
+		public int ItemValue
+		{
+			get
+			{
+				var rawItemBonus = owner.Boni.RawValueOf(type.From(Bonus.Item));
+				var itemCap = 10;
+				return Math.Min(itemCap, rawItemBonus);
+			}
+		}
+	}
+
+	public class NPCBonusProperty : IBonusProperty
+	{
+		private GameLiving owner;
+		private BonusType type;
+
+		public NPCBonusProperty(GameLiving owner, BonusType type)
 		{
 			this.owner = owner;
 			this.type = type;
@@ -216,10 +282,14 @@ namespace DOL.GS
 					unbuffedBonus = Math.Max(0, unbuffedBonus);
 				}
 
-				int stat = unbuffedBonus + buffBonus + abilityBonus;
-				stat = (int)(stat * boni.RawValueOf(Bonus.Multiplier.ComponentOf(type)) / 1000.0);
+				int effectiveBonus = unbuffedBonus + buffBonus + abilityBonus;
+				effectiveBonus = (int)(effectiveBonus * boni.RawValueOf(Bonus.Multiplier.ComponentOf(type)) / 1000.0);
 
-				return Math.Max(1, stat);
+				if(type.IsStat)
+				{
+					effectiveBonus = Math.Max(1, effectiveBonus);
+				}
+				return effectiveBonus;
 			}
 		}
 
@@ -231,6 +301,7 @@ namespace DOL.GS
 
 				int baseBuffBonus = boni.RawValueOf(Bonus.BaseBuff.ComponentOf(type));
 				int specBuffBonus = boni.RawValueOf(Bonus.SpecBuff.ComponentOf(type));
+				int extraBuffBonus = boni.RawValueOf(type.From(Bonus.ExtraBuff));
 
 				return baseBuffBonus + specBuffBonus;
 			}
@@ -340,10 +411,6 @@ namespace DOL.GS
 
 		public IPropertyCalculator Create(BonusType type)
 		{
-			if(type.IsStat)
-			{
-				throw new ArgumentException("StatCalculators are superseded by StatProperty and NPCStatProperty.");
-			}
 			return legacyCalculators[(int)type.ID];
 		}
 

@@ -4773,7 +4773,6 @@ namespace DOL.GS
 		{
 			try
 			{
-				//return m_propertyCalc[(int)property].CalcValue(this, property);
 				var type = new BonusType(property);
 				return BonusProperties.ValueOf(type);
 			}
