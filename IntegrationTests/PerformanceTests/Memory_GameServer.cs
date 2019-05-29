@@ -98,24 +98,5 @@ namespace DOL.PerformanceTests.Memory
 			Console.WriteLine("10000 Boni with 8 base properties set consume " + memoryConsumption + " bytes");
 			Assert.Less(memoryConsumption, 20 * 1000 * 1000);
 		}
-
-		[Test]
-		public void BonusCaps_HundredTimes_LessThan1MegaByte()
-		{
-			long beforeInit = GC.GetTotalMemory(true);
-			var foo = new PropertyCaps(Create.FakePlayer());
-			long afterInit = GC.GetTotalMemory(true);
-			PropertyCaps[] capsArray = new PropertyCaps[100];
-			for (int i = 0; i < capsArray.Length; i++)
-			{
-				capsArray[i] = new PropertyCaps(Create.FakePlayer());
-			}
-			long after = GC.GetTotalMemory(true);
-			long initMemoryConsumption = afterInit - beforeInit;
-			long memoryConsumption = after - afterInit;
-			Console.WriteLine("BonusCaps init consumes " + initMemoryConsumption + " bytes");
-			Console.WriteLine("100 more BonusCaps consume " + memoryConsumption + " bytes");
-			Assert.Less(after - beforeInit, 1 * 1000 * 1000);
-		}
 	}
 }

@@ -169,8 +169,8 @@ namespace DOL.GS
 		{
 			get
 			{
-				var propertyCaps = new PropertyCaps(owner);
-				var cap = propertyCaps.Of(PrimaryType);
+				var propertyCapFactory = new PropertyCapFactory(owner);
+				var cap = propertyCapFactory.Create(PrimaryType);
 				return cap;
 			}
 		}
@@ -219,10 +219,9 @@ namespace DOL.GS
 			{
 				var baseBonus = 100;
 				var debuff = owner.Boni.RawValueOf(type.From(Bonus.Debuff));
-				return Math.Max(1, 100
-				- BuffValue // less is faster = buff
-				+ debuff // more is slower = debuff
-				- ItemValue);
+				var effectiveValue = Math.Max(1, 100 - BuffValue + debuff - ItemValue);
+				//inverted: meaning bonuses make the returned value lower and vice versa
+				return effectiveValue;
 			}
 		}
 

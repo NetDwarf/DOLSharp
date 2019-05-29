@@ -36,7 +36,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Boni\UT_BonusCaps.cs" />
     <Compile Include="FakeFactory.cs" />
     <Compile Include="Fakes.cs" />
     <Compile Include="PropertyCalculator\UT_MaxSpeedCalculator.cs" />
