@@ -8,25 +8,25 @@ namespace DOL.GS
 
 		public void Add(Bonus bonus)
 		{
-			var bonusCompound = GetBonusComponentsOf(bonus.Type.ID, true);
+			var bonusCompound = GetBonusOf(bonus.Type.ID, true);
 			bonusCompound.Add(bonus.Value, bonus.Category);
 		}
 
 		public void Remove(Bonus bonus)
 		{
-			var bonusCompound = GetBonusComponentsOf(bonus.Type.ID, true);
+			var bonusCompound = GetBonusOf(bonus.Type.ID, true);
 			bonusCompound.Remove(bonus.Value, bonus.Category);
 		}
 
 		public void SetTo(Bonus bonus)
 		{
-			var bonusCompound = GetBonusComponentsOf(bonus.Type.ID, true);
+			var bonusCompound = GetBonusOf(bonus.Type.ID, true);
 			bonusCompound.Set(bonus.Value, bonus.Category);
 		}
 		
 		public int RawValueOf(BonusComponent component)
 		{
-			return GetBonusComponentsOf(component.Type.ID).Get(component.Category);
+			return GetBonusOf(component.Type.ID).Get(component.Category);
 		}
 
 		public void Clear(BonusCategory category)
@@ -38,12 +38,12 @@ namespace DOL.GS
 			}
 		}
 
-		private IBonusCompound GetBonusComponentsOf(eProperty property)
+		private IBonusCompound GetBonusOf(eProperty property)
 		{
-			return GetBonusComponentsOf(property, false);
+			return GetBonusOf(property, false);
 		}
 
-		private IBonusCompound GetBonusComponentsOf(eProperty property, bool createIfNotExists)
+		private IBonusCompound GetBonusOf(eProperty property, bool createIfNotExists)
 		{
 			var propIndex = bonusCompounds.FindIndex(s => s.Type == property);
 			if (propIndex < 0)

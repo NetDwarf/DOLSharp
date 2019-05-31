@@ -16,8 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-using System;
-
 namespace DOL.GS.PropertyCalc
 {
 	[PropertyCalculator(eProperty.Stat_First, eProperty.Stat_Last)]
@@ -28,7 +26,7 @@ namespace DOL.GS.PropertyCalc
 			var bonusType = new BonusType(property);
 			var bonusProperties = new BonusProperties(living);
 			return bonusProperties.ValueOf(bonusType);
-        }
+		}
 
         public override int CalcValueFromBuffs(GameLiving living, eProperty property)
         {

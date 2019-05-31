@@ -4755,8 +4755,6 @@ namespace DOL.GS
 			get { return new MultiplicativePropertiesBoniAdapter(Boni); }
 		}
 
-		public BonusProperties BonusProperties { get; }
-
 		/// <summary>
 		/// property calculators for each property
 		/// look at PropertyCalculator class for more description
@@ -4773,8 +4771,7 @@ namespace DOL.GS
 		{
 			try
 			{
-				var type = new BonusType(property);
-				return BonusProperties.ValueOf(type);
+				return m_propertyCalc[(int)property].CalcValue(this, property);
 			}
 			catch(NullReferenceException)
 			{
@@ -6877,7 +6874,6 @@ namespace DOL.GS
 		public GameLiving()
 			: base()
 		{
-			BonusProperties = new BonusProperties(this);
 			Boni = new Boni();
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);

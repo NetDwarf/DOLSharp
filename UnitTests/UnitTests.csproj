@@ -46,6 +46,7 @@
     <Compile Include="Boni\UT_BonusCompound.cs" />
     <Compile Include="PropertyCalculator\UT_NaturalResistCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_ResistCalculator.cs" />
+    <Compile Include="PropertyCalculator\UT_ToABonusCalculator.cs" />
     <Compile Include="UT_GameEffectList.cs" />
     <Compile Include="UT_GameNPC.cs" />
     <Compile Include="UT_GamePlayer.cs" />

@@ -195,6 +195,18 @@
 				return ID >= eProperty.Resist_First && ID <= eProperty.Resist_Last || ID == eProperty.Resist_Natural;
 			}
 		}
+
+		public bool IsTOAPercentBonus
+		{
+			get
+			{
+				bool isMeleeDamage = ID == eProperty.MeleeDamage;
+				bool isArcherSpeed = ID == eProperty.ArcherySpeed;
+				bool isMeleeSpeed = ID == eProperty.MeleeSpeed;
+				bool isSpellRange = ID == eProperty.SpellRange;
+				return isMeleeDamage || isArcherSpeed || isMeleeSpeed || isSpellRange;
+			}
+		}
 	}
 
 	public class StatBonus

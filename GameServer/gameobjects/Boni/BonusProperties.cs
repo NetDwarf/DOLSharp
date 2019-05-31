@@ -1,67 +1,70 @@
-﻿using DOL.GS.PropertyCalc;
+﻿using DOL.GS.Effects;
+using DOL.GS.Spells;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace DOL.GS
 {
 	public class BonusProperties
 	{
-		private GameLiving owner;
+		private BonusPropertyFactory factory;
 		
 		public BonusProperties(GameLiving owner)
 		{
-			this.owner = owner;
+			this.factory = new BonusPropertyFactory(owner);
 		}
 
 		public int ValueOf(BonusType type)
 		{
-			var bonusProperty = CreatePropertyOf(type);
+			var bonusProperty = factory.CreatePropertyOf(type);
 			return bonusProperty.Value;
 		}
 
 		public int BuffValueOf(BonusType type)
 		{
-			var bonusProperty = CreatePropertyOf(type);
+			var bonusProperty = factory.CreatePropertyOf(type);
 			return bonusProperty.BuffValue;
 		}
 
 		public int ItemValueOf(BonusType type)
 		{
-			var bonusProperty = CreatePropertyOf(type);
+			var bonusProperty = factory.CreatePropertyOf(type);
 			return bonusProperty.ItemValue;
 		}
+	}
 
-		private IBonusProperty CreatePropertyOf(BonusType type)
+	public class BonusPropertyFactory
+	{
+		private GameLiving owner;
+
+		public BonusPropertyFactory(GameLiving owner)
 		{
-			bool typeIsMeleeDamage = type.ID == eProperty.MeleeDamage;
-			bool typeIsGeneralized = type.IsStat || type.IsResist || typeIsMeleeDamage;
+			this.owner = owner;
+		}
 
-			if (type.ID == eProperty.MeleeSpeed)
-			{
-				return new InvertedPercentProperty(owner, type);
-			}
-			if (typeIsGeneralized)
-			{
-				if (owner is GamePlayer)
-				{
-					var player = owner as GamePlayer;
-					bool ownerIsArcher = player.CharacterClass.ID == (int)eCharacterClass.Scout || player.CharacterClass.ID == (int)eCharacterClass.Hunter || player.CharacterClass.ID == (int)eCharacterClass.Ranger;
-					bool typeIsManaStat = type.ID == (eProperty)player.CharacterClass.ManaStat;
-					if (typeIsManaStat && !ownerIsArcher)
-					{
-						return new BonusProperty(player, type, Bonus.Stat.Acuity);
-					}
+		public IBonusProperty CreatePropertyOf(BonusType type)
+		{
+			bool typeIsGeneralized = type.IsStat || type.IsResist || type.IsTOAPercentBonus;
 
-					return new BonusProperty(player, type);
-				}
-				else
+			if (owner is GamePlayer)
+			{
+				var player = owner as GamePlayer;
+
+				//generalized Properties
+				bool ownerIsArcher = player.CharacterClass.ID == (int)eCharacterClass.Scout || player.CharacterClass.ID == (int)eCharacterClass.Hunter || player.CharacterClass.ID == (int)eCharacterClass.Ranger;
+				bool typeIsManaStat = type.ID == (eProperty)player.CharacterClass.ManaStat;
+				if (typeIsManaStat && !ownerIsArcher)
 				{
-					return new NPCBonusProperty(owner, type);
+					return new BonusProperty(player, type, Bonus.Stat.Acuity);
 				}
+
+				return new BonusProperty(player, type);
+
 			}
-			return new LegacyBonusProperty(owner, type);
+			else
+			{
+				return new NPCBonusProperty(owner, type);
+			}
+			throw new ArgumentException("There exists no Property for " + type.ID);
 		}
 	}
 
@@ -100,12 +103,27 @@ namespace DOL.GS
 				int itemBonus = ItemValue;
 				int buffBonus = BuffValue;
 
+				bool isRangeBonusType = PrimaryType.ID == eProperty.ArcheryRange || PrimaryType.ID == eProperty.SpellRange;
+				if (isRangeBonusType || debuff > 0)
+				{
+					GameSpellEffect nsreduction = SpellHandler.FindEffectOnTarget(owner, "NearsightReduction");
+					if (nsreduction != null) debuff = (int)(debuff * (1.00 - nsreduction.Spell.Value * 0.01));
+				}
+
+				if (PrimaryType.ID == eProperty.ArcheryRange && owner.RangedAttackType == GameLiving.eRangedAttackType.Long)
+				{
+					abilityBonus += 50;
+					IGameEffect effect = owner.EffectList.GetOfType<TrueshotEffect>();
+					if (effect != null)
+						effect.Cancel(false);
+				}
+
 				// Stats and resist debuffs have 100% Effectiveness for player buffs, but only 50%
 				// effectiveness for item bonuses and baseBonus(?).
 
 				int unbuffedBonus = baseBonus + itemBonus;
 				buffBonus -= debuff;
-				if (buffBonus < 0 && (PrimaryType.IsStat || PrimaryType.IsResist))
+				if ((PrimaryType.IsStat || PrimaryType.IsResist) && buffBonus < 0)
 				{
 					unbuffedBonus += buffBonus / 2;
 					buffBonus = 0;
@@ -120,12 +138,8 @@ namespace DOL.GS
 					effectiveBonus -= owner.TotalConstitutionLostAtDeath;
 				}
 
-				if (PrimaryType.IsStat)
-				{
-					effectiveBonus = Math.Max(1, effectiveBonus);
-				}
-
-				return Math.Min(effectiveBonus, Cap.HardCap);
+				effectiveBonus = Math.Max(Cap.Minimum, effectiveBonus);
+				return Math.Min(effectiveBonus, Cap.Maximum);
 			}
 		}
 
@@ -202,48 +216,6 @@ namespace DOL.GS
 		}
 	}
 
-	public class InvertedPercentProperty : IBonusProperty
-	{
-		private GameLiving owner;
-		private BonusType type;
-
-		public InvertedPercentProperty(GameLiving owner, BonusType type)
-		{
-			this.owner = owner;
-			this.type = type;
-		}
-
-		public virtual int Value
-		{
-			get
-			{
-				var baseBonus = 100;
-				var debuff = owner.Boni.RawValueOf(type.From(Bonus.Debuff));
-				var effectiveValue = Math.Max(1, 100 - BuffValue + debuff - ItemValue);
-				//inverted: meaning bonuses make the returned value lower and vice versa
-				return effectiveValue;
-			}
-		}
-
-		public int BuffValue
-		{
-			get
-			{
-				return owner.Boni.RawValueOf(type.From(Bonus.BaseBuff));
-			}
-		}
-
-		public int ItemValue
-		{
-			get
-			{
-				var rawItemBonus = owner.Boni.RawValueOf(type.From(Bonus.Item));
-				var itemCap = 10;
-				return Math.Min(itemCap, rawItemBonus);
-			}
-		}
-	}
-
 	public class NPCBonusProperty : IBonusProperty
 	{
 		private GameLiving owner;
@@ -313,106 +285,5 @@ namespace DOL.GS
 				return 0;
 			}
 		}
-	}
-
-	public class LegacyBonusProperty : IBonusProperty
-	{
-		private GameLiving owner;
-		private IPropertyCalculator propertyCalculator;
-		private BonusType type;
-
-		public LegacyBonusProperty(GameLiving owner, BonusType type)
-		{
-			this.owner = owner;
-			this.type = type;
-			var propCalcFactory = new PropertyCalculatorFactory(owner);
-			this.propertyCalculator = propCalcFactory.Create(type);
-		}
-
-		public virtual int Value
-		{
-			get
-			{
-				return propertyCalculator.CalcValue(owner, type.ID);
-			}
-		}
-
-		public int BuffValue
-		{
-			get
-			{
-				return propertyCalculator.CalcValueFromBuffs(owner, type.ID);
-			}
-		}
-
-		public int ItemValue
-		{
-			get
-			{
-				return propertyCalculator.CalcValueFromItems(owner, type.ID);
-			}
-		}
-	}
-
-	public class PropertyCalculatorFactory
-	{
-		private static readonly IPropertyCalculator[] legacyCalculators = new IPropertyCalculator[(int)eProperty.MaxProperty + 1];
-		private static readonly log4net.ILog log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private static readonly bool loadedAllLegacyCalculators;
-		private GameLiving owner;
-
-		static PropertyCalculatorFactory()
-		{
-			try
-			{
-				foreach (Assembly asm in ScriptMgr.GameServerScripts)
-				{
-					foreach (Type t in asm.GetTypes())
-					{
-						try
-						{
-							if (!t.IsClass || t.IsAbstract) continue;
-							if (!typeof(IPropertyCalculator).IsAssignableFrom(t)) continue;
-							IPropertyCalculator calc = (IPropertyCalculator)Activator.CreateInstance(t);
-							foreach (PropertyCalculatorAttribute attr in t.GetCustomAttributes(typeof(PropertyCalculatorAttribute), false))
-							{
-								for (int i = (int)attr.Min; i <= (int)attr.Max; i++)
-								{
-									legacyCalculators[i] = calc;
-								}
-							}
-						}
-						catch (Exception e)
-						{
-							if (log.IsErrorEnabled)
-							{
-								log.Error("Error while working with type " + t.FullName, e);
-							}
-						}
-					}
-				}
-				loadedAllLegacyCalculators = true;
-			}
-			catch (Exception e)
-			{
-				if (log.IsErrorEnabled)
-				{
-					log.Error("GameLiving.LoadCalculators()", e);
-				}
-				loadedAllLegacyCalculators = false;
-			}
-		}
-
-		public PropertyCalculatorFactory(GameLiving owner)
-		{
-			this.owner = owner;
-		}
-
-		public IPropertyCalculator Create(BonusType type)
-		{
-			return legacyCalculators[(int)type.ID];
-		}
-
-		public bool AllCalculatorsLoaded { get { return loadedAllLegacyCalculators; } }
 	}
 }

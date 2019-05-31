@@ -220,7 +220,6 @@ namespace DOL.UnitTests.GameServer
         [Test]
         public void CalculateDamageBase_SpellDamageIs100FromGameNPCWithoutOwner_ReturnAround119()
         {
-            GameLiving.LoadCalculators(); //temporal coupling and global state
             var spell = Create.DamageSpell(100);
             var source = Create.FakeNPC();
             source.Level = 50;

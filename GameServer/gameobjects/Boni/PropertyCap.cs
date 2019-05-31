@@ -37,13 +37,21 @@ namespace DOL.GS
 			{
 				return new ResistCap(owner);
 			}
-			if (type.ID == eProperty.MeleeDamage)
+			if (type.ID == eProperty.MeleeDamage || type.ID == eProperty.ArcherySpeed)
 			{
 				return new MeleeDamageCap(owner);
 			}
 			if (type.ID == eProperty.MeleeSpeed)
 			{
 				return new MeleeSpeedCap(owner);
+			}
+			if(type.ID == eProperty.SpellRange)
+			{
+				return new SpellRangeCap(owner);
+			}
+			if(type.ID == eProperty.ArcheryRange)
+			{
+				return new ArcheryRangeCap(owner);
 			}
 
 			throw new ArgumentException("There is no PropertyCap for " + type.ID);
@@ -61,7 +69,8 @@ namespace DOL.GS
 		int BaseBuff { get; }
 		int SpecBuff { get; }
 		int ExtraBuff { get; }
-		int HardCap { get; }
+		int Maximum { get; }
+		int Minimum { get; }
 
 		int For(BonusCategory category);
 	}
@@ -88,7 +97,8 @@ namespace DOL.GS
 		public virtual int SpecBuff { get; } = 0;
 		public virtual int ExtraBuff { get; } = uncapped;
 		public virtual int Debuff { get; } = uncapped;
-		public virtual int HardCap { get; } = uncapped;
+		public virtual int Maximum { get; } = uncapped;
+		public virtual int Minimum { get; } = -uncapped;
 
 		public int For(BonusCategory category)
 		{
@@ -127,6 +137,8 @@ namespace DOL.GS
 		public override int Mythical { get { return 52; } }
 		public override int BaseBuff { get { return (int)(1.25 * owner.Level); } }
 		public override int SpecBuff { get { return (int)(1.25 * 1.5 * owner.Level); } }
+
+		public override int Minimum { get { return 1; } }
 	}
 
 	public class AcuityCap : StatCap
@@ -153,7 +165,7 @@ namespace DOL.GS
 		public override int Mythical { get { return 5; } }
 		public override int Buff { get { return 24; } }
 		public override int BaseBuff { get { return int.MaxValue; } }
-		public override int HardCap { get { return 70; } }
+		public override int Maximum { get { return 70; } }
 	}
 
 	public class EssenceResistCap : PropertyCap
@@ -177,25 +189,37 @@ namespace DOL.GS
 		public override int Debuff { get { return 10; } }
 	}
 
+	public class SpellRangeCap : PropertyCap
+	{
+		public SpellRangeCap(GameLiving owner) : base(owner) { }
+
+		public override int Item { get { return 10; } }
+		public override int BaseBuff { get { return 0; } }
+		public override int SpecBuff { get { return 5; } }
+
+		public override int Minimum { get { return -100; } }
+	}
+
+	public class ArcheryRangeCap : PropertyCap
+	{
+		public ArcheryRangeCap(GamePlayer owner) : base(owner) { }
+
+		public override int Item { get { return 10; } }
+		public override int BaseBuff { get { return 0; } }
+		public override int SpecBuff { get { return 0; } }
+
+		public override int Minimum { get { return -100; } }
+	}
+
 	public class MeleeSpeedCap : PropertyCap
 	{
 		public MeleeSpeedCap(GameLiving owner) : base(owner) { }
 
-		public override int Item { get { return 10; } }
-		public override int BaseBuff { get { return Uncapped; } }
-		public override int SpecBuff { get { return 0; } }
-		public override int ExtraBuff { get { return 0; } }
-	}
+		public override int Item => 10;
+		public override int BaseBuff => Uncapped;
+		public override int SpecBuff => 0;
+		public override int ExtraBuff => 0;
 
-	public enum eCapCategory
-	{
-		Unknown,
-		Stat,
-		Acuity,
-		Resist,
-		EssenceResist,
-		MeleeDamage,
-		MeleeSpeed,
-		__Last,
+		public override int Maximum => 99;
 	}
 }
