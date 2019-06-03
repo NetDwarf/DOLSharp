@@ -2,8 +2,6 @@
 using NSubstitute;
 using DOL.GS;
 using DOL.AI;
-using System;
-using System.Collections.Generic;
 
 namespace DOL.UnitTests.GameServer
 {

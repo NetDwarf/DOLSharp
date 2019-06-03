@@ -10827,7 +10827,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Gets sprinting flag
 		/// </summary>
-		public bool IsSprinting
+		public virtual bool IsSprinting
 		{
 			get { return m_sprintEffect != null; }
 		}

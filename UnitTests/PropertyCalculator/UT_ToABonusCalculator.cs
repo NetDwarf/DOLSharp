@@ -6,6 +6,7 @@ using DOL.Database;
 using DOL.GS.Effects;
 using NSubstitute;
 using static DOL.GS.GameObject;
+using DOL.GS.Keeps;
 
 namespace DOL.UnitTests.GameServer.PropertyCalc
 {
@@ -64,13 +65,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType ArcherySpeedBonus
-		{
-			get
-			{
-				return new BonusType(eProperty.ArcherySpeed);
-			}
-		}
+		private BonusType ArcherySpeedBonus => new BonusType(eProperty.ArcherySpeed);
 
 		private static IPropertyCalculator createArcherySpeedCalculator()
 		{
@@ -147,6 +142,19 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		}
 
 		[Test]
+		public void CalcValue_Player_120Debuff_Zero()
+		{
+			var player = Create.FakePlayer();
+			var calc = createSpellRangeCalculator();
+			player.Boni.Add(SpellRangeBonus.Debuff.Create(120));
+
+			int actual = calc.CalcValue(player, SpellRangeBonus.ID);
+
+			int expected = 0;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
 		public void CalcValue_Player_12DebuffAnd25NearsightReductionSpell_91()
 		{
 			var player = Create.FakePlayer();
@@ -166,13 +174,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType SpellRangeBonus
-		{
-			get
-			{
-				return new BonusType(eProperty.SpellRange);
-			}
-		}
+		private BonusType SpellRangeBonus => new BonusType(eProperty.SpellRange);
 
 		private static IPropertyCalculator createSpellRangeCalculator()
 		{
@@ -224,17 +226,235 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType ArcheryRangeBonus
-		{
-			get
-			{
-				return new BonusType(eProperty.ArcheryRange);
-			}
-		}
+		private BonusType ArcheryRangeBonus => new BonusType(eProperty.ArcheryRange);
 
 		private static IPropertyCalculator createArcheryRangeCalculator()
 		{
 			return new ArcheryRangePercentCalculator();
+		}
+	}
+
+	[TestFixture]
+	public class UT_MissHitPercentCalculator
+	{
+		[Test]
+		public void CalcValue_Player_5BaseBuff4SpecBuff3ExtraBuff_12()
+		{
+			var player = Create.FakePlayer();
+			var calc = createMissHitCalculator();
+			player.Boni.Add(MissHitType.BaseBuff.Create(5));
+			player.Boni.Add(MissHitType.SpecBuff.Create(4));
+			player.Boni.Add(MissHitType.ExtraBuff.Create(3));
+
+			int actual = calc.CalcValue(player, MissHitType.ID);
+
+			int expected = 12;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_Player_5Debuff_Minus5()
+		{
+			var player = Create.FakePlayer();
+			var calc = createMissHitCalculator();
+			player.Boni.Add(MissHitType.Debuff.Create(5));
+
+			int actual = calc.CalcValue(player, MissHitType.ID);
+
+			int expected = -5;
+			Assert.AreEqual(expected, actual);
+		}
+
+		private BonusType MissHitType => new BonusType(eProperty.MissHit);
+
+		private static IPropertyCalculator createMissHitCalculator()
+		{
+			return new MissHitPercentCalculator();
+		}
+	}
+
+	[TestFixture]
+	public class UT_ArcaneSyphoneCalculator
+	{
+		[Test]
+		public void CalcValue_Player_30Item_25()
+		{
+			var player = Create.FakePlayer();
+			var calc = createArcaneSyphonCalculator();
+			player.Boni.Add(ArcaneSyphonType.Item.Create(30));
+
+			int actual = calc.CalcValue(player, ArcaneSyphonType.ID);
+
+			int expected = 25;
+			Assert.AreEqual(expected, actual);
+		}
+
+		private BonusType ArcaneSyphonType => new BonusType(eProperty.ArcaneSyphon);
+
+		private static IPropertyCalculator createArcaneSyphonCalculator()
+		{
+			return new ArcaneSyphonCalculator();
+		}
+	}
+
+	[TestFixture]
+	public class UT_ArmorFactorCalculator
+	{
+		[Test]
+		public void CalcValue_L25Player_30Item_25()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 25;
+			var calc = createCalculator();
+			player.Boni.Add(ArmorFactorType.Item.Create(30));
+
+			int actual = calc.CalcValue(player, ArmorFactorType.ID);
+
+			int expected = 25;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_L50Player_100SpecBuff_93()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 50;
+			var calc = createCalculator();
+			player.Boni.Add(ArmorFactorType.SpecBuff.Create(100));
+
+			int actual = calc.CalcValue(player, ArmorFactorType.ID);
+
+			int expected = 93;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_Player_12Debuff_Minus12()
+		{
+			var player = Create.FakePlayer();
+			var calc = createCalculator();
+			player.Boni.Add(ArmorFactorType.Debuff.Create(12));
+
+			int actual = calc.CalcValue(player, ArmorFactorType.ID);
+
+			int expected = -12;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_Player_100ExtraBuff_Hundred()
+		{
+			var player = Create.FakePlayer();
+			var calc = createCalculator();
+			player.Boni.Add(ArmorFactorType.ExtraBuff.Create(100));
+
+			int actual = calc.CalcValue(player, ArmorFactorType.ID);
+
+			int expected = 100;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_L50NPC_604()
+		{
+			var player = Create.FakeNPC();
+			player.Level = 50;
+			var calc = createCalculator();
+
+			int actual = calc.CalcValue(player, ArmorFactorType.ID);
+
+			int expected = 604;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_BaseLevel50KeepDoor_50()
+		{
+			var keep = new GameKeep();
+			keep.DBKeep = new DBKeep();
+			keep.BaseLevel = 50;
+			var keepDoor = new GameKeepDoor();
+			keepDoor.Component = new GameKeepComponent();
+			keepDoor.Component.AbstractKeep = keep;
+			var calc = createCalculator();
+
+			int actual = calc.CalcValue(keepDoor, ArmorFactorType.ID);
+			int expected = 50;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_BaseLevel50TowerDoor_25()
+		{
+			var keep = new GameKeepTower();
+			keep.DBKeep = new DBKeep();
+			keep.BaseLevel = 50;
+			var keepDoor = new GameKeepDoor();
+			keepDoor.Component = new GameKeepComponent();
+			keepDoor.Component.AbstractKeep = keep;
+			var calc = createCalculator();
+
+			int actual = calc.CalcValue(keepDoor, ArmorFactorType.ID);
+			int expected = 25;
+			Assert.AreEqual(expected, actual);
+		}
+
+
+		private BonusType ArmorFactorType => new BonusType(eProperty.ArmorFactor);
+
+		private static IPropertyCalculator createCalculator()
+		{
+			return new ArmorFactorCalculator();
+		}
+	}
+
+	[TestFixture]
+	public class UT_ArmorAbsorptionCalculator
+	{
+		[Test]
+		public void CalcValue_Player_100Ability_50()
+		{
+			var player = Create.FakePlayer();
+			var calc = createCalculator();
+			player.Boni.Add(ArmorAbsorptionType.Ability.Create(100));
+
+			int actual = calc.CalcValue(player, ArmorAbsorptionType.ID);
+
+			int expected = 50;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_L50NPC_17()
+		{
+			var npc = Create.FakeNPC();
+			npc.Level = 50;
+			var calc = createCalculator();
+
+			int actual = calc.CalcValue(npc, ArmorAbsorptionType.ID);
+
+			int expected = 17;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_LevelOneNPC_MinusTen()
+		{
+			var npc = Create.FakeNPC();
+			npc.Level = 1;
+			var calc = createCalculator();
+
+			int actual = calc.CalcValue(npc, ArmorAbsorptionType.ID);
+
+			int expected = -10;
+			Assert.AreEqual(expected, actual);
+		}
+
+		private BonusType ArmorAbsorptionType => new BonusType(eProperty.ArmorAbsorption);
+
+		private static IPropertyCalculator createCalculator()
+		{
+			return new ArmorAbsorptionCalculator();
 		}
 	}
 }

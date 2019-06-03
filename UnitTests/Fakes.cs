@@ -1,7 +1,8 @@
-﻿using System;
-using DOL.AI;
+﻿using DOL.AI;
 using DOL.Database;
 using DOL.GS;
+using DOL.GS.Keeps;
+using NSubstitute;
 
 namespace DOL.UnitTests.GameServer
 {
@@ -13,12 +14,17 @@ namespace DOL.UnitTests.GameServer
         public int modifiedSpellLevel;
         public int modifiedEffectiveLevel;
         private int totalConLostOnDeath;
+		public bool isInCombat = false;
+		public bool isSprinting = false;
 
         public override ICharacterClass CharacterClass { get { return characterClass; } }
 
         public FakePlayer() : base(null, null) { }
 
-        public override void LoadFromDatabase(DataObject obj)
+		public override bool InCombat => isInCombat;
+		public override bool IsSprinting => isSprinting;
+
+		public override void LoadFromDatabase(DataObject obj)
         {
         }
 
@@ -48,6 +54,21 @@ namespace DOL.UnitTests.GameServer
             set { totalConLostOnDeath = value; }
         }
     }
+
+	public class FakeNPC : GameNPC
+	{
+		public bool isInCombat = false;
+
+		public FakeNPC() : base(Substitute.For<ABrain>()){}
+
+		public override bool InCombat => isInCombat;
+	}
+
+	public class FakeKeepDoor : GameKeepDoor
+	{
+		public int maxHealth = 0;
+		public override int MaxHealth{ get { return maxHealth; } }
+	}
 
 	public class FakeRace : LivingRace
 	{

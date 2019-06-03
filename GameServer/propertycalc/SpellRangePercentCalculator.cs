@@ -27,7 +27,7 @@ namespace DOL.GS.PropertyCalc
 		{
 			var bonusProperties = new BonusProperties(living);
 			var value = bonusProperties.ValueOf(new BonusType(property));
-			return Math.Max(0, 100 + value);
+			return 100 + value;
 		}
 
         public override int CalcValueFromBuffs(GameLiving living, eProperty property)

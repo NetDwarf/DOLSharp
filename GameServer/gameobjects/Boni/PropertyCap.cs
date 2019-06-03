@@ -29,30 +29,19 @@ namespace DOL.GS
 					return new AcuityCap(owner);
 				}
 			}
-			if(type.ID == eProperty.Resist_Natural)
-			{
-				return new EssenceResistCap(owner);
-			}
-			if(type.IsResist)
-			{
-				return new ResistCap(owner);
-			}
+			if(type.ID == eProperty.Resist_Natural) { return new EssenceResistCap(owner); }
+			if(type.IsResist) { return new ResistCap(owner); }
 			if (type.ID == eProperty.MeleeDamage || type.ID == eProperty.ArcherySpeed)
 			{
 				return new MeleeDamageCap(owner);
 			}
-			if (type.ID == eProperty.MeleeSpeed)
-			{
-				return new MeleeSpeedCap(owner);
-			}
-			if(type.ID == eProperty.SpellRange)
-			{
-				return new SpellRangeCap(owner);
-			}
-			if(type.ID == eProperty.ArcheryRange)
-			{
-				return new ArcheryRangeCap(owner);
-			}
+			if (type.ID == eProperty.MeleeSpeed) { return new MeleeSpeedCap(owner); }
+			if(type.ID == eProperty.SpellRange) { return new SpellRangeCap(owner); }
+			if(type.ID == eProperty.ArcheryRange) { return new ArcheryRangeCap(owner); }
+			if (type.ID == eProperty.MissHit) { return new MissHit(owner); }
+			if (type.ID == eProperty.ArcaneSyphon) { return new ArcaneSyphonCap(owner); }
+			if (type.ID == eProperty.ArmorFactor) { return new ArmorFactorCap(owner); }
+			if(type.ID == eProperty.ArmorAbsorption) { return new ArmorAbsorptionCap(owner); }
 
 			throw new ArgumentException("There is no PropertyCap for " + type.ID);
 		}
@@ -75,30 +64,29 @@ namespace DOL.GS
 		int For(BonusCategory category);
 	}
 
-	public abstract class PropertyCap : IPropertyCap
+	public abstract class DefaultPropertyCap : IPropertyCap
 	{
 		protected GameLiving owner;
-		private static int uncapped = int.MaxValue;
 
-		protected int Uncapped { get { return uncapped; } }
+		protected int Uncapped => int.MaxValue;
 
-		public PropertyCap(GameLiving owner)
+		public DefaultPropertyCap(GameLiving owner)
 		{
 			this.owner = owner;
 		}
 
-		public virtual int Base { get; } = uncapped;
-		public virtual int Ability { get; } = uncapped;
-		public virtual int Item { get; } = uncapped;
-		public virtual int ItemOvercap { get; } = 0;
-		public virtual int Mythical { get; } = 0;
-		public virtual int Buff { get; } = uncapped;
-		public virtual int BaseBuff { get; } = 0;
-		public virtual int SpecBuff { get; } = 0;
-		public virtual int ExtraBuff { get; } = uncapped;
-		public virtual int Debuff { get; } = uncapped;
-		public virtual int Maximum { get; } = uncapped;
-		public virtual int Minimum { get; } = -uncapped;
+		public virtual int Base => Uncapped;
+		public virtual int Ability => Uncapped;
+		public virtual int Item => Uncapped;
+		public virtual int ItemOvercap => 0;
+		public virtual int Mythical => 0;
+		public virtual int Buff => Uncapped;
+		public virtual int BaseBuff => Uncapped;
+		public virtual int SpecBuff => Uncapped;
+		public virtual int ExtraBuff => Uncapped;
+		public virtual int Debuff => Uncapped;
+		public virtual int Maximum => Uncapped;
+		public virtual int Minimum => -Uncapped;
 
 		public int For(BonusCategory category)
 		{
@@ -128,90 +116,89 @@ namespace DOL.GS
 		}
 	}
 
-	public class StatCap : PropertyCap
+	public class StatCap : DefaultPropertyCap
 	{
 		public StatCap(GameLiving owner) : base(owner) { }
 
-		public override int Item { get { return (int)(1.5 * owner.Level); } }
-		public override int ItemOvercap { get { return (int)(0.5 * owner.Level + 1); } }
-		public override int Mythical { get { return 52; } }
-		public override int BaseBuff { get { return (int)(1.25 * owner.Level); } }
-		public override int SpecBuff { get { return (int)(1.25 * 1.5 * owner.Level); } }
+		public override int Item => (int)(1.5 * owner.Level);
+		public override int ItemOvercap => (int)(0.5 * owner.Level + 1);
+		public override int Mythical => 52;
+		public override int BaseBuff => (int)(1.25 * owner.Level);
+		public override int SpecBuff => (int)(1.25 * 1.5 * owner.Level);
 
-		public override int Minimum { get { return 1; } }
+		public override int Minimum => 1;
 	}
 
 	public class AcuityCap : StatCap
 	{
 		public AcuityCap(GameLiving owner) : base(owner) { }
 		
-		public override int BaseBuff { get { return 0; } }
-		public override int SpecBuff { get { return 0; } }
+		public override int BaseBuff => 0;
+		public override int SpecBuff => 0;
 	}
 
 	public class ListCasterAcuityCap : AcuityCap
 	{
 		public ListCasterAcuityCap(GameLiving owner) : base(owner) { }
 
-		public override int BaseBuff { get { return (int)(1.25 * 1.5 * owner.Level); } }
-		public override int SpecBuff { get { return (int)(1.25 * 1.5 * owner.Level); } }
+		public override int BaseBuff => (int)(1.25 * 1.5 * owner.Level);
+		public override int SpecBuff => (int)(1.25 * 1.5 * owner.Level);
 	}
 
-	public class ResistCap : PropertyCap
+	public class ResistCap : DefaultPropertyCap
 	{
 		public ResistCap(GameLiving owner) : base(owner) { }
 
-		public override int Item { get { return (int)(0.5 * owner.Level + 1); } }
-		public override int Mythical { get { return 5; } }
-		public override int Buff { get { return 24; } }
-		public override int BaseBuff { get { return int.MaxValue; } }
-		public override int Maximum { get { return 70; } }
+		public override int Item => (int)(0.5 * owner.Level + 1);
+		public override int Mythical => 5;
+		public override int Buff => 24;
+		public override int Maximum => 70; 
 	}
 
-	public class EssenceResistCap : PropertyCap
+	public class EssenceResistCap : DefaultPropertyCap
 	{
 		public EssenceResistCap(GameLiving owner) : base(owner) { }
 
-		public override int Item { get { return (int)(0.5 * owner.Level + 1); } }
-		public override int BaseBuff { get { return 25; } }
-		public override int SpecBuff { get { return 0; } }
-		public override int ExtraBuff { get { return 0; } }
+		public override int Item => (int)(0.5 * owner.Level + 1);
+		public override int BaseBuff => 25;
+		public override int SpecBuff => 0;
+		public override int ExtraBuff => 0;
 	}
 
-	public class MeleeDamageCap : PropertyCap
+	public class MeleeDamageCap : DefaultPropertyCap
 	{
 		public MeleeDamageCap(GameLiving owner) : base(owner) { }
 		
-		public override int Item { get { return 10; } }
-		public override int BaseBuff { get { return Uncapped; } }
-		public override int SpecBuff { get { return Uncapped; } }
-		public override int ExtraBuff { get { return 0; } }
-		public override int Debuff { get { return 10; } }
+		public override int Item => 10;
+		public override int BaseBuff => Uncapped;
+		public override int SpecBuff => Uncapped;
+		public override int ExtraBuff => 0;
+		public override int Debuff => 10;
 	}
 
-	public class SpellRangeCap : PropertyCap
+	public class SpellRangeCap : DefaultPropertyCap
 	{
 		public SpellRangeCap(GameLiving owner) : base(owner) { }
 
-		public override int Item { get { return 10; } }
-		public override int BaseBuff { get { return 0; } }
-		public override int SpecBuff { get { return 5; } }
+		public override int Item => 10;
+		public override int BaseBuff => 0;
+		public override int SpecBuff => 5;
 
-		public override int Minimum { get { return -100; } }
+		public override int Minimum => -100;
 	}
 
-	public class ArcheryRangeCap : PropertyCap
+	public class ArcheryRangeCap : DefaultPropertyCap
 	{
 		public ArcheryRangeCap(GamePlayer owner) : base(owner) { }
 
-		public override int Item { get { return 10; } }
-		public override int BaseBuff { get { return 0; } }
-		public override int SpecBuff { get { return 0; } }
+		public override int Item => 10;
+		public override int BaseBuff => 0;
+		public override int SpecBuff => 0;
 
-		public override int Minimum { get { return -100; } }
+		public override int Minimum => -100;
 	}
 
-	public class MeleeSpeedCap : PropertyCap
+	public class MeleeSpeedCap : DefaultPropertyCap
 	{
 		public MeleeSpeedCap(GameLiving owner) : base(owner) { }
 
@@ -221,5 +208,32 @@ namespace DOL.GS
 		public override int ExtraBuff => 0;
 
 		public override int Maximum => 99;
+	}
+
+	public class ArcaneSyphonCap : DefaultPropertyCap
+	{
+		public ArcaneSyphonCap(GameLiving owner) : base(owner) { }
+
+		public override int Item => 25;
+	}
+
+	public class ArmorFactorCap : DefaultPropertyCap
+	{
+		public ArmorFactorCap(GameLiving owner) : base(owner) { }
+
+		public override int Item => owner.Level;
+		public override int SpecBuff => (int)(owner.Level * 1.875);
+	}
+
+	public class ArmorAbsorptionCap :DefaultPropertyCap
+	{
+		public ArmorAbsorptionCap(GameLiving owner) : base(owner) { }
+
+		public override int Maximum => 50;
+	}
+
+	public class MissHit : DefaultPropertyCap
+	{
+		public MissHit(GameLiving owner) : base(owner) { }
 	}
 }

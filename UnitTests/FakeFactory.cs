@@ -33,13 +33,17 @@ namespace DOL.UnitTests.GameServer
             return player;
         }
 
-        public static GameNPC FakeNPC()
+        public static FakeNPC FakeNPC()
         {
-            var brain = Substitute.For<ABrain>();
-            var npc = new GameNPC(brain);
+            var npc = new FakeNPC();
 			npc.LivingRace = new FakeRace();
             return npc;
         }
+
+		public static FakeKeepDoor FakeKeepDoor()
+		{
+			return new FakeKeepDoor();
+		}
 
         public static GamePet Pet(GameLiving owner)
         {
