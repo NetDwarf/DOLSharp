@@ -67,7 +67,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		public void CalcValue_Player_7SpecBuff_Zero()
 		{
 			var living = Create.FakePlayer();
-			living.Boni.Add(EndurangeRegenType.SpecBuff.Create(5));
+			living.Boni.Add(EndurangeRegenType.SpecBuff.Create(7));
 			var calc = createCalculator();
 			setRegenMultiplier(1);
 
@@ -81,7 +81,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 		private IPropertyCalculator createCalculator()
 		{
-			return new EnduranceRegenerationRateCalculator();
+			var calc = new EnduranceRegenerationRateCalculator();
+			calc.RandomRoudingUpEnabled = false;
+			return calc;
 		}
 
 		private void setRegenMultiplier(double value)
@@ -142,7 +144,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 		private IPropertyCalculator createCalculator()
 		{
-			return new PowerRegenerationRateCalculator();
+			var calc = new PowerRegenerationRateCalculator();
+			calc.RandomRoudingUpEnabled = false;
+			return calc;
 		}
 
 		private void setRegenMultiplier(double value)
@@ -232,7 +236,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 		private IPropertyCalculator createCalculator()
 		{
-			return new HealthRegenerationRateCalculator();
+			var calc = new HealthRegenerationRateCalculator();
+			calc.RandomRoudingUpEnabled = false;
+			return calc;
 		}
 
 		private void setRegenMultiplier(double value)

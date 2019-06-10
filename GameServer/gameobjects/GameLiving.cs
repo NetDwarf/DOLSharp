@@ -4697,6 +4697,8 @@ namespace DOL.GS
 
 		public virtual Boni Boni { get; }
 
+		public BonusProperties BonusProperties => new BonusProperties(this);
+
 		private IPropertyIndexer createIndexer(BonusCategory category)
 		{
 			return new IndexerBoniAdapter(Boni, category);
@@ -4794,12 +4796,7 @@ namespace DOL.GS
 			return 0;
 		}
 
-		/// <summary>
-		/// Retrieve a property value of this living's buff bonuses only;
-		/// caps and cap increases apply.
-		/// </summary>
-		/// <param name="property"></param>
-		/// <returns></returns>
+		[Obsolete("Use BonusProperties instead!")]
 		public virtual int GetModifiedFromBuffs(eProperty property)
 		{
 			if (m_propertyCalc != null && m_propertyCalc[(int)property] != null)
@@ -4813,12 +4810,7 @@ namespace DOL.GS
 			return 0;
 		}
 
-		/// <summary>
-		/// Retrieve a property value of this living's item bonuses only;
-		/// caps and cap increases apply.
-		/// </summary>
-		/// <param name="property"></param>
-		/// <returns></returns>
+		[Obsolete("Use BonusProperties instead!")]
 		public virtual int GetModifiedFromItems(eProperty property)
 		{
 			if (m_propertyCalc != null && m_propertyCalc[(int)property] != null)

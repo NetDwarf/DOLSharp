@@ -20,15 +20,6 @@ using System;
 
 namespace DOL.GS.PropertyCalc
 {
-	/// <summary>
-	/// The power regen rate calculator
-	/// 
-	/// BuffBonusCategory1 is used for all buffs
-	/// BuffBonusCategory2 is used for all debuffs (positive values expected here)
-	/// BuffBonusCategory3 unused
-	/// BuffBonusCategory4 unused
-	/// BuffBonusMultCategory1 unused
-	/// </summary>
 	[PropertyCalculator(eProperty.PowerRegenerationRate)]
 	public class PowerRegenerationRateCalculator : PropertyCalculator
 	{
@@ -48,26 +39,23 @@ namespace DOL.GS.PropertyCalc
 				regen /= 2.0;
 
 			// tolakram - there is no difference per tic between combat and non combat
-
-			if (regen != 0 && ServerProperties.Properties.MANA_REGEN_RATE != 1)
-				regen *= ServerProperties.Properties.MANA_REGEN_RATE;
+			
+			regen *= ServerProperties.Properties.MANA_REGEN_RATE;
 
 			double decimals = regen - (int)regen;
-			if (Util.ChanceDouble(decimals)) 
+			if (RandomRoudingUpEnabled && Util.ChanceDouble(decimals)) 
 			{
 				regen += 1;	// compensate int rounding error
 			}
 
-			int debuff = living.SpecBuffBonusCategory[(int)property];
-			if (debuff < 0)
-				debuff = -debuff;
+			var bonusProperties = new BonusProperties(living);
+			regen += bonusProperties.ValueOf(new BonusType(property));
 
-			regen += living.BaseBuffBonusCategory[(int)property] + living.AbilityBonus[(int)property] + living.ItemBonus[(int)property] - debuff;
-
-			if (regen < 1)
-				regen = 1;
+			regen = Math.Max(1, regen);
 
 			return (int)regen;
 		}
+
+		public bool RandomRoudingUpEnabled { get; set; } = true;
 	}
 }

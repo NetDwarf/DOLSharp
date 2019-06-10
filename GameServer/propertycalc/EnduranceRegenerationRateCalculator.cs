@@ -20,38 +20,15 @@ using System;
 
 namespace DOL.GS.PropertyCalc
 {
-	/// <summary>
-	/// The health regen rate calculator
-	/// 
-	/// BuffBonusCategory1 is used for all buffs
-	/// BuffBonusCategory2 is used for all debuffs (positive values expected here)
-	/// BuffBonusCategory3 unused
-	/// BuffBonusCategory4 unused
-	/// BuffBonusMultCategory1 unused
-	/// </summary>
 	[PropertyCalculator(eProperty.EnduranceRegenerationRate)]
 	public class EnduranceRegenerationRateCalculator : PropertyCalculator
 	{
-		public EnduranceRegenerationRateCalculator() {}
-
-		/// <summary>
-		/// calculates the final property value
-		/// </summary>
-		/// <param name="living"></param>
-		/// <param name="property"></param>
-		/// <returns></returns>
 		public override int CalcValue(GameLiving living, eProperty property)
 		{
-			int debuff = living.SpecBuffBonusCategory[(int)property];
-			if (debuff < 0)
-				debuff = -debuff;
+			var bonusProperties = new BonusProperties(living);
+			double regen = bonusProperties.ValueOf(new BonusType(property));
 
-			// buffs allow to regenerate endurance even in combat and while moving
-			double regen =
-				 living.BaseBuffBonusCategory[(int)property]
-				+living.ItemBonus[(int)property];
-
-			if (regen == 0 && living is GamePlayer) //&& ((GamePlayer)living).HasAbility(Abilities.Tireless))
+			if (regen == 0 && living is GamePlayer) //Tireless ability for all players
 				regen++;
 
 			/*    Patch 1.87 - COMBAT AND REGENERATION CHANGES
@@ -60,33 +37,25 @@ namespace DOL.GS.PropertyCalc
  				  Players will no longer need to sit to regenerate faster.
 			    - Fatigue now regenerates at the standing rate while moving.
 			*/
-			if (!living.InCombat)
+
+			if (!living.InCombat && living is GamePlayer && !((GamePlayer)living).IsSprinting)
 			{
-				if (living is GamePlayer)
-				{
-					if (!((GamePlayer)living).IsSprinting)
-					{
-						regen += 4;
-					}
-				}
+				regen += 4;
 			}
-				
 
-			regen -= debuff;
-
-			if (regen < 0)
-				regen = 0;
-
-			if (regen != 0 && ServerProperties.Properties.ENDURANCE_REGEN_RATE != 1)
-				regen *= ServerProperties.Properties.ENDURANCE_REGEN_RATE;
+			regen = Math.Max(0, regen);
+			
+			regen *= ServerProperties.Properties.ENDURANCE_REGEN_RATE;
 
 			double decimals = regen - (int)regen;
-			if (Util.ChanceDouble(decimals))
+			if (RandomRoudingUpEnabled && Util.ChanceDouble(decimals))
 			{
 				regen += 1;	// compensate int rounding error
 			}
 
 			return (int)regen;
 		}
+
+		public bool RandomRoudingUpEnabled { get; set; } = true;
 	}
 }

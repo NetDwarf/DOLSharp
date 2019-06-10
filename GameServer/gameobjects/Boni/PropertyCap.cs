@@ -13,10 +13,7 @@ namespace DOL.GS
 
 		public IPropertyCap Create(BonusType type)
 		{
-			if(type.IsBaseStat)
-			{
-				return new StatCap(owner);
-			}
+			if (type.IsBaseStat) { return new StatCap(owner); }
 			if(type.IsAcuityStat)
 			{
 				bool isListCaster = owner.CharacterClass.ClassType == eClassType.ListCaster;
@@ -36,12 +33,13 @@ namespace DOL.GS
 				return new MeleeDamageCap(owner);
 			}
 			if (type.ID == eProperty.MeleeSpeed) { return new MeleeSpeedCap(owner); }
-			if(type.ID == eProperty.SpellRange) { return new SpellRangeCap(owner); }
-			if(type.ID == eProperty.ArcheryRange) { return new ArcheryRangeCap(owner); }
+			if (type.ID == eProperty.SpellRange) { return new SpellRangeCap(owner); }
+			if (type.ID == eProperty.ArcheryRange) { return new ArcheryRangeCap(owner); }
 			if (type.ID == eProperty.MissHit) { return new MissHit(owner); }
 			if (type.ID == eProperty.ArcaneSyphon) { return new ArcaneSyphonCap(owner); }
 			if (type.ID == eProperty.ArmorFactor) { return new ArmorFactorCap(owner); }
-			if(type.ID == eProperty.ArmorAbsorption) { return new ArmorAbsorptionCap(owner); }
+			if (type.ID == eProperty.ArmorAbsorption) { return new ArmorAbsorptionCap(owner); }
+			if (type.IsRegen) { return new RegenCap(owner); }
 
 			throw new ArgumentException("There is no PropertyCap for " + type.ID);
 		}
@@ -64,7 +62,7 @@ namespace DOL.GS
 		int For(BonusCategory category);
 	}
 
-	public abstract class DefaultPropertyCap : IPropertyCap
+	public class DefaultPropertyCap : IPropertyCap
 	{
 		protected GameLiving owner;
 
@@ -235,5 +233,12 @@ namespace DOL.GS
 	public class MissHit : DefaultPropertyCap
 	{
 		public MissHit(GameLiving owner) : base(owner) { }
+	}
+
+	public class RegenCap : DefaultPropertyCap
+	{
+		public RegenCap(GameLiving owner) : base(owner) { }
+
+		public override int SpecBuff => 0;
 	}
 }

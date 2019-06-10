@@ -22,26 +22,9 @@ using DOL.GS.Keeps;
 
 namespace DOL.GS.PropertyCalc
 {
-	/// <summary>
-	/// The health regen rate calculator
-	/// 
-	/// BuffBonusCategory1 is used for all buffs
-	/// BuffBonusCategory2 is used for all debuffs (positive values expected here)
-	/// BuffBonusCategory3 unused
-	/// BuffBonusCategory4 unused
-	/// BuffBonusMultCategory1 unused
-	/// </summary>
 	[PropertyCalculator(eProperty.HealthRegenerationRate)]
 	public class HealthRegenerationRateCalculator : PropertyCalculator
 	{
-		public HealthRegenerationRateCalculator() {}
-
-		/// <summary>
-		/// calculates the final property value
-		/// </summary>
-		/// <param name="living"></param>
-		/// <param name="property"></param>
-		/// <returns></returns>
 		public override int CalcValue(GameLiving living, eProperty property)
 		{
 			if (living.IsDiseased)
@@ -69,33 +52,26 @@ namespace DOL.GS.PropertyCalc
 			// assumes NPC regen is now half as effective as GamePlayer (as noted above) - tolakram
 			// http://www.dolserver.net/viewtopic.php?f=16&t=13197
 
-			if (living is GameNPC)
+			if (living is GameNPC && living.InCombat)
 			{
-				if (living.InCombat)
-					regen /= 2.0;
+				regen /= 2.0;
 			}
             
-			if (regen != 0 && ServerProperties.Properties.HEALTH_REGEN_RATE != 1)
-				regen *= ServerProperties.Properties.HEALTH_REGEN_RATE;
+			regen *= ServerProperties.Properties.HEALTH_REGEN_RATE;
 
 			double decimals = regen - (int)regen;
-			if (Util.ChanceDouble(decimals)) 
+			if (RandomRoudingUpEnabled && Util.ChanceDouble(decimals)) 
 			{
 				regen += 1;	// compensate int rounding error
 			}
+			var bonusProperties = new BonusProperties(living);
+			regen += bonusProperties.ValueOf(new BonusType(property));
 
-			regen += living.ItemBonus[(int)property];
-
-			int debuff = living.SpecBuffBonusCategory[(int)property];
-			if (debuff < 0)
-				debuff = -debuff;
-
-			regen += living.BaseBuffBonusCategory[(int)property] - debuff;
-
-			if (regen < 1)
-				regen = 1;
+			regen = Math.Max(1, regen);
 
 			return (int)regen;
 		}
+
+		public bool RandomRoudingUpEnabled { get; set; } = true;
 	}
 }

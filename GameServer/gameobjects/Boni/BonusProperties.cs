@@ -91,7 +91,7 @@ namespace DOL.GS
 			this.affectingTypes = affectingTypes;
 		}
 
-		private BonusType PrimaryType { get { return affectingTypes[0]; } }
+		private BonusType PrimaryType => affectingTypes[0]; 
 
 		public virtual int Value
 		{
@@ -109,6 +109,7 @@ namespace DOL.GS
 				int buffBonus = BuffValue;
 
 				bool isRangeBonusType = PrimaryType.ID == eProperty.ArcheryRange || PrimaryType.ID == eProperty.SpellRange;
+
 				if (isRangeBonusType || debuff > 0)
 				{
 					GameSpellEffect nsreduction = SpellHandler.FindEffectOnTarget(owner, "NearsightReduction");
@@ -127,6 +128,7 @@ namespace DOL.GS
 				// effectiveness for item bonuses and baseBonus(?).
 
 				int unbuffedBonus = baseBonus + itemBonus;
+				
 				buffBonus -= debuff;
 				if ((PrimaryType.IsStat || PrimaryType.IsResist) && buffBonus < 0)
 				{
@@ -239,22 +241,6 @@ namespace DOL.GS
 				var boni = owner.Boni;
 
 				int baseBonus = boni.RawValueOf(Bonus.Base.ComponentOf(type));
-				if(type.ID == eProperty.ArmorFactor)
-				{
-					baseBonus += (int)((1 + owner.Level / 170.0) * owner.Level * 9.34);
-				}
-				if(type.ID == eProperty.ArmorAbsorption)
-				{
-					var living = owner;
-					int abs = 0;
-					if (living.Level >= 30) abs = 27;
-					else if (living.Level >= 20) abs = 19;
-					else if (living.Level >= 10) abs = 10;
-
-					abs += (living.GetModified(eProperty.Constitution)
-						+ living.GetModified(eProperty.Dexterity) - 120) / 12;
-					baseBonus += abs;
-				}
 				int abilityBonus = boni.RawValueOf(Bonus.Ability.ComponentOf(type));
 				int debuff = boni.RawValueOf(Bonus.Debuff.ComponentOf(type));
 

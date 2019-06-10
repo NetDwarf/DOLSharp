@@ -53,6 +53,7 @@
 			bool isItemStatOvercap = isItem && type.ID >= eProperty.StrCapBonus && type.ID <= eProperty.AcuCapBonus;
 			bool isMythical = isItem && type.ID >= eProperty.MythicalStatCapBonus_First && type.ID <= eProperty.MythicalStatCapBonus_Last;
 			bool isResistOvercap = isItem && type.ID >= eProperty.ResCapBonus_First && type.ID <= eProperty.ResCapBonus_Last;
+			bool isRegenDebuff = category.Equals(Bonus.SpecBuff) && type.IsRegen;
 
 			if (type.ID == eProperty.AcuCapBonus)
 			{
@@ -78,6 +79,11 @@
 			{
 				typeID = type.ID - eProperty.ResCapBonus_First + eProperty.Resist_First;
 				categoryID = ePropertyCategory.Mythical;
+			}
+			else if(isRegenDebuff)
+			{
+				typeID = type.ID;
+				categoryID = ePropertyCategory.Debuff;
 			}
 			else
 			{
@@ -193,6 +199,14 @@
 			get
 			{
 				return ID >= eProperty.Resist_First && ID <= eProperty.Resist_Last || ID == eProperty.Resist_Natural;
+			}
+		}
+
+		public bool IsRegen
+		{
+			get
+			{
+				return ID == eProperty.HealthRegenerationRate || ID == eProperty.PowerRegenerationRate || ID == eProperty.EnduranceRegenerationRate;
 			}
 		}
 

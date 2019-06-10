@@ -102,6 +102,19 @@ namespace DOL.UnitTests.GameServer
 			Assert.AreEqual(expected, actual);
 		}
 
+		[Test]
+		public void ValueOf_DebuffHealthRegen_2HealthRegenSpecBuff_2()
+		{
+			var boni = createBoni();
+			var healthRegen = new BonusType(eProperty.HealthRegenerationRate);
+
+			boni.Add(healthRegen.SpecBuff.Create(2));
+
+			int actual = boni.RawValueOf(healthRegen.Debuff);
+			int expected = 2;
+			Assert.AreEqual(expected, actual);
+		}
+
 		private Boni createBoni()
 		{
 			return new Boni();

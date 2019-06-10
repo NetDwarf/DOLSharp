@@ -18,6 +18,7 @@
  */
 using System;
 using System.Collections.Generic;
+using DOL.AI;
 using DOL.AI.Brain;
 using DOL.Database;
 using DOL.Events;
@@ -75,7 +76,7 @@ namespace DOL.GS
 		                      int summonHitsBonus) : base(npcTemplate)
 		{
 			// Transfer bonuses.
-			
+
 			m_summonConBonus = summonConBonus;
 			m_summonHitsBonus = summonHitsBonus;
 
@@ -89,10 +90,10 @@ namespace DOL.GS
 					LoadEquipmentTemplate("barehand_weapon");
 					InventoryItem item;
 					if (Inventory != null &&
-					    (item = Inventory.GetItem(eInventorySlot.RightHandWeapon)) != null)
+						(item = Inventory.GetItem(eInventorySlot.RightHandWeapon)) != null)
 						item.ProcSpellID = (int)Procs.Stun;
 					break;
-				case "reanimated servant" :
+				case "reanimated servant":
 					LoadEquipmentTemplate("reanimated_servant");
 					break;
 				case "necroservant":
@@ -101,7 +102,7 @@ namespace DOL.GS
 				case "greater necroservant":
 					LoadEquipmentTemplate("barehand_weapon");
 					if (Inventory != null &&
-					    (item = Inventory.GetItem(eInventorySlot.RightHandWeapon)) != null)
+						(item = Inventory.GetItem(eInventorySlot.RightHandWeapon)) != null)
 						item.ProcSpellID = (int)Procs.Poison;
 					break;
 				case "abomination":
@@ -113,14 +114,25 @@ namespace DOL.GS
 			}
 		}
 
+		private NecromancerPet(ABrain brain, int summonConBonus, int summonHitsBonus) : base(brain)
+		{
+			m_summonConBonus = summonConBonus;
+			m_summonHitsBonus = summonHitsBonus;
+		}
+
+		public static NecromancerPet CreateTestableNecromancerPet(ABrain brain, int summonConBonus, int summonHitsBonus)
+		{
+			return new NecromancerPet(brain, summonConBonus, summonHitsBonus);
+		}
+
 		#region Stats
 
-		/// <summary>
-		/// Get modified bonuses for the pet; some bonuses come from the shade,
-		/// some come from the pet.
-		/// </summary>
-		/// <param name="property"></param>
-		/// <returns></returns>
+			/// <summary>
+			/// Get modified bonuses for the pet; some bonuses come from the shade,
+			/// some come from the pet.
+			/// </summary>
+			/// <param name="property"></param>
+			/// <returns></returns>
 		public override int GetModified(eProperty property)
 		{
 			if (Brain == null || (Brain as IControlledBrain) == null)
@@ -128,99 +140,70 @@ namespace DOL.GS
 
             GameLiving owner = (Brain as IControlledBrain).GetLivingOwner();
 
-			switch (property)
+			var bonusType = new BonusType(property);
+			if (bonusType.IsBaseStat || bonusType.IsResist)
 			{
-				case eProperty.Strength:
-				case eProperty.Dexterity:
-				case eProperty.Quickness:
-				case eProperty.Resist_Crush:
-				case eProperty.Resist_Body:
-				case eProperty.Resist_Cold:
-				case eProperty.Resist_Energy:
-				case eProperty.Resist_Heat:
-				case eProperty.Resist_Matter:
-				case eProperty.Resist_Slash:
-				case eProperty.Resist_Spirit:
-				case eProperty.Resist_Thrust:
-					{
-						// Get item bonuses from the shade, but buff bonuses from the pet.
+				int itemBonus = 0;
+				if (bonusType.ID != eProperty.Constitution)
+				{
+					itemBonus = owner.BonusProperties.ItemValueOf(bonusType);
+				}
+				int buffBonus = BonusProperties.BuffValueOf(bonusType);
+				int debuff = DebuffCategory[(int)property];
 
-						int itemBonus = owner.GetModifiedFromItems(property);
-						int buffBonus = GetModifiedFromBuffs(property);
-						int debuff = DebuffCategory[(int)property];
+				// Base stats from the pet; add this to item bonus
+				// afterwards, as it is treated the same way for
+				// debuffing purposes.
 
-						// Base stats from the pet; add this to item bonus
-						// afterwards, as it is treated the same way for
-						// debuffing purposes.
+				int baseBonus = 0;
+				switch (property)
+				{
+					case eProperty.Strength:
+						baseBonus = Strength;
+						break;
+					case eProperty.Dexterity:
+						baseBonus = Dexterity;
+						break;
+					case eProperty.Quickness:
+						baseBonus = Quickness;
+						break;
+					case eProperty.Constitution:
+						baseBonus = Constitution;
+						break;
+				}
 
-						int baseBonus = 0;
-						switch (property)
-						{
-							case eProperty.Strength:
-								baseBonus = Strength;
-								break;
-							case eProperty.Dexterity:
-								baseBonus = Dexterity;
-								break;
-							case eProperty.Quickness:
-								baseBonus = Quickness;
-								break;
-						}
+				itemBonus += baseBonus;
 
-						itemBonus += baseBonus;
+				// Apply debuffs. 100% Effectiveness for player buffs, but only 50%
+				// effectiveness for item bonuses.
 
-						// Apply debuffs. 100% Effectiveness for player buffs, but only 50%
-						// effectiveness for item bonuses.
+				buffBonus -= Math.Abs(debuff);
 
-						buffBonus -= Math.Abs(debuff);
+				if (buffBonus < 0)
+				{
+					itemBonus += buffBonus / 2;
+					buffBonus = 0;
+					if (itemBonus < 0)
+						itemBonus = 0;
+				}
 
-						if (buffBonus < 0)
-						{
-							itemBonus += buffBonus / 2;
-							buffBonus = 0;
-							if (itemBonus < 0)
-								itemBonus = 0;
-						}
+				return itemBonus + buffBonus;
+			}
+			else if (bonusType.ID == eProperty.MaxHealth)
+			{
+				int conBonus = (int)(3.1 * Constitution);
+				int hitsBonus = (int)(32.5 * Level + m_summonHitsBonus);
+				int debuff = DebuffCategory[(int)property];
 
-						return itemBonus + buffBonus;
-					}
-				case eProperty.Constitution:
-					{
-						int baseBonus = Constitution;
-						int buffBonus = GetModifiedFromBuffs(eProperty.Constitution);
-						int debuff = DebuffCategory[(int)property];
+				// Apply debuffs. As only base constitution affects pet
+				// health, effectiveness is a flat 50%.
 
-						// Apply debuffs. 100% Effectiveness for player buffs, but only 50%
-						// effectiveness for base bonuses.
+				conBonus -= Math.Abs(debuff) / 2;
 
-						buffBonus -= Math.Abs(debuff);
+				if (conBonus < 0)
+					conBonus = 0;
 
-						if (buffBonus < 0)
-						{
-							baseBonus += buffBonus / 2;
-							buffBonus = 0;
-							if (baseBonus < 0)
-								baseBonus = 0;
-						}
-
-						return baseBonus + buffBonus;
-					}
-				case eProperty.MaxHealth:
-					{
-						int conBonus = (int)(3.1 * Constitution);
-						int hitsBonus = (int)(32.5 * Level + m_summonHitsBonus);
-						int debuff = DebuffCategory[(int)property];
-
-						// Apply debuffs. As only base constitution affects pet
-						// health, effectiveness is a flat 50%.
-
-						conBonus -= Math.Abs(debuff) / 2;
-
-						if (conBonus < 0)
-							conBonus = 0;
-
-						return conBonus + hitsBonus;
-					}
+				return conBonus + hitsBonus;
 			}
 
 			return base.GetModified(property);

@@ -53,6 +53,7 @@
     <Compile Include="UT_GamePlayer.cs" />
     <Compile Include="PropertyCalculator\UT_IndexerBoniAdapter.cs" />
     <Compile Include="PropertyCalculator\UT_MultiplicativePropertiesBoniAdapter.cs" />
+    <Compile Include="UT_NecromancerPets.cs" />
     <Compile Include="UT_SpellHandler.cs" />
     <Compile Include="PropertyCalculator\UT_StatCalculator.cs" />
   </ItemGroup>

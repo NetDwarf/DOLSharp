@@ -53,7 +53,8 @@ namespace DOL.GS.Spells
                 }
             }
 
-            playerAF += effect.Owner.GetModifiedFromItems(eProperty.ArmorFactor);
+			//always zero because it was not implemented
+            //playerAF += effect.Owner.GetModifiedFromItems(eProperty.ArmorFactor);
 
             if (m_spell.Value < 0)
             {

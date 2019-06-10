@@ -24,7 +24,19 @@ namespace DOL.GS.PropertyCalc
 		public override int CalcValue(GameLiving living, eProperty property)
 		{
 			var bonusProperties = new BonusProperties(living);
-			return bonusProperties.ValueOf(new BonusType(property));
+			int bonusValue = bonusProperties.ValueOf(new BonusType(property));
+			int abs = 0;
+			if (living is GameNPC)
+			{
+				if (living.Level >= 30) abs = 27;
+				else if (living.Level >= 20) abs = 19;
+				else if (living.Level >= 10) abs = 10;
+
+				abs += (living.GetModified(eProperty.Constitution)
+					+ living.GetModified(eProperty.Dexterity) - 120) / 12;
+				bonusValue += abs;
+			}
+			return bonusValue;
 		}
 	}
 }
