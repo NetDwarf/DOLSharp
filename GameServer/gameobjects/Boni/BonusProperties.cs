@@ -53,7 +53,7 @@ namespace DOL.GS
 				bool typeIsManaStat = type.ID == (eProperty)player.CharacterClass.ManaStat;
 				if (typeIsManaStat && !ownerIsArcher)
 				{
-					return new PlayerBonusProperty(player, type, Bonus.Stat.Acuity);
+					return new PlayerBonusProperty(player, type, Bonus.Acuity);
 				}
 
 				return new PlayerBonusProperty(player, type);
@@ -240,9 +240,9 @@ namespace DOL.GS
 			{
 				var boni = owner.Boni;
 
-				int baseBonus = boni.RawValueOf(Bonus.Base.ComponentOf(type));
-				int abilityBonus = boni.RawValueOf(Bonus.Ability.ComponentOf(type));
-				int debuff = boni.RawValueOf(Bonus.Debuff.ComponentOf(type));
+				int baseBonus = boni.RawValueOf(type.Base);
+				int abilityBonus = boni.RawValueOf(type.Ability);
+				int debuff = boni.RawValueOf(type.Debuff);
 
 				int itemBonus = ItemValue;
 				int buffBonus = BuffValue;
@@ -261,7 +261,7 @@ namespace DOL.GS
 				}
 
 				int effectiveBonus = unbuffedBonus + buffBonus + abilityBonus;
-				effectiveBonus = (int)(effectiveBonus * boni.RawValueOf(Bonus.Multiplier.ComponentOf(type)) / 1000.0);
+				effectiveBonus = (int)(effectiveBonus * boni.RawValueOf(type.Multiplier) / 1000.0);
 
 				if(type.IsStat)
 				{
@@ -277,13 +277,13 @@ namespace DOL.GS
 			{
 				var boni = owner.Boni;
 
-				int baseBuffBonus = boni.RawValueOf(Bonus.BaseBuff.ComponentOf(type));
+				int baseBuffBonus = boni.RawValueOf(type.BaseBuff);
 				if(type.ID == eProperty.ArmorFactor)
 				{
 					baseBuffBonus = 0;
 				}
-				int specBuffBonus = boni.RawValueOf(Bonus.SpecBuff.ComponentOf(type));
-				int extraBuffBonus = boni.RawValueOf(type.From(Bonus.ExtraBuff));
+				int specBuffBonus = boni.RawValueOf(type.SpecBuff);
+				int extraBuffBonus = boni.RawValueOf(type.ExtraBuff);
 
 				return baseBuffBonus + specBuffBonus;
 			}

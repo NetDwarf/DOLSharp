@@ -33,11 +33,13 @@ namespace DOL.GS.PropertyCalc
 		{
 			get
 			{
-				return boni.RawValueOf(category.ComponentOf((eProperty)index));
+				var bonusType = new BonusType((eProperty)index);
+				return boni.RawValueOf(bonusType.From(category));
 			}
 			set
 			{
-				boni.SetTo(category.ComponentOf((eProperty)index).Create(value));
+				var bonusType = new BonusType((eProperty)index);
+				boni.SetTo(bonusType.From(category).Create(value));
 			}
 		}
 

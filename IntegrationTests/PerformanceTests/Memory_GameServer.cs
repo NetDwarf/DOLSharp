@@ -33,7 +33,8 @@ namespace DOL.PerformanceTests.Memory
 				players[i] = GamePlayer.CreateTestableGamePlayer();
 				for (int j = 1; j <= 8; j++)
 				{
-					players[i].Boni.Add(Bonus.Base.ComponentOf((eProperty)j).Create(60));
+					var bonusType = new BonusType((eProperty)j);
+					players[i].Boni.Add(bonusType.Base.Create(60));
 				}
 			}
 			long after = GC.GetTotalMemory(true);
@@ -52,7 +53,8 @@ namespace DOL.PerformanceTests.Memory
 				players[i] = GamePlayer.CreateTestableGamePlayer();
 				for (int j = 1; j <= 100; j++)
 				{
-					players[i].Boni.Add(Bonus.Item.ComponentOf((eProperty)j).Create(60));
+					var bonusType = new BonusType((eProperty)j);
+					players[i].Boni.Add(bonusType.Item.Create(60));
 				}
 			}
 			long after = GC.GetTotalMemory(true);
@@ -71,7 +73,8 @@ namespace DOL.PerformanceTests.Memory
 				npcs[i] = Create.FakeNPC();
 				for (int j = 1; j <= 8; j++)
 				{
-					npcs[i].Boni.Add(Bonus.Base.ComponentOf((eProperty)j).Create(60));
+					var bonusType = new BonusType((eProperty)j);
+					npcs[i].Boni.Add(bonusType.Base.Create(60));
 				}
 			}
 			long after = GC.GetTotalMemory(true);
@@ -90,7 +93,8 @@ namespace DOL.PerformanceTests.Memory
 				boniArray[i] = new Boni();
 				for (int j = 1; j <= 8; j++)
 				{
-					boniArray[i].Add(Bonus.Base.ComponentOf((eProperty)j).Create(60));
+					var bonusType = new BonusType((eProperty)j);
+					boniArray[i].Add(bonusType.Base.Create(60));
 				}
 			}
 			long after = GC.GetTotalMemory(true);

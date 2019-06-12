@@ -39,7 +39,7 @@ namespace DOL.GS
 			if (type.ID == eProperty.ArcaneSyphon) { return new ArcaneSyphonCap(owner); }
 			if (type.ID == eProperty.ArmorFactor) { return new ArmorFactorCap(owner); }
 			if (type.ID == eProperty.ArmorAbsorption) { return new ArmorAbsorptionCap(owner); }
-			if (type.IsRegen) { return new RegenCap(owner); }
+			if (type.IsRegen) { return new DefaultPropertyCap(owner); }
 
 			throw new ArgumentException("There is no PropertyCap for " + type.ID);
 		}
@@ -233,12 +233,5 @@ namespace DOL.GS
 	public class MissHit : DefaultPropertyCap
 	{
 		public MissHit(GameLiving owner) : base(owner) { }
-	}
-
-	public class RegenCap : DefaultPropertyCap
-	{
-		public RegenCap(GameLiving owner) : base(owner) { }
-
-		public override int SpecBuff => 0;
 	}
 }

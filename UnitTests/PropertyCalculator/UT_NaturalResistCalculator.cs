@@ -25,7 +25,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(Bonus.Ability.Create(2, eProperty.Resist_Natural));
+			player.Boni.Add(NaturalResist.Ability.Create(2));
 
 			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
 			int expected = 2;
@@ -38,7 +38,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(Bonus.Item.Create(2, eProperty.Resist_Natural));
+			player.Boni.Add(NaturalResist.Item.Create(2));
 
 			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
 			int expected = 2;
@@ -50,7 +50,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
-			player.Boni.Add(Bonus.BaseBuff.Create(2, eProperty.Resist_Natural));
+			player.Boni.Add(NaturalResist.BaseBuff.Create(2));
 
 			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
 			int expected = 2;
@@ -62,8 +62,8 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
-			player.Boni.Add(Bonus.BaseBuff.Create(8, eProperty.Resist_Natural));
-			player.Boni.Add(Bonus.Debuff.Create(6, eProperty.Resist_Natural));
+			player.Boni.Add(NaturalResist.BaseBuff.Create(8));
+			player.Boni.Add(NaturalResist.Debuff.Create(6));
 
 			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
 			int expected = 2;
@@ -76,8 +76,8 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(Bonus.Item.Create(6, eProperty.Resist_Natural));
-			player.Boni.Add(Bonus.Debuff.Create(6, eProperty.Resist_Natural));
+			player.Boni.Add(NaturalResist.Item.Create(6));
+			player.Boni.Add(NaturalResist.Debuff.Create(6));
 
 			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
 			int expected = 3;
@@ -90,7 +90,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(Bonus.Item.Create(50, eProperty.Resist_Natural));
+			player.Boni.Add(NaturalResist.Item.Create(50));
 
 			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
 			int expected = 26;
@@ -102,13 +102,15 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
-			player.Boni.Add(Bonus.ExtraBuff.Create(50, eProperty.Resist_Natural));
-			player.Boni.Add(Bonus.BaseBuff.Create(50, eProperty.Resist_Natural));
+			player.Boni.Add(NaturalResist.ExtraBuff.Create(50));
+			player.Boni.Add(NaturalResist.BaseBuff.Create(50));
 
 			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
 			int expected = 25;
 			Assert.AreEqual(expected, actual);
 		}
+
+		private BonusType NaturalResist => new BonusType(eProperty.Resist_Natural);
 
 		private static ResistNaturalCalculator createNaturalResistCalculator()
 		{

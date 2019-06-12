@@ -54,7 +54,7 @@ namespace DOL.GS
 
 		public virtual int Get(BonusCategory category)
 		{
-			if(category.ID == ePropertyCategory.Multiplier)
+			if(category.Equals(Bonus.Multiplier))
 			{
 				double result = 1.0;
 				foreach(var perMilleMultiplicator in perMilleMultiplier)
@@ -69,15 +69,15 @@ namespace DOL.GS
 
 		public void Set(int value, BonusCategory category)
 		{
-			if (category.ID != ePropertyCategory.Multiplier)
-			{
-				int componentIndex = (int)category.ID;
-				componentValues[componentIndex] = value;
-			}
-			else
+			if (category.Equals(Bonus.Multiplier))
 			{
 				perMilleMultiplier = new List<int>();
 				perMilleMultiplier.Add(value);
+			}
+			else
+			{
+				int componentIndex = (int)category.ID;
+				componentValues[componentIndex] = value;
 			}
 		}
 
@@ -94,7 +94,7 @@ namespace DOL.GS
 		
 		public int Get(BonusCategory category)
 		{
-			if(category.ID == ePropertyCategory.Multiplier)
+			if(category.Equals(Bonus.Multiplier))
 			{
 				return 1000;
 			}

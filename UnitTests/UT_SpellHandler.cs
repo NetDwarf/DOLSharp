@@ -186,7 +186,7 @@ namespace DOL.UnitTests.GameServer
         {
             var spell = Create.DamageSpell(100);
             var source = Create.FakePlayer(new CharacterClassAnimist());
-			source.Boni.Add(Bonus.Base.Intelligence.Create(100));
+			source.Boni.Add(Bonus.Intelligence.Base.Create(100));
             var target = Create.FakePlayer();
             var spellLine = new SpellLine("", "", "", false);
             var spellHandler = new SpellHandler(source, spell, spellLine);
@@ -202,7 +202,7 @@ namespace DOL.UnitTests.GameServer
         {
             var spell = Create.DamageSpell(100);
             var owner = Create.FakePlayer(new CharacterClassAnimist());
-			owner.Boni.Add(Bonus.Base.Intelligence.Create(100));
+			owner.Boni.Add(Bonus.Intelligence.Base.Create(100));
             owner.Level = 50;
             GamePet source = Create.Pet(owner);
             source.Level = 50; //temporal coupling through AutoSetStat()

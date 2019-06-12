@@ -23,7 +23,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		public void CalcValue_OneMeleeSpeedBaseBuff_99()
 		{
 			var player = Create.FakePlayer();
-			player.Boni.SetTo(Bonus.BaseBuff.Create(1, eProperty.MeleeSpeed));
+			player.Boni.SetTo(MeleeSpeed.BaseBuff.Create(1));
 			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
 
 			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
@@ -37,7 +37,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Debuff.Create(1, eProperty.MeleeSpeed));
+			player.Boni.SetTo(MeleeSpeed.Debuff.Create(1));
 			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
 
 			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
@@ -51,7 +51,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Item.Create(1, eProperty.MeleeSpeed));
+			player.Boni.SetTo(MeleeSpeed.Item.Create(1));
 			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
 
 			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
@@ -65,7 +65,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Item.Create(11, eProperty.MeleeSpeed));
+			player.Boni.SetTo(MeleeSpeed.Item.Create(11));
 			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
 
 			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
@@ -79,7 +79,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.BaseBuff.Create(100, eProperty.MeleeSpeed));
+			player.Boni.SetTo(MeleeSpeed.BaseBuff.Create(100));
 			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
 
 			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
@@ -93,8 +93,8 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.BaseBuff.Create(9, eProperty.MeleeSpeed));
-			player.Boni.SetTo(Bonus.Item.Create(9, eProperty.MeleeSpeed));
+			player.Boni.SetTo(MeleeSpeed.BaseBuff.Create(9));
+			player.Boni.SetTo(MeleeSpeed.Item.Create(9));
 			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
 
 			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
@@ -108,13 +108,15 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var npc = Create.FakeNPC();
 			npc.Level = 50;
-			npc.Boni.Add(Bonus.BaseBuff.Create(2, eProperty.MeleeSpeed));
+			npc.Boni.Add(MeleeSpeed.BaseBuff.Create(2));
 			var speedCalc = createMeleeSpeedCalculator();
 
 			int actual = speedCalc.CalcValue(npc, eProperty.MeleeSpeed);
 			int expected = 98;
 			Assert.AreEqual(expected, actual);
 		}
+
+		private BonusType MeleeSpeed => new BonusType(eProperty.MeleeSpeed);
 
 		private static MeleeSpeedPercentCalculator createMeleeSpeedCalculator()
 		{

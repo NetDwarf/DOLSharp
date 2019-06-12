@@ -4,20 +4,17 @@
 	{
 		public Bonus(int value, BonusCategory category, BonusType type)
 		{
-			var component = new BonusComponent(category, type);
-			this.TypeID = component.Type.ID;
-			this.CategoryID = component.Category.ID;
+			this.TypeID = type.ID;
+			this.CategoryID = category.ID;
+			ConvertOldBonus();
 			this.Value = value;
 		}
 
 		public int Value { get; }
-		private eProperty TypeID { get; }
-		private ePropertyCategory CategoryID { get; }
+		private eProperty TypeID { get; set; }
+		private ePropertyCategory CategoryID { get; set; }
 		public BonusType Type { get { return new BonusType(TypeID); } }
 		public BonusCategory Category { get { return new BonusCategory(CategoryID); } }
-
-		public static BonusCategory Create(ePropertyCategory categoryID) { return new BonusCategory(categoryID); }
-		public static BonusType Create(eProperty typeID) { return new BonusType(typeID); }
 
 		public static BonusCategory Base { get { return new BonusCategory(ePropertyCategory.Base); } }
 		public static BonusCategory Ability { get { return new BonusCategory(ePropertyCategory.Ability); } }
@@ -31,65 +28,73 @@
 		public static BonusCategory SpecDebuff { get { return new BonusCategory(ePropertyCategory.SpecDebuff); } }
 		public static BonusCategory Multiplier { get { return new BonusCategory(ePropertyCategory.Multiplier); } }
 
-		public static BonusType UndefinedType { get { return new BonusType(eProperty.Undefined); } }
-		public static StatBonus Stat { get { return new StatBonus(); } }
-		public static ResistBonus Resist { get { return new ResistBonus(); } }
+		public static BonusType Strength { get { return new BonusType(eProperty.Strength); } }
+		public static BonusType Constitution { get { return new BonusType(eProperty.Constitution); } }
+		public static BonusType Dexterity { get { return new BonusType(eProperty.Dexterity); } }
+		public static BonusType Quickness { get { return new BonusType(eProperty.Quickness); } }
+		public static BonusType Intelligence { get { return new BonusType(eProperty.Intelligence); } }
+		public static BonusType Piety { get { return new BonusType(eProperty.Piety); } }
+		public static BonusType Empathy { get { return new BonusType(eProperty.Empathy); } }
+		public static BonusType Charisma { get { return new BonusType(eProperty.Charisma); } }
+		public static BonusType Acuity { get { return new BonusType(eProperty.Acuity); } }
+
+		private void ConvertOldBonus()
+		{
+			bool isItem = Category.ID == ePropertyCategory.Item;
+			bool isItemStatOvercap = isItem && Type.ID >= eProperty.StrCapBonus && Type.ID <= eProperty.AcuCapBonus;
+			bool isMythical = isItem && Type.ID >= eProperty.MythicalStatCapBonus_First && Type.ID <= eProperty.MythicalStatCapBonus_Last;
+			bool isResistOvercap = isItem && Type.ID >= eProperty.ResCapBonus_First && Type.ID <= eProperty.ResCapBonus_Last;
+			bool isRegenDebuff = Category.Equals(Bonus.SpecBuff) && Type.IsRegen;
+
+			if (Type.ID == eProperty.AcuCapBonus)
+			{
+				TypeID = eProperty.Acuity;
+				CategoryID = ePropertyCategory.ItemOvercap;
+			}
+			else if (Type.ID == eProperty.MythicalAcuCapBonus)
+			{
+				TypeID = eProperty.Acuity;
+				CategoryID = ePropertyCategory.Mythical;
+			}
+			else if (isItemStatOvercap)
+			{
+				TypeID = Type.ID - eProperty.StrCapBonus + eProperty.Stat_First;
+				CategoryID = ePropertyCategory.ItemOvercap;
+			}
+			else if (isMythical)
+			{
+				TypeID = Type.ID - eProperty.MythicalStatCapBonus_First + eProperty.Stat_First;
+				CategoryID = ePropertyCategory.Mythical;
+			}
+			else if (isResistOvercap)
+			{
+				TypeID = Type.ID - eProperty.ResCapBonus_First + eProperty.Resist_First;
+				CategoryID = ePropertyCategory.Mythical;
+			}
+			else if (isRegenDebuff)
+			{
+				TypeID = Type.ID;
+				CategoryID = ePropertyCategory.Debuff;
+			}
+			else
+			{
+				CategoryID = Category.ID;
+				TypeID = Type.ID;
+			}
+			this.TypeID = TypeID;
+			this.CategoryID = CategoryID;
+		}
 	}
 
 	public class BonusComponent
 	{
-		private eProperty typeID;
-		private ePropertyCategory categoryID;
-
-		public BonusType Type { get { return new BonusType(typeID); } }
-		public BonusCategory Category { get { return new BonusCategory(categoryID); } }
-
-		public BonusComponent(ePropertyCategory category, eProperty property)
-			: this(new BonusCategory(category), new BonusType(property)) { }
+		public BonusType Type { get; }
+		public BonusCategory Category { get; }
 
 		public BonusComponent(BonusCategory category, BonusType type)
 		{
-			bool isItem = category.ID == ePropertyCategory.Item;
-			bool isItemStatOvercap = isItem && type.ID >= eProperty.StrCapBonus && type.ID <= eProperty.AcuCapBonus;
-			bool isMythical = isItem && type.ID >= eProperty.MythicalStatCapBonus_First && type.ID <= eProperty.MythicalStatCapBonus_Last;
-			bool isResistOvercap = isItem && type.ID >= eProperty.ResCapBonus_First && type.ID <= eProperty.ResCapBonus_Last;
-			bool isRegenDebuff = category.Equals(Bonus.SpecBuff) && type.IsRegen;
-
-			if (type.ID == eProperty.AcuCapBonus)
-			{
-				typeID = eProperty.Acuity;
-				categoryID = ePropertyCategory.ItemOvercap;
-			}
-			else if (type.ID == eProperty.MythicalAcuCapBonus)
-			{
-				typeID = eProperty.Acuity;
-				categoryID = ePropertyCategory.Mythical;
-			}
-			else if(isItemStatOvercap)
-			{
-				typeID = type.ID - eProperty.StrCapBonus + eProperty.Stat_First;
-				categoryID = ePropertyCategory.ItemOvercap;
-			}
-			else if (isMythical)
-			{
-				typeID = type.ID - eProperty.MythicalStatCapBonus_First + eProperty.Stat_First;
-				categoryID = ePropertyCategory.Mythical;
-			}
-			else if (isResistOvercap)
-			{
-				typeID = type.ID - eProperty.ResCapBonus_First + eProperty.Resist_First;
-				categoryID = ePropertyCategory.Mythical;
-			}
-			else if(isRegenDebuff)
-			{
-				typeID = type.ID;
-				categoryID = ePropertyCategory.Debuff;
-			}
-			else
-			{
-				categoryID = category.ID;
-				typeID = type.ID;
-			}
+			this.Category = category;
+			this.Type = type;
 		}
 
 		public Bonus Create(int value)
@@ -108,41 +113,10 @@
 	public class BonusCategory
 	{
 		public ePropertyCategory ID { get; }
-
-		public BonusComponent Strength { get { return new BonusComponent(ID, eProperty.Strength); } }
-		public BonusComponent Constitution { get { return new BonusComponent(ID, eProperty.Constitution); } }
-		public BonusComponent Dexterity { get { return new BonusComponent(ID, eProperty.Dexterity); } }
-		public BonusComponent Quickness { get { return new BonusComponent(ID, eProperty.Quickness); } }
-		public BonusComponent Empathy { get { return new BonusComponent(ID, eProperty.Empathy); } }
-		public BonusComponent Intelligence { get { return new BonusComponent(ID, eProperty.Intelligence); } }
-		public BonusComponent Piety { get { return new BonusComponent(ID, eProperty.Piety); } }
-		public BonusComponent Charisma { get { return new BonusComponent(ID, eProperty.Charisma); } }
-		public BonusComponent Acuity { get { return new BonusComponent(ID, eProperty.Acuity); } }
 		
 		public BonusCategory(ePropertyCategory category)
 		{
 			this.ID = category;
-		}
-		
-		public Bonus Create(int value, eProperty property)
-		{
-			var type = new BonusType(property);
-			return Create(value, type);
-		}
-
-		public Bonus Create(int value, BonusType type)
-		{
-			return new Bonus(value, this, type);
-		}
-
-		public BonusComponent ComponentOf(eProperty property)
-		{
-			return new BonusComponent(this.ID, property);
-		}
-
-		public BonusComponent ComponentOf(BonusType type)
-		{
-			return new BonusComponent(this.ID, type.ID);
 		}
 
 		public override bool Equals(object obj)
@@ -162,19 +136,19 @@
 			this.ID = id;
 		}
 
-		public BonusComponent Base { get { return new BonusComponent(ePropertyCategory.Base, ID); } }
-		public BonusComponent Ability { get { return new BonusComponent(ePropertyCategory.Ability, ID); } }
-		public BonusComponent Item { get { return new BonusComponent(ePropertyCategory.Item, ID); } }
-		public BonusComponent ItemOvercap { get { return new BonusComponent(ePropertyCategory.ItemOvercap, ID); } }
-		public BonusComponent Mythical { get { return new BonusComponent(ePropertyCategory.Mythical, ID); } }
-		public BonusComponent BaseBuff { get { return new BonusComponent(ePropertyCategory.BaseBuff, ID); } }
-		public BonusComponent SpecBuff { get { return new BonusComponent(ePropertyCategory.SpecBuff, ID); } }
-		public BonusComponent ExtraBuff { get { return new BonusComponent(ePropertyCategory.ExtraBuff, ID); } }
-		public BonusComponent Debuff { get { return new BonusComponent(ePropertyCategory.Debuff, ID); } }
-		public BonusComponent SpecDebuff { get { return new BonusComponent(ePropertyCategory.SpecDebuff, ID); } }
-		public BonusComponent Multiplier { get { return new BonusComponent(ePropertyCategory.Multiplier, ID); } }
+		public BonusComponent Base { get { return From(Bonus.Base); } }
+		public BonusComponent Ability { get { return From(Bonus.Ability); } }
+		public BonusComponent Item { get { return From(Bonus.Item); } }
+		public BonusComponent ItemOvercap { get { return From(Bonus.ItemOvercap); } }
+		public BonusComponent Mythical { get { return From(Bonus.Mythical); } }
+		public BonusComponent BaseBuff { get { return From(Bonus.BaseBuff); } }
+		public BonusComponent SpecBuff { get { return From(Bonus.SpecBuff); } }
+		public BonusComponent ExtraBuff { get { return From(Bonus.ExtraBuff); } }
+		public BonusComponent Debuff { get { return From(Bonus.Debuff); } }
+		public BonusComponent SpecDebuff { get { return From(Bonus.SpecDebuff); } }
+		public BonusComponent Multiplier { get { return From(Bonus.Multiplier); } }
 
-		public BonusComponent From(BonusCategory category) { return new BonusComponent(category.ID, ID); }
+		public BonusComponent From(BonusCategory category) { return new BonusComponent(category, this); }
 
 		public override bool Equals(object obj)
 		{
@@ -193,22 +167,11 @@
 
 		public bool IsBaseStat { get { return ID >= eProperty.Stat_First && ID <= eProperty.Quickness; } }
 
-		public bool IsAcuityStat { get { return (ID >= eProperty.Intelligence && ID <= eProperty.Stat_Last) || ID == eProperty.Acuity; } }
+		public bool IsAcuityStat => (ID >= eProperty.Intelligence && ID <= eProperty.Stat_Last) || ID == eProperty.Acuity;
 
-		public bool IsResist {
-			get
-			{
-				return ID >= eProperty.Resist_First && ID <= eProperty.Resist_Last || ID == eProperty.Resist_Natural;
-			}
-		}
+		public bool IsResist => ID >= eProperty.Resist_First && ID <= eProperty.Resist_Last || ID == eProperty.Resist_Natural;
 
-		public bool IsRegen
-		{
-			get
-			{
-				return ID == eProperty.HealthRegenerationRate || ID == eProperty.PowerRegenerationRate || ID == eProperty.EnduranceRegenerationRate;
-			}
-		}
+		public bool IsRegen => ID == eProperty.HealthRegenerationRate || ID == eProperty.PowerRegenerationRate || ID == eProperty.EnduranceRegenerationRate;
 
 		public bool IsTOAPercentBonus
 		{
@@ -221,33 +184,6 @@
 				return isMeleeDamage || isArcherSpeed || isMeleeSpeed || isSpellRange;
 			}
 		}
-	}
-
-	public class StatBonus
-	{
-		public BonusType Strength { get { return new BonusType(eProperty.Strength); } }
-		public BonusType Constitution { get { return new BonusType(eProperty.Constitution); } }
-		public BonusType Dexterity { get { return new BonusType(eProperty.Dexterity); } }
-		public BonusType Quickness { get { return new BonusType(eProperty.Quickness); } }
-		public BonusType Intelligence { get { return new BonusType(eProperty.Intelligence); } }
-		public BonusType Piety { get { return new BonusType(eProperty.Piety); } }
-		public BonusType Empathy { get { return new BonusType(eProperty.Empathy); } }
-		public BonusType Charisma { get { return new BonusType(eProperty.Charisma); } }
-		public BonusType Acuity { get { return new BonusType(eProperty.Acuity); } }
-	}
-
-	public class ResistBonus
-	{
-		public BonusType Slash { get { return new BonusType(eProperty.Resist_Slash); } }
-		public BonusType Crush { get { return new BonusType(eProperty.Resist_Crush); } }
-		public BonusType Thrust { get { return new BonusType(eProperty.Resist_Thrust); } }
-		public BonusType Body { get { return new BonusType(eProperty.Resist_Body); } }
-		public BonusType Cold { get { return new BonusType(eProperty.Resist_Cold); } }
-		public BonusType Energy { get { return new BonusType(eProperty.Resist_Energy); } }
-		public BonusType Heat { get { return new BonusType(eProperty.Resist_Heat); } }
-		public BonusType Matter { get { return new BonusType(eProperty.Resist_Matter); } }
-		public BonusType Spirit { get { return new BonusType(eProperty.Resist_Spirit); } }
-		public BonusType Essence { get { return new BonusType(eProperty.Resist_Natural); } }
 	}
 
 	public enum ePropertyCategory : byte

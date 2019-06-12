@@ -32,11 +32,13 @@ namespace DOL.GS.PropertyCalc
 
 		public double Get(int index)
 		{
-			return boni.RawValueOf(Bonus.Multiplier.ComponentOf((eProperty)index)) / 1000.0;
+			var bonusType = new BonusType((eProperty)index);
+			return boni.RawValueOf(bonusType.Multiplier) / 1000.0;
 		}
 
 		public void Remove(int index, object key)
 		{
+			var bonusType = new BonusType((eProperty)index);
 			bool keyExists = multiplicatorValues.TryGetValue(key, out double value);
 			if(!keyExists)
 			{
@@ -44,14 +46,15 @@ namespace DOL.GS.PropertyCalc
 			}
 			int perMilleValue = (int)(value*1000);
 			multiplicatorValues.Remove(key);
-			boni.Remove(Bonus.Multiplier.ComponentOf((eProperty)index).Create(perMilleValue));
+			boni.Remove(bonusType.Multiplier.Create(perMilleValue));
 		}
 
 		public void Set(int index, object key, double value)
 		{
+			var bonusType = new BonusType((eProperty)index);
 			int perMilleValue = (int)(value * 1000);
 			multiplicatorValues.Add(key, value);
-			boni.Add(Bonus.Multiplier.ComponentOf((eProperty)index).Create(perMilleValue));
+			boni.Add(bonusType.Multiplier.Create(perMilleValue));
 		}
 	}
 }

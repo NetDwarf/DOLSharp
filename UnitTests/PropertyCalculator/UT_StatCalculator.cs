@@ -254,7 +254,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-			player.Boni.SetTo(Bonus.Base.Constitution.Create(70));
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(70));
 			player.DebuffCategory[eProperty.Constitution] = 50;
             var statCalc = createStatCalculator();
 
@@ -269,7 +269,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-			player.Boni.SetTo(Bonus.Base.Constitution.Create(70));
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(70));
             player.TotalConstitutionLostAtDeath = 3;
             var statCalc = createStatCalculator();
 
