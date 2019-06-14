@@ -64,7 +64,7 @@ namespace DOL.PerformanceTests.Memory
 		}
 
 		[Test]
-		public void GameNPC_With8BasePropertiesSet_LessThan100Megabyte()
+		public void GameNPC_10000Times_With8BasePropertiesSet_LessThan100Megabyte()
 		{
 			long before = GC.GetTotalMemory(true);
 			GameNPC[] npcs = new GameNPC[10000];
@@ -87,10 +87,10 @@ namespace DOL.PerformanceTests.Memory
 		public void Boni_10000Times_With8BasePropertiesSet_LessThan20MegaByte()
 		{
 			long before = GC.GetTotalMemory(true);
-			Boni[] boniArray = new Boni[10000];
+			UncappedBoni[] boniArray = new UncappedBoni[10000];
 			for (int i = 0; i < boniArray.Length; i++)
 			{
-				boniArray[i] = new Boni();
+				boniArray[i] = new UncappedBoni();
 				for (int j = 1; j <= 8; j++)
 				{
 					var bonusType = new BonusType((eProperty)j);
@@ -101,6 +101,41 @@ namespace DOL.PerformanceTests.Memory
 			long memoryConsumption = after - before;
 			Console.WriteLine("10000 Boni with 8 base properties set consume " + memoryConsumption + " bytes");
 			Assert.Less(memoryConsumption, 20 * 1000 * 1000);
+		}
+
+		[Test]
+		public void Boni_100Times_WithHundredItemPropertiesSet_LessThan2Megabyte()
+		{
+			long before = GC.GetTotalMemory(true);
+			UncappedBoni[] boniArray = new UncappedBoni[100];
+			for (int i = 0; i < boniArray.Length; i++)
+			{
+				boniArray[i] = new UncappedBoni();
+				for (int j = 1; j <= 100; j++)
+				{
+					var bonusType = new BonusType((eProperty)j);
+					boniArray[i].Add(bonusType.Item.Create(60));
+				}
+			}
+			long after = GC.GetTotalMemory(true);
+			long memoryConsumption = after - before;
+			Console.WriteLine("100 Boni with 100 item properties set consume " + memoryConsumption + " bytes");
+			Assert.Less(memoryConsumption, 2 * 1000 * 1000);
+		}
+
+		[Test]
+		public void Bonus_10000Times_()
+		{
+			long before = GC.GetTotalMemory(true);
+			Bonus[] boniArray = new Bonus[10000];
+			for (int i = 0; i < boniArray.Length; i++)
+			{
+				boniArray[i] = Bonus.Strength.Base.Create(5);
+			}
+			long after = GC.GetTotalMemory(true);
+			long memoryConsumption = after - before;
+			Console.WriteLine("10000 Bonus(es) consume " + memoryConsumption + " bytes");
+			Assert.Less(memoryConsumption, 800 * 1000);
 		}
 	}
 }

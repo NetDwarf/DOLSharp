@@ -30,7 +30,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 		private static IndexerBoniAdapter createAbilityIndexerAdapter()
 		{
-			var boni = new Boni();
+			var boni = new Boni(Create.FakeNPC());
 			return new IndexerBoniAdapter(boni, Bonus.Ability);
 		}
 	}

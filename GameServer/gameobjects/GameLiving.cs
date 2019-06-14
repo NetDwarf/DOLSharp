@@ -4695,9 +4695,7 @@ namespace DOL.GS
 		#endregion
 		#region Property/Bonus/Buff/PropertyCalculator fields
 
-		public virtual Boni Boni { get; }
-
-		public BonusProperties BonusProperties => new BonusProperties(this);
+		public Boni Boni { get; }
 
 		private IPropertyIndexer createIndexer(BonusCategory category)
 		{
@@ -4782,7 +4780,7 @@ namespace DOL.GS
 			}
 		}
 
-		[Obsolete("Use Boni instead!")]
+		[Obsolete(useBoniInstead)]
 		public virtual int GetModifiedBase(eProperty property)
 		{
 			if (m_propertyCalc != null && m_propertyCalc[(int)property] != null)
@@ -4796,7 +4794,7 @@ namespace DOL.GS
 			return 0;
 		}
 
-		[Obsolete("Use BonusProperties instead!")]
+		[Obsolete(useBoniInstead)]
 		public virtual int GetModifiedFromBuffs(eProperty property)
 		{
 			if (m_propertyCalc != null && m_propertyCalc[(int)property] != null)
@@ -4810,7 +4808,7 @@ namespace DOL.GS
 			return 0;
 		}
 
-		[Obsolete("Use BonusProperties instead!")]
+		[Obsolete("Use Boni instead!")]
 		public virtual int GetModifiedFromItems(eProperty property)
 		{
 			if (m_propertyCalc != null && m_propertyCalc[(int)property] != null)
@@ -6868,7 +6866,7 @@ namespace DOL.GS
 		public GameLiving()
 			: base()
 		{
-			Boni = new Boni();
+			Boni = new Boni(this);
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);
 			m_groundTarget = new Point3D(0, 0, 0);

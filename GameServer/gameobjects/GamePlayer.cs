@@ -2144,8 +2144,6 @@ namespace DOL.GS
 				}
 			}
 		}
-		
-		public override Boni Boni { get; }
 
 		/// <summary>
 		/// Gets/sets the player efficacy percent
@@ -15614,7 +15612,6 @@ namespace DOL.GS
 
         private GamePlayer(ICharacterClass charClass) : base()
 		{
-			Boni = new Boni();
 			m_characterClass = charClass;
         }
 		/// <summary>
@@ -15625,7 +15622,6 @@ namespace DOL.GS
 		public GamePlayer(GameClient client, DOLCharacters dbChar)
 			: base()
 		{
-			Boni = new Boni();
 			IsJumping = false;
 			m_steed = new WeakRef(null);
 			m_rangeAttackAmmo = new WeakRef(null);

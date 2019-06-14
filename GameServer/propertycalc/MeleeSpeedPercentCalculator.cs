@@ -23,7 +23,7 @@ namespace DOL.GS.PropertyCalc
 	{
 		public override int CalcValue(GameLiving living, eProperty property)
 		{
-			var properties = new BonusProperties(living);
+			var properties = new Boni(living);
 			int value = properties.ValueOf(new BonusType(property));
 			return 100 - value;
 		}

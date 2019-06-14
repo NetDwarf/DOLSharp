@@ -211,7 +211,7 @@ namespace DOL.UnitTests.GameServer
             var spellLine = new SpellLine("", "", "", false);
             var spellHandler = new SpellHandler(source, spell, spellLine);
 
-            double actual = spellHandler.CalculateDamageBase(target);
+			double actual = spellHandler.CalculateDamageBase(target);
 
             double expected = 100 * (100 + 200) / 275.0 * (100 + 200) / 275.0;
             Assert.AreEqual(expected, actual, 0.001);

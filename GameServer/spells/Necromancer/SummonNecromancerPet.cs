@@ -55,7 +55,7 @@ namespace DOL.GS.Spells
 			int hitsCap = MaxHealthCalculator.GetItemBonusCap(Caster) 
 			    + MaxHealthCalculator.GetItemBonusCapIncrease(Caster);
 			
-			m_summonConBonus = Caster.BonusProperties.ItemValueOf(Bonus.Constitution);
+			m_summonConBonus = Caster.Boni.ItemValueOf(Bonus.Constitution);
 			m_summonHitsBonus = Math.Min(Caster.ItemBonus[(int)(eProperty.MaxHealth)], hitsCap)
 				+ Caster.AbilityBonus[(int)(eProperty.MaxHealth)]; ;
 

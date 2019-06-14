@@ -41,7 +41,7 @@
     <Compile Include="PropertyCalculator\UT_MaxSpeedCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_MeleeDamagePercentCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_MeleeSpeedPercentCalculator.cs" />
-    <Compile Include="Boni\UT_Boni.cs" />
+    <Compile Include="Boni\UT_UncappedBoni.cs" />
     <Compile Include="Boni\UT_BonusCompound.cs" />
     <Compile Include="PropertyCalculator\UT_NaturalResistCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_RegenCalculators.cs" />

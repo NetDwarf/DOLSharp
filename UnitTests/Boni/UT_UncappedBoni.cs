@@ -4,7 +4,7 @@ using DOL.GS;
 namespace DOL.UnitTests.GameServer
 {
 	[TestFixture]
-	class UT_Boni
+	class UT_UncappedBoni
 	{
 		[Test]
 		public void ValueOf_Constitution_Init_AbilityConstitutionIsZero()
@@ -115,9 +115,9 @@ namespace DOL.UnitTests.GameServer
 			Assert.AreEqual(expected, actual);
 		}
 
-		private Boni createBoni()
+		private UncappedBoni createBoni()
 		{
-			return new Boni();
+			return new UncappedBoni();
 		}
 	}
 }

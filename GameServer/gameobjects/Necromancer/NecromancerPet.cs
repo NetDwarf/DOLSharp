@@ -146,9 +146,9 @@ namespace DOL.GS
 				int itemBonus = 0;
 				if (bonusType.ID != eProperty.Constitution)
 				{
-					itemBonus = owner.BonusProperties.ItemValueOf(bonusType);
+					itemBonus = owner.Boni.ItemValueOf(bonusType);
 				}
-				int buffBonus = BonusProperties.BuffValueOf(bonusType);
+				int buffBonus = Boni.BuffValueOf(bonusType);
 				int debuff = DebuffCategory[(int)property];
 
 				// Base stats from the pet; add this to item bonus

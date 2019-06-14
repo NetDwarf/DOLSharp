@@ -14,7 +14,7 @@ namespace DOL.GS
 		public IPropertyCap Create(BonusType type)
 		{
 			if (type.IsBaseStat) { return new StatCap(owner); }
-			if(type.IsAcuityStat)
+			if (type.IsAcuityStat)
 			{
 				bool isListCaster = owner.CharacterClass.ClassType == eClassType.ListCaster;
 				if(isListCaster)
@@ -26,8 +26,8 @@ namespace DOL.GS
 					return new AcuityCap(owner);
 				}
 			}
-			if(type.ID == eProperty.Resist_Natural) { return new EssenceResistCap(owner); }
-			if(type.IsResist) { return new ResistCap(owner); }
+			if (type.ID == eProperty.Resist_Natural) { return new EssenceResistCap(owner); }
+			if (type.IsResist) { return new ResistCap(owner); }
 			if (type.ID == eProperty.MeleeDamage || type.ID == eProperty.ArcherySpeed)
 			{
 				return new MeleeDamageCap(owner);
