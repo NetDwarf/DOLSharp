@@ -7,16 +7,16 @@ namespace DOL.GS
 	{
 		eProperty Type { get; }
 
-		int Get(BonusCategory category);
-		void Set(int value, BonusCategory category);
+		int Get(BonusPart category);
+		void Set(int value, BonusPart category);
 
-		void Add(int value, BonusCategory category);
-		void Remove(int value, BonusCategory category);
+		void Add(int value, BonusPart category);
+		void Remove(int value, BonusPart category);
 	}
 
 	public class BonusCompound : IBonusCompound
 	{
-		private int[] componentValues = new int[(int)ePropertyCategory.__Last + 1];
+		private int[] componentValues = new int[(int)eBonusPart.__Last + 1];
 		private List<int> perMilleMultiplier = new List<int>();
 
 		public eProperty Type { get; }
@@ -26,7 +26,7 @@ namespace DOL.GS
 			this.Type = property;
 		}
 
-		public void Add(int value, BonusCategory category)
+		public void Add(int value, BonusPart category)
 		{
 			if(!category.Equals(Bonus.Multiplier))
 			{
@@ -39,7 +39,7 @@ namespace DOL.GS
 			}
 		}
 
-		public void Remove(int value, BonusCategory category)
+		public void Remove(int value, BonusPart category)
 		{
 			if (!category.Equals(Bonus.Multiplier))
 			{
@@ -52,7 +52,7 @@ namespace DOL.GS
 			}
 		}
 
-		public virtual int Get(BonusCategory category)
+		public virtual int Get(BonusPart category)
 		{
 			if(category.Equals(Bonus.Multiplier))
 			{
@@ -67,7 +67,7 @@ namespace DOL.GS
 			return componentValues[componentIndex];
 		}
 
-		public void Set(int value, BonusCategory category)
+		public void Set(int value, BonusPart category)
 		{
 			if (category.Equals(Bonus.Multiplier))
 			{
@@ -92,7 +92,7 @@ namespace DOL.GS
 	{
 		public eProperty Type { get { return eProperty.Undefined; } }
 		
-		public int Get(BonusCategory category)
+		public int Get(BonusPart category)
 		{
 			if(category.Equals(Bonus.Multiplier))
 			{
@@ -101,17 +101,17 @@ namespace DOL.GS
 			return 0;
 		}
 
-		public void Add(int value, BonusCategory category)
+		public void Add(int value, BonusPart category)
 		{
 			//do nothing
 		}
 
-		public void Remove(int value, BonusCategory category)
+		public void Remove(int value, BonusPart category)
 		{
 			//do nothing
 		}
 
-		public void Set(int value, BonusCategory category)
+		public void Set(int value, BonusPart category)
 		{
 			//do nothing
 		}

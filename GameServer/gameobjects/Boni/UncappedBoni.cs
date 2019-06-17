@@ -8,49 +8,49 @@ namespace DOL.GS
 
 		public void Add(Bonus bonus)
 		{
-			var bonusCompound = GetBonusOf(bonus.Type.ID, true);
-			bonusCompound.Add(bonus.Value, bonus.Category);
+			var bonusCompound = GetBonusOf(bonus.Type, true);
+			bonusCompound.Add(bonus.Value, bonus.Part);
 		}
 
 		public void Remove(Bonus bonus)
 		{
-			var bonusCompound = GetBonusOf(bonus.Type.ID, true);
-			bonusCompound.Remove(bonus.Value, bonus.Category);
+			var bonusCompound = GetBonusOf(bonus.Type, true);
+			bonusCompound.Remove(bonus.Value, bonus.Part);
 		}
 
 		public void SetTo(Bonus bonus)
 		{
-			var bonusCompound = GetBonusOf(bonus.Type.ID, true);
-			bonusCompound.Set(bonus.Value, bonus.Category);
+			var bonusCompound = GetBonusOf(bonus.Type, true);
+			bonusCompound.Set(bonus.Value, bonus.Part);
 		}
 		
 		public int RawValueOf(BonusComponent component)
 		{
-			return GetBonusOf(component.Type.ID).Get(component.Category);
+			return GetBonusOf(component.Type).Get(component.Part);
 		}
 
-		public void Clear(BonusCategory category)
+		public void Clear(BonusPart part)
 		{
 			for (int i = 0; i <= (int)eProperty.MaxProperty; i++)
 			{
-				var bonusType = new BonusType((eProperty)i);
-				SetTo(new Bonus(0, category, bonusType));
+				var bonusType = new BonusType((eBonusType)i);
+				SetTo(new Bonus(0, part, bonusType));
 			}
 		}
 
-		private IBonusCompound GetBonusOf(eProperty property)
+		private IBonusCompound GetBonusOf(BonusType type)
 		{
-			return GetBonusOf(property, false);
+			return GetBonusOf(type, false);
 		}
 
-		private IBonusCompound GetBonusOf(eProperty property, bool createIfNotExists)
+		private IBonusCompound GetBonusOf(BonusType type, bool createIfNotExists)
 		{
-			var propIndex = bonusCompounds.FindIndex(s => s.Type == property);
-			if (propIndex < 0)
+			var bonusindex = bonusCompounds.FindIndex(s => s.Type == type.ID);
+			if (bonusindex < 0)
 			{
 				if (createIfNotExists)
 				{
-					var bonusCompound = new BonusCompound(property);
+					var bonusCompound = new BonusCompound(type.ID);
 					bonusCompounds.Add(bonusCompound);
 					return bonusCompound;
 				}
@@ -61,7 +61,7 @@ namespace DOL.GS
 			}
 			else
 			{
-				return bonusCompounds[propIndex];
+				return bonusCompounds[bonusindex];
 			}
 		}
 	}

@@ -30,9 +30,9 @@ namespace DOL.GS
 			uncappedBoni.SetTo(bonus);
 		}
 
-		public void Clear(BonusCategory category)
+		public void Clear(BonusPart part)
 		{
-			uncappedBoni.Clear(category);
+			uncappedBoni.Clear(part);
 		}
 
 		public int RawValueOf(BonusComponent component)
@@ -205,10 +205,10 @@ namespace DOL.GS
 			}
 		}
 
-		private int CappedValueOf(BonusCategory category)
+		private int CappedValueOf(BonusPart part)
 		{
-			int rawValue = GetRawValueOf(category);
-			int cap = Cap.For(category);
+			int rawValue = GetRawValueOf(part);
+			int cap = Cap.For(part);
 			return Math.Min(cap, rawValue);
 		}
 
@@ -222,7 +222,7 @@ namespace DOL.GS
 			}
 		}
 
-		private int GetRawValueOf(BonusCategory category)
+		private int GetRawValueOf(BonusPart part)
 		{
 			var boni = owner.Boni;
 
@@ -230,7 +230,7 @@ namespace DOL.GS
 
 			foreach (var affectingType in affectingTypes)
 			{
-				rawValue += boni.RawValueOf(affectingType.From(category));
+				rawValue += boni.RawValueOf(affectingType.From(part));
 			}
 
 			return rawValue;

@@ -289,7 +289,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType ArcaneSyphonType => new BonusType(eProperty.ArcaneSyphon);
+		private BonusType ArcaneSyphonType => new BonusType(eBonusType.ArcaneSyphon);
 
 		private static IPropertyCalculator createArcaneSyphonCalculator()
 		{

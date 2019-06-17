@@ -70,8 +70,8 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer();
             player.Level = 50;
-            player.ItemBonus[eProperty.MythicalConCapBonus] = 100;
-            player.ItemBonus[eProperty.Constitution] = 150;
+			player.Boni.Add(Bonus.Constitution.Mythical.Create(100));
+			player.Boni.Add(Bonus.Constitution.Item.Create(150));
 
             int actual = player.Constitution;
 
@@ -83,9 +83,9 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer();
             player.Level = 50;
-            player.ItemBonus[eProperty.MythicalConCapBonus] = 5;
-            player.ItemBonus[eProperty.ConCapBonus] = 100;
-            player.ItemBonus[eProperty.Constitution] = 150;
+			player.ItemBonus[eProperty.MythicalConCapBonus] = 5;
+			player.ItemBonus[eProperty.ConCapBonus] = 100;
+			player.ItemBonus[eProperty.Constitution] = 150;
 
             int actual = player.Constitution;
 
@@ -136,9 +136,9 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer(new CharacterClassAnimist());
             player.Level = 50;
-            player.ItemBonus[eProperty.Acuity] = 200;
-            player.ItemBonus[eProperty.AcuCapBonus] = 30;
-            player.ItemBonus[eProperty.MythicalAcuCapBonus] = 30;
+			player.Boni.Add(Bonus.Acuity.Item.Create(200));
+			player.Boni.Add(Bonus.Acuity.ItemOvercap.Create(30));
+			player.Boni.Add(Bonus.Acuity. Mythical.Create(30));
 
             int actual = player.Intelligence;
 
@@ -163,9 +163,9 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer(new CharacterClassAnimist());
             player.Level = 30;
-            player.ItemBonus[eProperty.Constitution] = 200;
-            player.ItemBonus[eProperty.ConCapBonus] = 20;
-            player.ItemBonus[eProperty.MythicalConCapBonus] = 20;
+			player.Boni.Add(Bonus.Constitution.Item.Create(200));
+			player.Boni.Add(Bonus.Constitution.ItemOvercap.Create(20));
+			player.Boni.Add(Bonus.Constitution.Mythical.Create(20));
 
             int actual = player.Constitution;
 

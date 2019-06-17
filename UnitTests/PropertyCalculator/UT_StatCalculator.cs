@@ -109,8 +109,8 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-            player.ItemBonus[eProperty.MythicalConCapBonus] = 100;
-            player.ItemBonus[eProperty.Constitution] = 150;
+			player.Boni.Add(Bonus.Constitution.Mythical.Create(100));
+			player.Boni.Add(Bonus.Constitution.Item.Create(150));
 			var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Constitution);
@@ -123,9 +123,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-            player.ItemBonus[eProperty.MythicalConCapBonus] = 5;
-            player.ItemBonus[eProperty.ConCapBonus] = 100;
-            player.ItemBonus[eProperty.Constitution] = 150;
+			player.Boni.Add(Bonus.Constitution.Mythical.Create(5));
+			player.Boni.Add(Bonus.Constitution.ItemOvercap.Create(100));
+			player.Boni.Add(Bonus.Constitution.Item.Create(150));
 			var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Constitution);
@@ -138,8 +138,8 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-            player.ItemBonus[eProperty.Constitution] = 100;
-            player.ItemBonus[eProperty.ConCapBonus] = 10;
+			player.Boni.Add(Bonus.Constitution.Item.Create(100));
+			player.Boni.Add(Bonus.Constitution.ItemOvercap.Create(10));
 			var statCalc = createStatCalculator();
 
             int actual = statCalc.CalcValue(player, eProperty.Constitution);

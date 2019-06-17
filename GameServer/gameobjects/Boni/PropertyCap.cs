@@ -59,7 +59,7 @@ namespace DOL.GS
 		int Maximum { get; }
 		int Minimum { get; }
 
-		int For(BonusCategory category);
+		int For(BonusPart category);
 	}
 
 	public class DefaultPropertyCap : IPropertyCap
@@ -86,27 +86,27 @@ namespace DOL.GS
 		public virtual int Maximum => Uncapped;
 		public virtual int Minimum => -Uncapped;
 
-		public int For(BonusCategory category)
+		public int For(BonusPart category)
 		{
 			switch (category.ID)
 			{
-				case ePropertyCategory.Base:
+				case eBonusPart.Base:
 					return Base;
-				case ePropertyCategory.Ability:
+				case eBonusPart.Ability:
 					return Ability;
-				case ePropertyCategory.Item:
+				case eBonusPart.Item:
 					return Item;
-				case ePropertyCategory.ItemOvercap:
+				case eBonusPart.ItemOvercap:
 					return ItemOvercap;
-				case ePropertyCategory.Mythical:
+				case eBonusPart.Mythical:
 					return Mythical;
-				case ePropertyCategory.BaseBuff:
+				case eBonusPart.BaseBuff:
 					return BaseBuff;
-				case ePropertyCategory.SpecBuff:
+				case eBonusPart.SpecBuff:
 					return SpecBuff;
-				case ePropertyCategory.ExtraBuff:
+				case eBonusPart.ExtraBuff:
 					return ExtraBuff;
-				case ePropertyCategory.Debuff:
+				case eBonusPart.Debuff:
 					return Debuff;
 				default:
 					return int.MaxValue;

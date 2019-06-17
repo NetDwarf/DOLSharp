@@ -4697,7 +4697,7 @@ namespace DOL.GS
 
 		public Boni Boni { get; }
 
-		private IPropertyIndexer createIndexer(BonusCategory category)
+		private IPropertyIndexer createIndexer(BonusPart category)
 		{
 			return new IndexerBoniAdapter(Boni, category);
 		}
@@ -4855,7 +4855,7 @@ namespace DOL.GS
 		public static readonly string[] STAT_NAMES = new string[]{"Unknown Stat","Strength", "Dexterity", "Constitution", "Quickness", "Intelligence",
 			"Piety", "Empathy", "Charisma"};
 
-		[Obsolete("Use Boni.GetValueOf(BonusComponent) instead!")]
+		[Obsolete("Use Boni.RawValueOf(BonusComponent) instead!")]
 		public int GetBaseStat(eStat stat)
 		{
 			var statType = new BonusType((eProperty)stat);

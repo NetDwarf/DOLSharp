@@ -21,9 +21,9 @@ namespace DOL.GS.PropertyCalc
 	public sealed class IndexerBoniAdapter : IPropertyIndexer
 	{
 		private Boni boni;
-		private BonusCategory category;
+		private BonusPart category;
 
-		public IndexerBoniAdapter(Boni boni, BonusCategory category)
+		public IndexerBoniAdapter(Boni boni, BonusPart category)
 		{
 			this.boni = boni;
 			this.category = category;

@@ -124,18 +124,18 @@ namespace DOL.PerformanceTests.Memory
 		}
 
 		[Test]
-		public void Bonus_10000Times_()
+		public void Bonus_1000Times_LessThan80kb()
 		{
 			long before = GC.GetTotalMemory(true);
-			Bonus[] boniArray = new Bonus[10000];
+			Bonus[] boniArray = new Bonus[1000];
 			for (int i = 0; i < boniArray.Length; i++)
 			{
 				boniArray[i] = Bonus.Strength.Base.Create(5);
 			}
 			long after = GC.GetTotalMemory(true);
 			long memoryConsumption = after - before;
-			Console.WriteLine("10000 Bonus(es) consume " + memoryConsumption + " bytes");
-			Assert.Less(memoryConsumption, 800 * 1000);
+			Console.WriteLine("1000 Bonus(es) consume " + memoryConsumption + " bytes");
+			Assert.Less(memoryConsumption, 80 * 1000);
 		}
 	}
 }

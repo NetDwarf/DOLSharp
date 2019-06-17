@@ -74,13 +74,13 @@ namespace DOL.UnitTests.GameServer
 	}
 
 	[TestFixture]
-	class UT_ePropertyCategory
+	class UT_ePropertyPart
 	{
 		[Test]
 		public void Last_EqualsBiggestValue()
 		{
-			var actual = ePropertyCategory.__Last;
-			var expected = Enum.GetValues(typeof(ePropertyCategory)).Cast<ePropertyCategory>().Last<ePropertyCategory>();
+			var actual = eBonusPart.__Last;
+			var expected = Enum.GetValues(typeof(eBonusPart)).Cast<eBonusPart>().Last<eBonusPart>();
 
 			Assert.AreEqual(actual, expected);
 		}
