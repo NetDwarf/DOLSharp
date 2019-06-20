@@ -29,7 +29,7 @@ namespace DOL.UnitTests.GameServer
         {
             var player = new FakePlayer();
 			player.LivingRace = new FakeRace();
-            player.characterClass = charClass;
+			player.characterClass = charClass;
             return player;
         }
 

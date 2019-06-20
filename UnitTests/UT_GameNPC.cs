@@ -118,6 +118,81 @@ namespace DOL.UnitTests.GameServer
 			Assert.AreEqual(expected, actual);
 		}
 
+		[Test]
+		public void ChanceToFumble_LevelOne_FivePercent()
+		{
+			var npc = createGenericNPC();
+			npc.Level = 1;
+
+			var actual = npc.ChanceToFumble;
+
+			var expected = 0.05;
+			Assert.AreEqual(expected, actual, 0.001);
+		}
+
+		[Test]
+		public void ChanceToFumble_Level50_OnePermille()
+		{
+			var npc = createGenericNPC();
+			npc.Level = 50;
+
+			var actual = npc.ChanceToFumble;
+
+			var expected = 0.001;
+			Assert.AreEqual(expected, actual, 0.001);
+		}
+
+		[Test]
+		public void ChanceToFumble_TenDebuff_TenPercent()
+		{
+			var npc = createGenericNPC();
+			npc.Boni.Add(FumbleChance.Debuff.Create(10));
+
+			var actual = npc.ChanceToFumble;
+
+			var expected = 0.10;
+			Assert.AreEqual(expected, actual, 0.001);
+		}
+
+		[Test]
+		public void ChanceToFumble_TenAbility_TenPercent()
+		{
+			var npc = createGenericNPC();
+			npc.Boni.Add(FumbleChance.Ability.Create(10));
+
+			var actual = npc.ChanceToFumble;
+
+			var expected = 0.10;
+			Assert.AreEqual(expected, actual, 0.001);
+		}
+
+		[Test]
+		public void GetWeaponStat_Add100StrengthBaseBuff_101()
+		{
+			var npc = createGenericNPC();
+
+			npc.Boni.Add(Bonus.Strength.BaseBuff.Create(100));
+
+			var actual = npc.GetWeaponStat(null);
+			var expected = 101;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void GetArmorAF_Add100BaseBuff_101()
+		{
+			var npc = createGenericNPC();
+
+			npc.Boni.Add(ArmorFactor.BaseBuff.Create(100));
+
+			var actual = npc.GetArmorAF(eArmorSlot.NOTSET);
+			var expected = 9;
+			Assert.AreEqual(expected, actual, 0.001);
+		}
+
+		private BonusType FumbleChance => new BonusType(eBonusType.FumbleChance);
+		private BonusType ArmorFactor => new BonusType(eBonusType.ArmorFactor);
+
 		private static GameNPC createGenericNPC()
 		{
 			var brain = Substitute.For<ABrain>();

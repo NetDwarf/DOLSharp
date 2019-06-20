@@ -2,16 +2,16 @@
 
 namespace DOL.GS
 {
-	public class PropertyCapFactory
+	public class BonusCapFactory
 	{
 		private GamePlayer owner;
 
-		public PropertyCapFactory(GamePlayer owner)
+		public BonusCapFactory(GamePlayer owner)
 		{
 			this.owner = owner;
 		}
 
-		public IPropertyCap Create(BonusType type)
+		public IBonusCap Create(BonusType type)
 		{
 			if (type.IsBaseStat) { return new StatCap(owner); }
 			if (type.IsAcuityStat)
@@ -39,13 +39,13 @@ namespace DOL.GS
 			if (type.ID == eProperty.ArcaneSyphon) { return new ArcaneSyphonCap(owner); }
 			if (type.ID == eProperty.ArmorFactor) { return new ArmorFactorCap(owner); }
 			if (type.ID == eProperty.ArmorAbsorption) { return new ArmorAbsorptionCap(owner); }
-			if (type.IsRegen) { return new DefaultPropertyCap(owner); }
+			if (type.IsRegen) { return new DefaultBonusCap(owner); }
 
 			throw new ArgumentException("There is no PropertyCap for " + type.ID);
 		}
 	}
 
-	public interface IPropertyCap
+	public interface IBonusCap
 	{
 		int Base { get; }
 		int Ability { get; }
@@ -62,13 +62,13 @@ namespace DOL.GS
 		int For(BonusPart category);
 	}
 
-	public class DefaultPropertyCap : IPropertyCap
+	public class DefaultBonusCap : IBonusCap
 	{
 		protected GameLiving owner;
 
 		protected int Uncapped => int.MaxValue;
 
-		public DefaultPropertyCap(GameLiving owner)
+		public DefaultBonusCap(GameLiving owner)
 		{
 			this.owner = owner;
 		}
@@ -114,7 +114,7 @@ namespace DOL.GS
 		}
 	}
 
-	public class StatCap : DefaultPropertyCap
+	public class StatCap : DefaultBonusCap
 	{
 		public StatCap(GameLiving owner) : base(owner) { }
 
@@ -143,7 +143,7 @@ namespace DOL.GS
 		public override int SpecBuff => (int)(1.25 * 1.5 * owner.Level);
 	}
 
-	public class ResistCap : DefaultPropertyCap
+	public class ResistCap : DefaultBonusCap
 	{
 		public ResistCap(GameLiving owner) : base(owner) { }
 
@@ -153,7 +153,7 @@ namespace DOL.GS
 		public override int Maximum => 70; 
 	}
 
-	public class EssenceResistCap : DefaultPropertyCap
+	public class EssenceResistCap : DefaultBonusCap
 	{
 		public EssenceResistCap(GameLiving owner) : base(owner) { }
 
@@ -163,7 +163,7 @@ namespace DOL.GS
 		public override int ExtraBuff => 0;
 	}
 
-	public class MeleeDamageCap : DefaultPropertyCap
+	public class MeleeDamageCap : DefaultBonusCap
 	{
 		public MeleeDamageCap(GameLiving owner) : base(owner) { }
 		
@@ -174,7 +174,7 @@ namespace DOL.GS
 		public override int Debuff => 10;
 	}
 
-	public class SpellRangeCap : DefaultPropertyCap
+	public class SpellRangeCap : DefaultBonusCap
 	{
 		public SpellRangeCap(GameLiving owner) : base(owner) { }
 
@@ -185,7 +185,7 @@ namespace DOL.GS
 		public override int Minimum => -100;
 	}
 
-	public class ArcheryRangeCap : DefaultPropertyCap
+	public class ArcheryRangeCap : DefaultBonusCap
 	{
 		public ArcheryRangeCap(GamePlayer owner) : base(owner) { }
 
@@ -196,7 +196,7 @@ namespace DOL.GS
 		public override int Minimum => -100;
 	}
 
-	public class MeleeSpeedCap : DefaultPropertyCap
+	public class MeleeSpeedCap : DefaultBonusCap
 	{
 		public MeleeSpeedCap(GameLiving owner) : base(owner) { }
 
@@ -208,14 +208,14 @@ namespace DOL.GS
 		public override int Maximum => 99;
 	}
 
-	public class ArcaneSyphonCap : DefaultPropertyCap
+	public class ArcaneSyphonCap : DefaultBonusCap
 	{
 		public ArcaneSyphonCap(GameLiving owner) : base(owner) { }
 
 		public override int Item => 25;
 	}
 
-	public class ArmorFactorCap : DefaultPropertyCap
+	public class ArmorFactorCap : DefaultBonusCap
 	{
 		public ArmorFactorCap(GameLiving owner) : base(owner) { }
 
@@ -223,14 +223,14 @@ namespace DOL.GS
 		public override int SpecBuff => (int)(owner.Level * 1.875);
 	}
 
-	public class ArmorAbsorptionCap :DefaultPropertyCap
+	public class ArmorAbsorptionCap :DefaultBonusCap
 	{
 		public ArmorAbsorptionCap(GameLiving owner) : base(owner) { }
 
 		public override int Maximum => 50;
 	}
 
-	public class MissHit : DefaultPropertyCap
+	public class MissHit : DefaultBonusCap
 	{
 		public MissHit(GameLiving owner) : base(owner) { }
 	}

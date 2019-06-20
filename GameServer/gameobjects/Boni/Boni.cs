@@ -212,12 +212,12 @@ namespace DOL.GS
 			return Math.Min(cap, rawValue);
 		}
 
-		private IPropertyCap Cap
+		private IBonusCap Cap
 		{
 			get
 			{
-				var propertyCapFactory = new PropertyCapFactory(owner);
-				var cap = propertyCapFactory.Create(PrimaryType);
+				var bonusCapFactory = new BonusCapFactory(owner);
+				var cap = bonusCapFactory.Create(PrimaryType);
 				return cap;
 			}
 		}

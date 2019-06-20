@@ -2,6 +2,8 @@
 using NSubstitute;
 using DOL.GS;
 using DOL.GS.Spells;
+using DOL.GS.Effects;
+using System;
 
 namespace DOL.UnitTests.GameServer
 {
@@ -330,9 +332,9 @@ namespace DOL.UnitTests.GameServer
             int actual = spellHandler.CalculateToHitChance(target);
 
             Assert.AreEqual(90, actual);
-        }
+		}
 
-        [Test]
+		[Test]
         public void CalculateToHitChance_TargetIsNPCLevel50SourceIsLevel50PlayerAndSpellLevelIs40_Return80()
         {
             GS.ServerProperties.Properties.PVE_SPELL_CONHITPERCENT = 10;
@@ -348,7 +350,26 @@ namespace DOL.UnitTests.GameServer
             int actual = spellHandler.CalculateToHitChance(target);
 
             Assert.AreEqual(80, actual);
-        }
-        #endregion
+		}
+		#endregion
+
+		[Test]
+		public void OnEffectStart_20ConstitutionBuffOnNPC_NPChas21Constitution()
+		{
+			var caster = Create.FakePlayer();
+			var target = Create.FakeNPC();
+			var spell = Create.Spell();
+			spell.Value = 20;
+			var spellLine = new SpellLine("", "", "", true);
+			var constitutionBuff = new ConstitutionBuff(caster, spell, spellLine);
+			var spellEffect = new GameSpellEffect(constitutionBuff, 0, 0);
+			
+			spellEffect.Start(target);
+			constitutionBuff.OnEffectStart(spellEffect);
+
+			int actual = target.Boni.ValueOf(Bonus.Constitution);
+			int expected = 21;
+			Assert.AreEqual(expected, actual);
+		}
     }
 }

@@ -1023,7 +1023,7 @@ namespace DOL.GS
 		/// <returns></returns>
 		public virtual int GetWeaponStat(InventoryItem weapon)
 		{
-			return GetModified(eProperty.Strength);
+			return Boni.ValueOf(Bonus.Strength);
 		}
 
 		/// <summary>

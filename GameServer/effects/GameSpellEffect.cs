@@ -73,7 +73,6 @@ namespace DOL.GS.Effects
 		public GameLiving Owner
 		{
 			get { return m_owner; }
-			protected set { m_owner = value; }
 		}
 		
 		/// <summary>
@@ -408,7 +407,7 @@ namespace DOL.GS.Effects
 					}
 					
 					//Enable Effect
-					Owner = target;
+					m_owner = target;
 					IsExpired = false;
 					try
 					{

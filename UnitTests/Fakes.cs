@@ -48,6 +48,11 @@ namespace DOL.UnitTests.GameServer
 			}
 		}
 
+		public override string GetName(int article, bool firstLetterUppercase)
+		{
+			return "";
+		}
+
 		public override int TotalConstitutionLostAtDeath
         {
             get { return totalConLostOnDeath; }
@@ -60,6 +65,11 @@ namespace DOL.UnitTests.GameServer
 		public bool isInCombat = false;
 
 		public FakeNPC() : base(Substitute.For<ABrain>()){}
+
+		public override string GetName(int article, bool firstLetterUppercase)
+		{
+			return "FakeName";
+		}
 
 		public override bool InCombat => isInCombat;
 	}

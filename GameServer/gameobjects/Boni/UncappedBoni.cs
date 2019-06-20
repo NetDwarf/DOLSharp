@@ -34,7 +34,7 @@ namespace DOL.GS
 			for (int i = 0; i <= (int)eProperty.MaxProperty; i++)
 			{
 				var bonusType = new BonusType((eBonusType)i);
-				SetTo(new Bonus(0, part, bonusType));
+				SetTo(bonusType.From(part).Create(0));
 			}
 		}
 
