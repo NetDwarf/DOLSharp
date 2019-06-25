@@ -33,7 +33,7 @@ namespace DOL.PerformanceTests.Memory
 				players[i] = GamePlayer.CreateTestableGamePlayer();
 				for (int j = 1; j <= 8; j++)
 				{
-					var bonusType = new BonusType((eProperty)j);
+					var bonusType = new BonusType((eBonusType)j);
 					players[i].Boni.Add(bonusType.Base.Create(60));
 				}
 			}
@@ -48,18 +48,31 @@ namespace DOL.PerformanceTests.Memory
 		{
 			long before = GC.GetTotalMemory(true);
 			GamePlayer[] players = new GamePlayer[100];
+			
 			for (int i = 0; i < players.Length; i++)
 			{
 				players[i] = GamePlayer.CreateTestableGamePlayer();
-				for (int j = 1; j <= 100; j++)
+				eBonusType previous = eBonusType.Stat_Last;
+				ushort counter = 0;
+				foreach (var j in Enum.GetValues(typeof(eBonusType)))
 				{
-					var bonusType = new BonusType((eProperty)j);
-					players[i].Boni.Add(bonusType.Item.Create(60));
+					if (previous != (eBonusType)j)
+					{
+						var bonusType = new BonusType((eBonusType)j);
+						players[i].Boni.Add(bonusType.Item.Create(60));
+						players[i].Boni.Add(bonusType.Item.Create(60));
+						counter++;
+					}
+					if (counter >= 100)
+					{
+						break;
+					}
+					previous = (eBonusType)j;
 				}
 			}
 			long after = GC.GetTotalMemory(true);
 			long memoryConsumption = after - before;
-			Console.WriteLine("100 GamePlayer with 100 item properties set consume " + memoryConsumption + " bytes");
+			Console.WriteLine("100 GamePlayer with 100 different item bonuses added twice, consume " + memoryConsumption + " bytes");
 			Assert.Less(memoryConsumption, 10 * 1000 * 1000);
 		}
 
@@ -73,7 +86,7 @@ namespace DOL.PerformanceTests.Memory
 				npcs[i] = Create.FakeNPC();
 				for (int j = 1; j <= 8; j++)
 				{
-					var bonusType = new BonusType((eProperty)j);
+					var bonusType = new BonusType((eBonusType)j);
 					npcs[i].Boni.Add(bonusType.Base.Create(60));
 				}
 			}
@@ -93,7 +106,7 @@ namespace DOL.PerformanceTests.Memory
 				boniArray[i] = new UncappedBoni();
 				for (int j = 1; j <= 8; j++)
 				{
-					var bonusType = new BonusType((eProperty)j);
+					var bonusType = new BonusType((eBonusType)j);
 					boniArray[i].Add(bonusType.Base.Create(60));
 				}
 			}
@@ -111,12 +124,24 @@ namespace DOL.PerformanceTests.Memory
 			for (int i = 0; i < boniArray.Length; i++)
 			{
 				boniArray[i] = new UncappedBoni();
-				for (int j = 1; j <= 100; j++)
+				eBonusType previous = eBonusType.Stat_Last;
+				ushort counter = 0;
+				foreach(var j in Enum.GetValues(typeof(eBonusType)))
 				{
-					var bonusType = new BonusType((eProperty)j);
-					boniArray[i].Add(bonusType.Item.Create(60));
+					if (previous != (eBonusType)j)
+					{
+						var bonusType = new BonusType((eBonusType)j);
+						boniArray[i].Add(bonusType.Item.Create(60));
+						counter++;
+					}
+					if(counter >= 100)
+					{
+						break;
+					}
+					previous = (eBonusType)j;
 				}
 			}
+
 			long after = GC.GetTotalMemory(true);
 			long memoryConsumption = after - before;
 			Console.WriteLine("100 Boni with 100 item properties set consume " + memoryConsumption + " bytes");

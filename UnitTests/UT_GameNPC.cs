@@ -41,7 +41,7 @@ namespace DOL.UnitTests.GameServer
 		public void GetModified_MeleeDamage_Has9AbilityMeleeDamage_9()
 		{
 			var npc = createGenericNPC();
-			var meleeDamage = new BonusType(eProperty.MeleeDamage);
+			var meleeDamage = new BonusType(eBonusType.MeleeDamage);
 			npc.Boni.Add(meleeDamage.Ability.Create(9));
 
 			int actual = npc.GetModified(eProperty.MeleeDamage);
@@ -53,7 +53,7 @@ namespace DOL.UnitTests.GameServer
 		public void GetModified_MatterResist_Has9ItemMatterResist_9()
 		{
 			var npc = createGenericNPC();
-			var matterResist = new BonusType(eProperty.Resist_Matter);
+			var matterResist = new BonusType(eBonusType.Resist_Matter);
 			npc.Boni.Add(matterResist.Ability.Create(9));
 
 			int actual = npc.GetModified(eProperty.Resist_Matter);
@@ -96,7 +96,7 @@ namespace DOL.UnitTests.GameServer
 		public void GetResistBase_FromMatter_NPCHasOneMatterBaseBuff_One()
 		{
 			var npc = createGenericNPC();
-			var matterResist = new BonusType(eProperty.Resist_Matter);
+			var matterResist = new BonusType(eBonusType.Resist_Matter);
 			npc.Boni.Add(matterResist.BaseBuff.Create(1));
 
 			int actual = npc.GetResistBase(eDamageType.Matter);
@@ -109,7 +109,7 @@ namespace DOL.UnitTests.GameServer
 		public void GetResistBase_FromNatural_NPCHasOneNaturalBaseBuff_Zero()
 		{
 			var npc = createGenericNPC();
-			var naturalResist = new BonusType(eProperty.Resist_Natural);
+			var naturalResist = new BonusType(eBonusType.Resist_Natural);
 			npc.Boni.Add(naturalResist.BaseBuff.Create(1));
 
 			int actual = npc.GetResistBase(eDamageType.Natural);

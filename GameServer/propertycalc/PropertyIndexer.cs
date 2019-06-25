@@ -22,6 +22,7 @@ namespace DOL.GS.PropertyCalc
 	{
 		private Boni boni;
 		private BonusPart category;
+		private BonusFactory bonusFactory = new BonusFactory();
 
 		public IndexerBoniAdapter(Boni boni, BonusPart category)
 		{
@@ -33,13 +34,13 @@ namespace DOL.GS.PropertyCalc
 		{
 			get
 			{
-				var bonusType = new BonusType((eProperty)index);
-				return boni.RawValueOf(bonusType.From(category));
+				var bonusComponent = bonusFactory.CreateComponent((eProperty)index, category.ID);
+				return boni.RawValueOf(bonusComponent);
 			}
 			set
 			{
-				var bonusType = new BonusType((eProperty)index);
-				boni.SetTo(bonusType.From(category).Create(value));
+				var bonusComponent = bonusFactory.CreateComponent((eProperty)index, category.ID);
+				boni.SetTo(bonusComponent.Create(value));
 			}
 		}
 

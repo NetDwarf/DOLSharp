@@ -5,7 +5,7 @@ namespace DOL.GS
 {
 	public interface IBonusCompound
 	{
-		eProperty Type { get; }
+		BonusType Type { get; }
 
 		int Get(BonusPart category);
 		void Set(int value, BonusPart category);
@@ -18,12 +18,12 @@ namespace DOL.GS
 	{
 		private int[] componentValues = new int[(int)eBonusPart.__Last + 1];
 		private List<int> perMilleMultiplier = new List<int>();
+		
+		public BonusType Type { get; }
 
-		public eProperty Type { get; }
-
-		public BonusCompound(eProperty property)
+		public BonusCompound(BonusType type)
 		{
-			this.Type = property;
+			this.Type = type;
 		}
 
 		public void Add(int value, BonusPart category)
@@ -90,7 +90,7 @@ namespace DOL.GS
 
 	public class NullBonusCompound : IBonusCompound
 	{
-		public eProperty Type { get { return eProperty.Undefined; } }
+		public BonusType Type { get { return new BonusType(eBonusType.Undefined); } }
 		
 		public int Get(BonusPart category)
 		{

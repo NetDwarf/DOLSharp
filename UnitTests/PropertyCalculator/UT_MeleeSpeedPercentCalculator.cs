@@ -116,7 +116,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType MeleeSpeed => new BonusType(eProperty.MeleeSpeed);
+		private BonusType MeleeSpeed => new BonusType(eBonusType.MeleeSpeed);
 
 		private static MeleeSpeedPercentCalculator createMeleeSpeedCalculator()
 		{

@@ -147,7 +147,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType BodyResist => new BonusType(eProperty.Resist_Body);
+		private BonusType BodyResist => new BonusType(eBonusType.Resist_Body);
 
 		private static ResistCalculator createResistCalculator()
 		{

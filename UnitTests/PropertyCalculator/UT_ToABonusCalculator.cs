@@ -20,7 +20,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Boni.Add(ArcherySpeedBonus.Item.Create(5));
 			var calc = createArcherySpeedCalculator();
 
-			int actual = calc.CalcValue(player, ArcherySpeedBonus.ID);
+			int actual = calc.CalcValue(player, ArcherySpeedBonus.DatabaseID);
 
 			int expected = 5;
 			Assert.AreEqual(expected, actual);
@@ -32,7 +32,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var player = Create.FakeNPC();
 			var calc = createArcherySpeedCalculator();
 
-			int actual = calc.CalcValue(player, ArcherySpeedBonus.ID);
+			int actual = calc.CalcValue(player, ArcherySpeedBonus.DatabaseID);
 
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
@@ -46,7 +46,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Boni.Add(ArcherySpeedBonus.Debuff.Create(2));
 			var calc = createArcherySpeedCalculator();
 
-			int actual = calc.CalcValue(player, ArcherySpeedBonus.ID);
+			int actual = calc.CalcValue(player, ArcherySpeedBonus.DatabaseID);
 
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
@@ -59,13 +59,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Boni.Add(ArcherySpeedBonus.Item.Create(15));
 			var calc = createArcherySpeedCalculator();
 
-			int actual = calc.CalcValue(player, ArcherySpeedBonus.ID);
+			int actual = calc.CalcValue(player, ArcherySpeedBonus.DatabaseID);
 
 			int expected = 10;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType ArcherySpeedBonus => new BonusType(eProperty.ArcherySpeed);
+		private BonusType ArcherySpeedBonus => new BonusType(eBonusType.ArcherySpeed);
 
 		private static IPropertyCalculator createArcherySpeedCalculator()
 		{
@@ -82,7 +82,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var npc = Create.FakeNPC();
 			var calc = createSpellRangeCalculator();
 
-			int actual = calc.CalcValue(npc, SpellRangeBonus.ID);
+			int actual = calc.CalcValue(npc, SpellRangeBonus.DatabaseID);
 
 			int expected = 100;
 			Assert.AreEqual(expected, actual);
@@ -96,7 +96,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Boni.Add(SpellRangeBonus.SpecBuff.Create(5));
 			player.Boni.Add(SpellRangeBonus.Item.Create(5));
 
-			int actual = calc.CalcValue(player, SpellRangeBonus.ID);
+			int actual = calc.CalcValue(player, SpellRangeBonus.DatabaseID);
 
 			int expected = 110;
 			Assert.AreEqual(expected, actual);
@@ -109,7 +109,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createSpellRangeCalculator();
 			player.Boni.Add(SpellRangeBonus.Item.Create(12));
 
-			int actual = calc.CalcValue(player, SpellRangeBonus.ID);
+			int actual = calc.CalcValue(player, SpellRangeBonus.DatabaseID);
 
 			int expected = 110;
 			Assert.AreEqual(expected, actual);
@@ -122,7 +122,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createSpellRangeCalculator();
 			player.Boni.Add(SpellRangeBonus.SpecBuff.Create(12));
 
-			int actual = calc.CalcValue(player, SpellRangeBonus.ID);
+			int actual = calc.CalcValue(player, SpellRangeBonus.DatabaseID);
 
 			int expected = 105;
 			Assert.AreEqual(expected, actual);
@@ -135,7 +135,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createSpellRangeCalculator();
 			player.Boni.Add(SpellRangeBonus.Debuff.Create(12));
 
-			int actual = calc.CalcValue(player, SpellRangeBonus.ID);
+			int actual = calc.CalcValue(player, SpellRangeBonus.DatabaseID);
 
 			int expected = 88;
 			Assert.AreEqual(expected, actual);
@@ -148,7 +148,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createSpellRangeCalculator();
 			player.Boni.Add(SpellRangeBonus.Debuff.Create(120));
 
-			int actual = calc.CalcValue(player, SpellRangeBonus.ID);
+			int actual = calc.CalcValue(player, SpellRangeBonus.DatabaseID);
 
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
@@ -168,13 +168,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var nearsightReduction = new NearsightReductionSpellHandler(player, spell, null);
 			player.EffectList.Add(new GameSpellEffect(nearsightReduction, 1, 0));
 
-			int actual = calc.CalcValue(player, SpellRangeBonus.ID);
+			int actual = calc.CalcValue(player, SpellRangeBonus.DatabaseID);
 
 			int expected = 91;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType SpellRangeBonus => new BonusType(eProperty.SpellRange);
+		private BonusType SpellRangeBonus => new BonusType(eBonusType.SpellRange);
 
 		private static IPropertyCalculator createSpellRangeCalculator()
 		{
@@ -193,7 +193,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Boni.Add(ArcheryRangeBonus.SpecBuff.Create(5));
 			player.Boni.Add(ArcheryRangeBonus.Item.Create(5));
 
-			int actual = calc.CalcValue(player, ArcheryRangeBonus.ID);
+			int actual = calc.CalcValue(player, ArcheryRangeBonus.DatabaseID);
 
 			int expected = 105;
 			Assert.AreEqual(expected, actual);
@@ -206,7 +206,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createArcheryRangeCalculator();
 			player.Boni.Add(ArcheryRangeBonus.SpecBuff.Create(12));
 
-			int actual = calc.CalcValue(player, ArcheryRangeBonus.ID);
+			int actual = calc.CalcValue(player, ArcheryRangeBonus.DatabaseID);
 
 			int expected = 100;
 			Assert.AreEqual(expected, actual);
@@ -220,13 +220,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createArcheryRangeCalculator();
 			player.RangedAttackType = GameLiving.eRangedAttackType.Long;
 
-			int actual = calc.CalcValue(player, ArcheryRangeBonus.ID);
+			int actual = calc.CalcValue(player, ArcheryRangeBonus.DatabaseID);
 
 			int expected = 150;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType ArcheryRangeBonus => new BonusType(eProperty.ArcheryRange);
+		private BonusType ArcheryRangeBonus => new BonusType(eBonusType.ArcheryRange);
 
 		private static IPropertyCalculator createArcheryRangeCalculator()
 		{
@@ -246,7 +246,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Boni.Add(MissHitType.SpecBuff.Create(4));
 			player.Boni.Add(MissHitType.ExtraBuff.Create(3));
 
-			int actual = calc.CalcValue(player, MissHitType.ID);
+			int actual = calc.CalcValue(player, MissHitType.DatabaseID);
 
 			int expected = 12;
 			Assert.AreEqual(expected, actual);
@@ -259,13 +259,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createMissHitCalculator();
 			player.Boni.Add(MissHitType.Debuff.Create(5));
 
-			int actual = calc.CalcValue(player, MissHitType.ID);
+			int actual = calc.CalcValue(player, MissHitType.DatabaseID);
 
 			int expected = -5;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType MissHitType => new BonusType(eProperty.MissHit);
+		private BonusType MissHitType => new BonusType(eBonusType.MissHit);
 
 		private static IPropertyCalculator createMissHitCalculator()
 		{
@@ -283,7 +283,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createArcaneSyphonCalculator();
 			player.Boni.Add(ArcaneSyphonType.Item.Create(30));
 
-			int actual = calc.CalcValue(player, ArcaneSyphonType.ID);
+			int actual = calc.CalcValue(player, ArcaneSyphonType.DatabaseID);
 
 			int expected = 25;
 			Assert.AreEqual(expected, actual);
@@ -308,7 +308,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			player.Boni.Add(ArmorFactorType.Item.Create(30));
 
-			int actual = calc.CalcValue(player, ArmorFactorType.ID);
+			int actual = calc.CalcValue(player, ArmorFactorType.DatabaseID);
 
 			int expected = 25;
 			Assert.AreEqual(expected, actual);
@@ -322,7 +322,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			player.Boni.Add(ArmorFactorType.SpecBuff.Create(100));
 
-			int actual = calc.CalcValue(player, ArmorFactorType.ID);
+			int actual = calc.CalcValue(player, ArmorFactorType.DatabaseID);
 
 			int expected = 93;
 			Assert.AreEqual(expected, actual);
@@ -335,7 +335,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			player.Boni.Add(ArmorFactorType.Debuff.Create(12));
 
-			int actual = calc.CalcValue(player, ArmorFactorType.ID);
+			int actual = calc.CalcValue(player, ArmorFactorType.DatabaseID);
 
 			int expected = -12;
 			Assert.AreEqual(expected, actual);
@@ -348,7 +348,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			player.Boni.Add(ArmorFactorType.ExtraBuff.Create(100));
 
-			int actual = calc.CalcValue(player, ArmorFactorType.ID);
+			int actual = calc.CalcValue(player, ArmorFactorType.DatabaseID);
 
 			int expected = 100;
 			Assert.AreEqual(expected, actual);
@@ -361,7 +361,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Level = 50;
 			var calc = createCalculator();
 
-			int actual = calc.CalcValue(player, ArmorFactorType.ID);
+			int actual = calc.CalcValue(player, ArmorFactorType.DatabaseID);
 
 			int expected = 604;
 			Assert.AreEqual(expected, actual);
@@ -378,7 +378,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			keepDoor.Component.AbstractKeep = keep;
 			var calc = createCalculator();
 
-			int actual = calc.CalcValue(keepDoor, ArmorFactorType.ID);
+			int actual = calc.CalcValue(keepDoor, ArmorFactorType.DatabaseID);
 			int expected = 50;
 			Assert.AreEqual(expected, actual);
 		}
@@ -394,13 +394,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			keepDoor.Component.AbstractKeep = keep;
 			var calc = createCalculator();
 
-			int actual = calc.CalcValue(keepDoor, ArmorFactorType.ID);
+			int actual = calc.CalcValue(keepDoor, ArmorFactorType.DatabaseID);
 			int expected = 25;
 			Assert.AreEqual(expected, actual);
 		}
 
 
-		private BonusType ArmorFactorType => new BonusType(eProperty.ArmorFactor);
+		private BonusType ArmorFactorType => new BonusType(eBonusType.ArmorFactor);
 
 		private static IPropertyCalculator createCalculator()
 		{
@@ -418,7 +418,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			player.Boni.Add(ArmorAbsorptionType.Ability.Create(100));
 
-			int actual = calc.CalcValue(player, ArmorAbsorptionType.ID);
+			int actual = calc.CalcValue(player, ArmorAbsorptionType.DatabaseID);
 
 			int expected = 50;
 			Assert.AreEqual(expected, actual);
@@ -431,7 +431,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			npc.Level = 50;
 			var calc = createCalculator();
 
-			int actual = calc.CalcValue(npc, ArmorAbsorptionType.ID);
+			int actual = calc.CalcValue(npc, ArmorAbsorptionType.DatabaseID);
 
 			int expected = 17;
 			Assert.AreEqual(expected, actual);
@@ -444,13 +444,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			npc.Level = 1;
 			var calc = createCalculator();
 
-			int actual = calc.CalcValue(npc, ArmorAbsorptionType.ID);
+			int actual = calc.CalcValue(npc, ArmorAbsorptionType.DatabaseID);
 
 			int expected = -10;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType ArmorAbsorptionType => new BonusType(eProperty.ArmorAbsorption);
+		private BonusType ArmorAbsorptionType => new BonusType(eBonusType.ArmorAbsorption);
 
 		private static IPropertyCalculator createCalculator()
 		{

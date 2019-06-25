@@ -26,20 +26,20 @@ namespace DOL.GS
 					return new AcuityCap(owner);
 				}
 			}
-			if (type.ID == eProperty.Resist_Natural) { return new EssenceResistCap(owner); }
+			if (type.Equals(new BonusType(eBonusType.Resist_Natural))) { return new EssenceResistCap(owner); }
 			if (type.IsResist) { return new ResistCap(owner); }
-			if (type.ID == eProperty.MeleeDamage || type.ID == eProperty.ArcherySpeed)
+			if (type.Equals(new BonusType(eBonusType.MeleeDamage)) || type.Equals(new BonusType(eBonusType.ArcherySpeed)))
 			{
 				return new MeleeDamageCap(owner);
 			}
-			if (type.ID == eProperty.MeleeSpeed) { return new MeleeSpeedCap(owner); }
-			if (type.ID == eProperty.SpellRange) { return new SpellRangeCap(owner); }
-			if (type.ID == eProperty.ArcheryRange) { return new ArcheryRangeCap(owner); }
-			if (type.ID == eProperty.MissHit) { return new MissHit(owner); }
-			if (type.ID == eProperty.ArcaneSyphon) { return new ArcaneSyphonCap(owner); }
-			if (type.ID == eProperty.ArmorFactor) { return new ArmorFactorCap(owner); }
-			if (type.ID == eProperty.ArmorAbsorption) { return new ArmorAbsorptionCap(owner); }
-			if (type.IsRegen) { return new DefaultBonusCap(owner); }
+			if (type.Equals(new BonusType(eBonusType.MeleeSpeed))) { return new MeleeSpeedCap(owner); }
+			if (type.Equals(new BonusType(eBonusType.SpellRange))) { return new SpellRangeCap(owner); }
+			if (type.Equals(new BonusType(eBonusType.ArcheryRange))) { return new ArcheryRangeCap(owner); }
+			if (type.Equals(new BonusType(eBonusType.MissHit))) { return new MissHit(owner); }
+			if (type.Equals(new BonusType(eBonusType.ArcaneSyphon))) { return new ArcaneSyphonCap(owner); }
+			if (type.Equals(new BonusType(eBonusType.ArmorFactor))) { return new ArmorFactorCap(owner); }
+			if (type.Equals(new BonusType(eBonusType.ArmorAbsorption))) { return new ArmorAbsorptionCap(owner); }
+			if (type.IsRegen) { return new RegenCap(owner); }
 
 			throw new ArgumentException("There is no PropertyCap for " + type.ID);
 		}
@@ -233,5 +233,12 @@ namespace DOL.GS
 	public class MissHit : DefaultBonusCap
 	{
 		public MissHit(GameLiving owner) : base(owner) { }
+	}
+
+	public class RegenCap : DefaultBonusCap
+	{
+		public RegenCap(GameLiving owner) : base(owner) { }
+
+		public override int SpecBuff => 0;
 	}
 }

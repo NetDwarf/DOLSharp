@@ -14,7 +14,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			setRegenMultiplier(1);
 
-			int actual = calc.CalcValue(living, EndurangeRegenType.ID);
+			int actual = calc.CalcValue(living, EndurangeRegenType.DatabaseID);
 
 			int expected = 5;
 			Assert.AreEqual(expected, actual);
@@ -29,7 +29,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			setRegenMultiplier(1);
 
-			int actual = calc.CalcValue(living, EndurangeRegenType.ID);
+			int actual = calc.CalcValue(living, EndurangeRegenType.DatabaseID);
 
 			int expected = 17;
 			Assert.AreEqual(expected, actual);
@@ -43,7 +43,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			setRegenMultiplier(1);
 
-			int actual = calc.CalcValue(living, EndurangeRegenType.ID);
+			int actual = calc.CalcValue(living, EndurangeRegenType.DatabaseID);
 
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
@@ -57,27 +57,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			setRegenMultiplier(1);
 
-			int actual = calc.CalcValue(living, EndurangeRegenType.ID);
+			int actual = calc.CalcValue(living, EndurangeRegenType.DatabaseID);
 
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
 
-		[Test]
-		public void CalcValue_Player_7SpecBuff_Zero()
-		{
-			var living = Create.FakePlayer();
-			living.Boni.Add(EndurangeRegenType.SpecBuff.Create(7));
-			var calc = createCalculator();
-			setRegenMultiplier(1);
-
-			int actual = calc.CalcValue(living, EndurangeRegenType.ID);
-
-			int expected = 0;
-			Assert.AreEqual(expected, actual);
-		}
-
-		private BonusType EndurangeRegenType => new BonusType(eProperty.EnduranceRegenerationRate);
+		private BonusType EndurangeRegenType => new BonusType(eBonusType.EnduranceRegenerationRate);
 
 		private IPropertyCalculator createCalculator()
 		{
@@ -103,7 +89,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			setRegenMultiplier(1);
 
-			int actual = calc.CalcValue(living, PowerRegenType.ID);
+			int actual = calc.CalcValue(living, PowerRegenType.DatabaseID);
 
 			int expected = 23;
 			Assert.AreEqual(expected, actual);
@@ -119,28 +105,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			setRegenMultiplier(1);
 
-			int actual = calc.CalcValue(living, PowerRegenType.ID);
+			int actual = calc.CalcValue(living, PowerRegenType.DatabaseID);
 
 			int expected = 16;
 			Assert.AreEqual(expected, actual);
 		}
 
-		[Test]
-		public void CalcValue_Player_20SpecBuff_One()
-		{
-			var living = Create.FakePlayer();
-			living.isInCombat = true;
-			living.Boni.Add(PowerRegenType.SpecBuff.Create(20));
-			var calc = createCalculator();
-			setRegenMultiplier(1);
-
-			int actual = calc.CalcValue(living, PowerRegenType.ID);
-
-			int expected = 1;
-			Assert.AreEqual(expected, actual);
-		}
-
-		private BonusType PowerRegenType => new BonusType(eProperty.PowerRegenerationRate);
+		private BonusType PowerRegenType => new BonusType(eBonusType.PowerRegenerationRate);
 
 		private IPropertyCalculator createCalculator()
 		{
@@ -166,7 +137,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			setRegenMultiplier(1);
 
-			int actual = calc.CalcValue(living, HealthRegenType.ID);
+			int actual = calc.CalcValue(living, HealthRegenType.DatabaseID);
 
 			int expected = 30;
 			Assert.AreEqual(expected, actual);
@@ -181,7 +152,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			setRegenMultiplier(1);
 
-			int actual = calc.CalcValue(living, HealthRegenType.ID);
+			int actual = calc.CalcValue(living, HealthRegenType.DatabaseID);
 
 			int expected = 15;
 			Assert.AreEqual(expected, actual);
@@ -197,24 +168,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			setRegenMultiplier(1);
 
-			int actual = calc.CalcValue(living, HealthRegenType.ID);
+			int actual = calc.CalcValue(living, HealthRegenType.DatabaseID);
 
 			int expected = 21;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void CalcValue_Player_20SpecBuff_One()
-		{
-			var living = Create.FakePlayer();
-			living.isInCombat = true;
-			living.Boni.Add(HealthRegenType.SpecBuff.Create(20));
-			var calc = createCalculator();
-			setRegenMultiplier(1);
-
-			int actual = calc.CalcValue(living, HealthRegenType.ID);
-
-			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -226,13 +182,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createCalculator();
 			setRegenMultiplier(1);
 
-			int actual = calc.CalcValue(living, HealthRegenType.ID);
+			int actual = calc.CalcValue(living, HealthRegenType.DatabaseID);
 
 			int expected = 50;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType HealthRegenType => new BonusType(eProperty.HealthRegenerationRate);
+		private BonusType HealthRegenType => new BonusType(eBonusType.HealthRegenerationRate);
 
 		private IPropertyCalculator createCalculator()
 		{

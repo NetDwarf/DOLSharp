@@ -24,7 +24,7 @@ namespace DOL.GS.PropertyCalc
 		public override int CalcValue(GameLiving living, eProperty property)
 		{
 			var bonusProperties = new Boni(living);
-			int bonusValue = bonusProperties.ValueOf(new BonusType(property));
+			int bonusValue = bonusProperties.ValueOf(new BonusType(eBonusType.ArmorAbsorption));
 			int abs = 0;
 			if (living is GameNPC)
 			{

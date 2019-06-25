@@ -26,7 +26,7 @@ namespace DOL.GS.PropertyCalc
 	{
 		public override int CalcValue(GameLiving living, eProperty property)
 		{
-			var bonusType = new BonusType(property);
+			var bonusType = new BonusType((eBonusType)property);
 			var bonusProperties = new Boni(living);
 			return bonusProperties.ValueOf(bonusType);
 		}
@@ -53,14 +53,14 @@ namespace DOL.GS.PropertyCalc
 
 		public override int CalcValueFromBuffs(GameLiving living, eProperty property)
 		{
-			var bonusType = new BonusType(property);
+			var bonusType = new BonusType((eBonusType)property);
 			var bonusProperties = new Boni(living);
 			return bonusProperties.BuffValueOf(bonusType);
 		}
 
 		public override int CalcValueFromItems(GameLiving living, eProperty property)
 		{
-			var bonusType = new BonusType(property);
+			var bonusType = new BonusType((eBonusType)property);
 			var bonusProperties = new Boni(living);
 			return bonusProperties.ItemValueOf(bonusType);
 		}
@@ -71,21 +71,21 @@ namespace DOL.GS.PropertyCalc
 	{
 		public override int CalcValue(GameLiving living, eProperty property)
         {
-				var bonusType = new BonusType(property);
+				var bonusType = new BonusType((eBonusType)property);
 				var bonusProperties = new Boni(living);
 				return bonusProperties.ValueOf(bonusType);
         }
 
         public override int CalcValueFromBuffs(GameLiving living, eProperty property)
         {
-			var bonusType = new BonusType(property);
+			var bonusType = new BonusType((eBonusType)property);
 			var bonusProperties = new Boni(living);
 			return bonusProperties.BuffValueOf(bonusType);
 		}
 
         public override int CalcValueFromItems(GameLiving living, eProperty property)
         {
-			var bonusType = new BonusType(property);
+			var bonusType = new BonusType((eBonusType)property);
 			var bonusProperties = new Boni(living);
 			return bonusProperties.ItemValueOf(bonusType);
 		}

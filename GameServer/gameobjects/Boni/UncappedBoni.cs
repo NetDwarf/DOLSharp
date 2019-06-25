@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DOL.GS
 {
@@ -31,10 +32,16 @@ namespace DOL.GS
 
 		public void Clear(BonusPart part)
 		{
-			for (int i = 0; i <= (int)eProperty.MaxProperty; i++)
+			var allPropertyIDs = Enum.GetValues(typeof(eBonusType));
+			foreach(var id in allPropertyIDs)
 			{
-				var bonusType = new BonusType((eBonusType)i);
+				var bonusType = new BonusType((eBonusType)id);
 				SetTo(bonusType.From(part).Create(0));
+				if(part.Equals(Bonus.Item))
+				{
+					SetTo(bonusType.ItemOvercap.Create(0));
+					SetTo(bonusType.Mythical.Create(0));
+				}
 			}
 		}
 
@@ -45,12 +52,12 @@ namespace DOL.GS
 
 		private IBonusCompound GetBonusOf(BonusType type, bool createIfNotExists)
 		{
-			var bonusindex = bonusCompounds.FindIndex(s => s.Type == type.ID);
+			var bonusindex = bonusCompounds.FindIndex(s => s.Type.Equals(type));
 			if (bonusindex < 0)
 			{
 				if (createIfNotExists)
 				{
-					var bonusCompound = new BonusCompound(type.ID);
+					var bonusCompound = new BonusCompound(type);
 					bonusCompounds.Add(bonusCompound);
 					return bonusCompound;
 				}

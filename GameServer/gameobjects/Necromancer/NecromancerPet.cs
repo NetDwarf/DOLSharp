@@ -131,32 +131,33 @@ namespace DOL.GS
 			/// Get modified bonuses for the pet; some bonuses come from the shade,
 			/// some come from the pet.
 			/// </summary>
-			/// <param name="property"></param>
+			/// <param name="propertyID"></param>
 			/// <returns></returns>
-		public override int GetModified(eProperty property)
+		public override int GetModified(eProperty propertyID)
 		{
 			if (Brain == null || (Brain as IControlledBrain) == null)
-				return base.GetModified(property);
+				return base.GetModified(propertyID);
 
             GameLiving owner = (Brain as IControlledBrain).GetLivingOwner();
 
-			var bonusType = new BonusType(property);
+			var bonusFactory = new BonusFactory();
+			var bonusType = bonusFactory.CreateType(propertyID);
 			if (bonusType.IsBaseStat || bonusType.IsResist)
 			{
 				int itemBonus = 0;
-				if (bonusType.ID != eProperty.Constitution)
+				if (!bonusType.Equals(Bonus.Constitution))
 				{
 					itemBonus = owner.Boni.ItemValueOf(bonusType);
 				}
 				int buffBonus = Boni.BuffValueOf(bonusType);
-				int debuff = DebuffCategory[(int)property];
+				int debuff = DebuffCategory[(int)propertyID];
 
 				// Base stats from the pet; add this to item bonus
 				// afterwards, as it is treated the same way for
 				// debuffing purposes.
 
 				int baseBonus = 0;
-				switch (property)
+				switch (propertyID)
 				{
 					case eProperty.Strength:
 						baseBonus = Strength;
@@ -189,11 +190,11 @@ namespace DOL.GS
 
 				return itemBonus + buffBonus;
 			}
-			else if (bonusType.ID == eProperty.MaxHealth)
+			else if (bonusType.Equals(new BonusType(eBonusType.MaxHealth)))
 			{
 				int conBonus = (int)(3.1 * Constitution);
 				int hitsBonus = (int)(32.5 * Level + m_summonHitsBonus);
-				int debuff = DebuffCategory[(int)property];
+				int debuff = DebuffCategory[(int)propertyID];
 
 				// Apply debuffs. As only base constitution affects pet
 				// health, effectiveness is a flat 50%.
@@ -206,7 +207,7 @@ namespace DOL.GS
 				return conBonus + hitsBonus;
 			}
 
-			return base.GetModified(property);
+			return base.GetModified(propertyID);
 		}
 
 		private int m_summonConBonus;

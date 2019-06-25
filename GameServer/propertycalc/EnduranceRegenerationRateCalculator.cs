@@ -26,7 +26,7 @@ namespace DOL.GS.PropertyCalc
 		public override int CalcValue(GameLiving living, eProperty property)
 		{
 			var bonusProperties = new Boni(living);
-			double regen = bonusProperties.ValueOf(new BonusType(property));
+			double regen = bonusProperties.ValueOf(new BonusType(eBonusType.EnduranceRegenerationRate));
 
 			if (regen == 0 && living is GamePlayer) //Tireless ability for all players
 				regen++;

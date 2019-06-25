@@ -65,7 +65,7 @@ namespace DOL.GS.PropertyCalc
 				regen += 1;	// compensate int rounding error
 			}
 			var bonusProperties = new Boni(living);
-			regen += bonusProperties.ValueOf(new BonusType(property));
+			regen += bonusProperties.ValueOf(new BonusType(eBonusType.HealthRegenerationRate));
 
 			regen = Math.Max(1, regen);
 

@@ -110,7 +110,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType NaturalResist => new BonusType(eProperty.Resist_Natural);
+		private BonusType NaturalResist => new BonusType(eBonusType.Resist_Natural);
 
 		private static ResistNaturalCalculator createNaturalResistCalculator()
 		{

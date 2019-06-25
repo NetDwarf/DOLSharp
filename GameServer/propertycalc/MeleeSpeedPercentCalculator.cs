@@ -24,7 +24,7 @@ namespace DOL.GS.PropertyCalc
 		public override int CalcValue(GameLiving living, eProperty property)
 		{
 			var properties = new Boni(living);
-			int value = properties.ValueOf(new BonusType(property));
+			int value = properties.ValueOf(new BonusType(eBonusType.MeleeSpeed));
 			return 100 - value;
 		}
 	}

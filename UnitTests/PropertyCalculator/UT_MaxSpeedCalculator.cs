@@ -23,7 +23,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		public void CalcValue_NPCWith1250PermilleSpeedBuff_250()
 		{
 			var npc = Create.FakeNPC();
-			var maxSpeed = new BonusType(eProperty.MaxSpeed);
+			var maxSpeed = new BonusType(eBonusType.MaxSpeed);
 			var movementSpeedCalculator = createMovementSpeedCalculator();
 			
 			npc.Boni.Add(maxSpeed.Multiplier.Create(1250));

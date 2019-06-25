@@ -47,7 +47,7 @@ namespace DOL.GS.PropertyCalc
 		{
 			if (living.IsMezzed || living.IsStunned) return 0;
 
-			var bonusType = new BonusType(property);
+			var bonusType = new BonusType(eBonusType.MaxSpeed);
 
 			double speed = living.Boni.RawValueOf(bonusType.Multiplier) * 0.001;
 

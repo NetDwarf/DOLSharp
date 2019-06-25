@@ -55,7 +55,7 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void Clear_Ability_WithOneConstitutionAbility_AbilityConstitutionIsOne()
+		public void Clear_Ability_WithOneConstitutionAbility_AbilityConstitutionIsZero()
 		{
 			var boni = createBoni();
 			var bonusProp = Bonus.Constitution.Ability.Create(1);
@@ -64,6 +64,20 @@ namespace DOL.UnitTests.GameServer
 			boni.Clear(Bonus.Ability);
 
 			int actual = boni.RawValueOf(Bonus.Constitution.Ability);
+			int expected = 0;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void Clear_Item_With12StrengthItemOvercap_StrengthItemOvercapIsZero()
+		{
+			var boni = createBoni();
+			var bonusProp = Bonus.Strength.ItemOvercap.Create(12);
+			boni.Add(bonusProp);
+
+			boni.Clear(Bonus.Item);
+
+			int actual = boni.RawValueOf(Bonus.Strength.ItemOvercap);
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
 		}
@@ -99,19 +113,6 @@ namespace DOL.UnitTests.GameServer
 
 			int actual = boni.RawValueOf(Bonus.Constitution.Base);
 			int expected = 1;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void ValueOf_DebuffHealthRegen_2HealthRegenSpecBuff_2()
-		{
-			var boni = createBoni();
-			var healthRegen = new BonusType(eProperty.HealthRegenerationRate);
-
-			boni.Add(healthRegen.SpecBuff.Create(2));
-
-			int actual = boni.RawValueOf(healthRegen.Debuff);
-			int expected = 2;
 			Assert.AreEqual(expected, actual);
 		}
 

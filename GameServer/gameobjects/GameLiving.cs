@@ -4858,14 +4858,14 @@ namespace DOL.GS
 		[Obsolete("Use Boni.RawValueOf(BonusComponent) instead!")]
 		public int GetBaseStat(eStat stat)
 		{
-			var statType = new BonusType((eProperty)stat);
+			var statType = new BonusType((eBonusType)stat);
 			return Boni.RawValueOf(statType.Base);
 		}
 
 		[Obsolete("Use Boni.Add(Bonus) instead!")]
 		public virtual void ChangeBaseStat(eStat stat, short amount)
 		{
-			var statType = new BonusType((eProperty)stat);
+			var statType = new BonusType((eBonusType)stat);
 			Boni.Add(statType.Base.Create(amount));
 		}
 

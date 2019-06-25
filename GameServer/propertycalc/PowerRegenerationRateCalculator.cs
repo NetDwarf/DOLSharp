@@ -49,7 +49,7 @@ namespace DOL.GS.PropertyCalc
 			}
 
 			var bonusProperties = new Boni(living);
-			regen += bonusProperties.ValueOf(new BonusType(property));
+			regen += bonusProperties.ValueOf(new BonusType(eBonusType.PowerRegenerationRate));
 
 			regen = Math.Max(1, regen);
 

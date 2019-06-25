@@ -24,6 +24,7 @@ namespace DOL.GS.PropertyCalc
 	{
 		private Boni boni;
 		private Dictionary<object, double> multiplicatorValues = new Dictionary<object, double>();
+		private BonusFactory bonusFactory = new BonusFactory();
 
 		public MultiplicativePropertiesBoniAdapter(Boni boni)
 		{
@@ -32,13 +33,13 @@ namespace DOL.GS.PropertyCalc
 
 		public double Get(int index)
 		{
-			var bonusType = new BonusType((eProperty)index);
+			var bonusType = bonusFactory.CreateType((eProperty)index);
 			return boni.RawValueOf(bonusType.Multiplier) / 1000.0;
 		}
 
 		public void Remove(int index, object key)
 		{
-			var bonusType = new BonusType((eProperty)index);
+			var bonusType = bonusFactory.CreateType((eProperty)index);
 			bool keyExists = multiplicatorValues.TryGetValue(key, out double value);
 			if(!keyExists)
 			{
@@ -51,7 +52,7 @@ namespace DOL.GS.PropertyCalc
 
 		public void Set(int index, object key, double value)
 		{
-			var bonusType = new BonusType((eProperty)index);
+			var bonusType = bonusFactory.CreateType((eProperty)index);
 			int perMilleValue = (int)(value * 1000);
 			multiplicatorValues.Add(key, value);
 			boni.Add(bonusType.Multiplier.Create(perMilleValue));

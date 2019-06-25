@@ -103,7 +103,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType MeleeDamage => new BonusType(eProperty.MeleeDamage);
+		private BonusType MeleeDamage => new BonusType(eBonusType.MeleeDamage);
 
 		private static MeleeDamagePercentCalculator createMeleeDamageCalculator()
 		{

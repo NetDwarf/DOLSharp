@@ -1,19 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DOL.GS
 {
 	public class Bonus
 	{
-		public Bonus(int value, BonusPart part, BonusType type)
+		public Bonus(BonusType type, BonusPart part, int value)
 		{
 			this.typeID = type.ID;
 			this.partID = part.ID;
 			this.Value = value;
-			ConvertOldBonus();
 		}
 
 		public int Value { get; }
-		private eProperty typeID;
+		private eBonusType typeID;
 		private eBonusPart partID;
 		public BonusType Type { get { return new BonusType(typeID); } private set { typeID = value.ID; } }
 		public BonusPart Part { get { return new BonusPart(partID); } private set { partID = value.ID; } }
@@ -39,44 +39,83 @@ namespace DOL.GS
 		public static BonusType Empathy { get { return new BonusType(eBonusType.Empathy); } }
 		public static BonusType Charisma { get { return new BonusType(eBonusType.Charisma); } }
 		public static BonusType Acuity { get { return new BonusType(eBonusType.Acuity); } }
+	}
 
-		private void ConvertOldBonus()
+	public class BonusFactory
+	{
+		private static Dictionary<eProperty, eBonusType> itemOvercapIDs = new Dictionary<eProperty, eBonusType>()
 		{
-			bool isItem = Part.ID == eBonusPart.Item;
-			bool isItemStatOvercap = isItem && Type.ID >= eProperty.StrCapBonus && Type.ID <= eProperty.AcuCapBonus;
-			bool isMythical = isItem && Type.ID >= eProperty.MythicalStatCapBonus_First && Type.ID <= eProperty.MythicalStatCapBonus_Last;
-			bool isResistOvercap = isItem && Type.ID >= eProperty.ResCapBonus_First && Type.ID <= eProperty.ResCapBonus_Last;
-			bool isRegenDebuff = Part.Equals(Bonus.SpecBuff) && Type.IsRegen;
+			{eProperty.StrCapBonus, eBonusType.Strength },
+			{eProperty.ConCapBonus, eBonusType.Constitution },
+			{eProperty.DexCapBonus, eBonusType.Dexterity },
+			{eProperty.QuiCapBonus, eBonusType.Quickness },
+			{eProperty.EmpCapBonus, eBonusType.Empathy },
+			{eProperty.IntCapBonus, eBonusType.Intelligence },
+			{eProperty.PieCapBonus, eBonusType.Piety },
+			{eProperty.ChaCapBonus, eBonusType.Charisma },
+			{eProperty.AcuCapBonus, eBonusType.Acuity },
+		};
+		private static Dictionary<eProperty, eBonusType> myticalIDs = new Dictionary<eProperty, eBonusType>()
+		{
+			{eProperty.MythicalStrCapBonus, eBonusType.Strength },
+			{eProperty.MythicalConCapBonus, eBonusType.Constitution },
+			{eProperty.MythicalDexCapBonus, eBonusType.Dexterity },
+			{eProperty.MythicalQuiCapBonus, eBonusType.Quickness },
+			{eProperty.MythicalEmpCapBonus, eBonusType.Empathy },
+			{eProperty.MythicalIntCapBonus, eBonusType.Intelligence },
+			{eProperty.MythicalPieCapBonus, eBonusType.Piety },
+			{eProperty.MythicalChaCapBonus, eBonusType.Charisma },
+			{eProperty.MythicalAcuCapBonus, eBonusType.Acuity },
+			{eProperty.SlashResCapBonus, eBonusType.Resist_Slash},
+			{eProperty.ThrustResCapBonus, eBonusType.Resist_Thrust},
+			{eProperty.CrushResCapBonus, eBonusType.Resist_Crush},
+			{eProperty.MatterResCapBonus, eBonusType.Resist_Matter},
+			{eProperty.HeatResCapBonus, eBonusType.Resist_Heat},
+			{eProperty.ColdResCapBonus, eBonusType.Resist_Cold},
+			{eProperty.BodyResCapBonus, eBonusType.Resist_Body},
+			{eProperty.EnergyResCapBonus, eBonusType.Resist_Energy},
+			{eProperty.SpiritResCapBonus, eBonusType.Resist_Spirit},
+		};
 
-			if (Type.ID == eProperty.AcuCapBonus)
+		public Bonus Create(eProperty propertyID, eBonusPart bonusPartID, int value)
+		{
+			return CreateComponent(propertyID, bonusPartID).Create(value);
+		}
+
+		public BonusComponent CreateComponent(eProperty propertyID, eBonusPart bonusPartID)
+		{
+			eBonusType typeID;
+			var bonusPart = new BonusPart(bonusPartID);
+
+			if (itemOvercapIDs.ContainsKey(propertyID))
 			{
-				Type = Acuity;
-				Part = ItemOvercap;
+				typeID = itemOvercapIDs[propertyID];
+				bonusPart = Bonus.ItemOvercap;
 			}
-			else if (Type.ID == eProperty.MythicalAcuCapBonus)
+			else if(myticalIDs.ContainsKey(propertyID))
 			{
-				Type = Acuity;
-				Part = Mythical;
+				typeID = myticalIDs[propertyID];
+				bonusPart = Bonus.Mythical;
 			}
-			else if (isItemStatOvercap)
+			else
 			{
-				Type = new BonusType(Type.ID - eProperty.StrCapBonus + eProperty.Stat_First);
-				Part = ItemOvercap;
+				if (Enum.IsDefined(typeof(eBonusType), (eBonusType)propertyID))
+				{
+					typeID = (eBonusType)propertyID;
+				}
+				else
+				{
+					throw new ArgumentException(propertyID + " is no valid eBonusType.");
+				}
 			}
-			else if (isMythical)
-			{
-				Type = new BonusType(Type.ID - eProperty.MythicalStatCapBonus_First + eProperty.Stat_First);
-				Part = Mythical;
-			}
-			else if (isResistOvercap)
-			{
-				Type = new BonusType(Type.ID - eProperty.ResCapBonus_First + eProperty.Resist_First);
-				Part = Mythical;
-			}
-			else if (isRegenDebuff)
-			{
-				Part = Debuff;
-			}
+			var bonusType = new BonusType(typeID);
+			return new BonusComponent(bonusType, bonusPart);
+		}
+
+		public BonusType CreateType(eProperty propertyID)
+		{
+			var component = CreateComponent(propertyID, Bonus.Item.ID);
+			return component.Type;
 		}
 	}
 
@@ -85,7 +124,7 @@ namespace DOL.GS
 		public BonusType Type { get; }
 		public BonusPart Part { get; }
 
-		public BonusComponent(BonusPart part, BonusType type)
+		public BonusComponent(BonusType type, BonusPart part)
 		{
 			this.Part = part;
 			this.Type = type;
@@ -93,7 +132,7 @@ namespace DOL.GS
 
 		public Bonus Create(int value)
 		{
-			return new Bonus(value, Part, Type);
+			return new Bonus(Type, Part, value);
 		}
 
 		public override bool Equals(object obj)
@@ -123,16 +162,19 @@ namespace DOL.GS
 
 	public class BonusType
 	{
-		public eProperty ID { get; }
+		public eBonusType ID { get; }
+		public eProperty DatabaseID => ConvertToPropertyID(ID);
 
 		public BonusType(eProperty id)
 		{
-			this.ID = id;
+			var bonusFactory = new BonusFactory();
+			var component = bonusFactory.CreateComponent(id, Bonus.Item.ID);
+			ID = component.Type.ID;
 		}
 
 		public BonusType(eBonusType id)
 		{
-			this.ID = ConvertToPropertyID(id);
+			ID = id;
 		}
 
 		private eProperty ConvertToPropertyID(eBonusType bonusTypeID)
@@ -152,7 +194,26 @@ namespace DOL.GS
 		public BonusComponent SpecDebuff { get { return From(Bonus.SpecDebuff); } }
 		public BonusComponent Multiplier { get { return From(Bonus.Multiplier); } }
 
-		public BonusComponent From(BonusPart part) { return new BonusComponent(part, this); }
+		public BonusComponent From(BonusPart part)
+		{
+			return new BonusComponent(this, part);
+		}
+
+		public bool IsStat
+		{
+			get
+			{
+				return ID >= eBonusType.Stat_First && ID <= eBonusType.Stat_Last;
+			}
+		}
+
+		public bool IsBaseStat { get { return ID >= eBonusType.Stat_First && ID <= eBonusType.Quickness; } }
+
+		public bool IsAcuityStat => (ID >= eBonusType.Intelligence && ID <= eBonusType.Stat_Last) || ID == eBonusType.Acuity;
+
+		public bool IsResist => ID >= eBonusType.Resist_First && ID <= eBonusType.Resist_Last || ID == eBonusType.Resist_Natural;
+
+		public bool IsRegen => ID == eBonusType.HealthRegenerationRate || ID == eBonusType.PowerRegenerationRate || ID == eBonusType.EnduranceRegenerationRate;
 
 		public override bool Equals(object obj)
 		{
@@ -160,22 +221,6 @@ namespace DOL.GS
 			if (type2 is null) { return false; }
 			return this.ID == type2.ID;
 		}
-
-		public bool IsStat
-		{
-			get
-			{
-				return ID >= eProperty.Stat_First && ID <= eProperty.Stat_Last;
-			}
-		}
-
-		public bool IsBaseStat { get { return ID >= eProperty.Stat_First && ID <= eProperty.Quickness; } }
-
-		public bool IsAcuityStat => (ID >= eProperty.Intelligence && ID <= eProperty.Stat_Last) || ID == eProperty.Acuity;
-
-		public bool IsResist => ID >= eProperty.Resist_First && ID <= eProperty.Resist_Last || ID == eProperty.Resist_Natural;
-
-		public bool IsRegen => ID == eProperty.HealthRegenerationRate || ID == eProperty.PowerRegenerationRate || ID == eProperty.EnduranceRegenerationRate;
 	}
 
 	public enum eBonusPart : byte

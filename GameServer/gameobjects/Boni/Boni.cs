@@ -76,7 +76,7 @@ namespace DOL.GS
 
 				//generalized Properties
 				bool ownerIsArcher = player.CharacterClass.ID == (int)eCharacterClass.Scout || player.CharacterClass.ID == (int)eCharacterClass.Hunter || player.CharacterClass.ID == (int)eCharacterClass.Ranger;
-				bool typeIsManaStat = type.ID == (eProperty)player.CharacterClass.ManaStat;
+				bool typeIsManaStat = type.Equals(new BonusType((eBonusType)player.CharacterClass.ManaStat));
 				if (typeIsManaStat && !ownerIsArcher)
 				{
 					return new PlayerBonusProperty(player, type, Bonus.Acuity);
@@ -86,7 +86,7 @@ namespace DOL.GS
 			}
 			else if(owner is GameKeepDoor || owner is GameKeepComponent)
 			{
-				if(type.ID != eProperty.ArmorFactor)
+				if(!type.Equals(new BonusType(eBonusType.ArmorFactor)))
 				{
 					throw new ArgumentException("KeepComponent has only AF Property.");
 				}
@@ -134,7 +134,7 @@ namespace DOL.GS
 				int itemBonus = ItemValue;
 				int buffBonus = BuffValue;
 
-				bool isRangeBonusType = PrimaryType.ID == eProperty.ArcheryRange || PrimaryType.ID == eProperty.SpellRange;
+				bool isRangeBonusType = PrimaryType.Equals(new BonusType(eBonusType.ArcheryRange)) || PrimaryType.Equals(new BonusType(eBonusType.SpellRange));
 
 				if (isRangeBonusType || debuff > 0)
 				{
@@ -142,7 +142,7 @@ namespace DOL.GS
 					if (nsreduction != null) debuff = (int)(debuff * (1.00 - nsreduction.Spell.Value * 0.01));
 				}
 
-				if (PrimaryType.ID == eProperty.ArcheryRange && owner.RangedAttackType == GameLiving.eRangedAttackType.Long)
+				if (PrimaryType.Equals(new BonusType(eBonusType.ArcheryRange)) && owner.RangedAttackType == GameLiving.eRangedAttackType.Long)
 				{
 					abilityBonus += 50;
 					IGameEffect effect = owner.EffectList.GetOfType<TrueshotEffect>();
@@ -166,7 +166,7 @@ namespace DOL.GS
 				int effectiveBonus = unbuffedBonus + buffBonus + abilityBonus;
 				effectiveBonus = (int)(effectiveBonus * GetMultiplier());
 
-				if (PrimaryType.ID == eProperty.Constitution)
+				if (PrimaryType.Equals(Bonus.Constitution))
 				{
 					effectiveBonus -= owner.TotalConstitutionLostAtDeath;
 				}
@@ -304,7 +304,7 @@ namespace DOL.GS
 				var boni = owner.Boni;
 
 				int baseBuffBonus = boni.RawValueOf(type.BaseBuff);
-				if(type.ID == eProperty.ArmorFactor)
+				if(type.Equals(new BonusType(eBonusType.ArmorFactor)))
 				{
 					baseBuffBonus = 0;
 				}
