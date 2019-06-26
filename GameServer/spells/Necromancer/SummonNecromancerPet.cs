@@ -49,11 +49,14 @@ namespace DOL.GS.Spells
 		public override bool CastSpell()
 		{
 			// First check current item bonuses for constitution and hits
-            // (including cap increases) of the caster, bonuses from
+			// (including cap increases) of the caster, bonuses from
 			// abilities such as Toughness will transfer as well.
-
-			int hitsCap = MaxHealthCalculator.GetItemBonusCap(Caster) 
-			    + MaxHealthCalculator.GetItemBonusCapIncrease(Caster);
+			var healthPoolBonus = new BonusType(eBonusType.HealthPool);
+			int itemBaseCap = Caster.Level * 4;
+			int itemBonusCapIncreaseCap = Caster.Level * 4;
+			int itemBonusCapIncrease = Caster.Boni.RawValueOf(healthPoolBonus.ItemOvercap);
+			int capIncrease = Math.Min(itemBonusCapIncrease, itemBonusCapIncreaseCap);
+			int hitsCap = itemBaseCap + capIncrease;
 			
 			m_summonConBonus = Caster.Boni.ItemValueOf(Bonus.Constitution);
 			m_summonHitsBonus = Math.Min(Caster.ItemBonus[(int)(eProperty.MaxHealth)], hitsCap)
