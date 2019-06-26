@@ -222,7 +222,7 @@ namespace DOL.UnitTests.GameServer
 
 		private BonusType Strength => Bonus.Strength;
 		private BonusType Constitution => Bonus.Constitution;
-		private BonusType MaxHealth => new BonusType(eBonusType.MaxHealth);
+		private BonusType MaxHealth => new BonusType(eBonusType.HealthPool);
 
 		private NecromancerPet createNecroPet(GamePlayer owner)
 		{

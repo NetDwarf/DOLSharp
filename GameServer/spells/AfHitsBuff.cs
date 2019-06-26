@@ -53,10 +53,7 @@ namespace DOL.GS.Spells
                 }
             }
 
-			//always zero because it was not implemented
-            //playerAF += effect.Owner.GetModifiedFromItems(eProperty.ArmorFactor);
-
-            if (m_spell.Value < 0)
+			if (m_spell.Value < 0)
             {
                 bonusAF = ((m_spell.Value * -1) * playerAF) / 100;
                 bonusHP = ((m_spell.Value * -1) * effect.Owner.MaxHealth) / 100;

@@ -40,6 +40,7 @@ namespace DOL.GS
 			if (type.Equals(new BonusType(eBonusType.ArmorFactor))) { return new ArmorFactorCap(owner); }
 			if (type.Equals(new BonusType(eBonusType.ArmorAbsorption))) { return new ArmorAbsorptionCap(owner); }
 			if (type.IsRegen) { return new RegenCap(owner); }
+			if (type.Equals(new BonusType(eBonusType.HealthPool))) { return new MaxHealthCap(owner); }
 
 			throw new ArgumentException("There is no PropertyCap for " + type.ID);
 		}
@@ -240,5 +241,13 @@ namespace DOL.GS
 		public RegenCap(GameLiving owner) : base(owner) { }
 
 		public override int SpecBuff => 0;
+	}
+
+	public class MaxHealthCap : DefaultBonusCap
+	{
+		public MaxHealthCap(GameLiving owner) : base(owner) { }
+
+		public override int Item => owner.Level * 4;
+		public override int ItemOvercap => owner.Level * 4;
 	}
 }

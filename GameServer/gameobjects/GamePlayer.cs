@@ -2505,20 +2505,20 @@ namespace DOL.GS
 			constitution -= 50;
 			if (constitution < 0) constitution *= 2;
 			
-			// hp1 : from level
-			// hp2 : from constitution
-			// hp3 : from champions level
-			// hp4 : from artifacts such Spear of Kings charge
-			int hp1 = CharacterClass.BaseHP * level;
-			int hp2 = hp1 * constitution / 10000;
-			int hp3 = 0;
+			int hpFromLevel = CharacterClass.BaseHP * level;
+			int hpFromConstitutition = hpFromLevel * constitution / 10000;
+			int hpFromChampionLevel = 0;
 			if (ChampionLevel >= 1)
-				hp3 = ServerProperties.Properties.HPS_PER_CHAMPIONLEVEL * ChampionLevel;
-			double hp4 = 20 + hp1 / 50 + hp2 + hp3;
+			{
+				hpFromChampionLevel = ServerProperties.Properties.HPS_PER_CHAMPIONLEVEL * ChampionLevel;
+			}
+			double hpFromArtifacts = 20 + hpFromLevel / 50 + hpFromConstitutition + hpFromChampionLevel;
 			if (GetModified(eProperty.ExtraHP) > 0)
-				hp4 += Math.Round(hp4 * (double)GetModified(eProperty.ExtraHP) / 100);
+			{
+				hpFromArtifacts += Math.Round(hpFromArtifacts * GetModified(eProperty.ExtraHP) / 100);
+			}
 
-			return Math.Max(1, (int)hp4);
+			return Math.Max(1, (int)hpFromArtifacts);
 		}
 
 		public override byte HealthPercentGroupWindow

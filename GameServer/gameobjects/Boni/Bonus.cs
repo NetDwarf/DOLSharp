@@ -258,7 +258,7 @@ namespace DOL.GS
 		Stat_Last = 8,
 
 		MaxMana = 9,
-		MaxHealth = 10,
+		HealthPool = 10,
 		#endregion
 
 		#region Resists

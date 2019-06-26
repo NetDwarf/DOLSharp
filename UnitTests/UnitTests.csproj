@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="FakeFactory.cs" />
     <Compile Include="Fakes.cs" />
+    <Compile Include="PropertyCalculator\UT_MaxHealthCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_MaxSpeedCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_MeleeDamagePercentCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_MeleeSpeedPercentCalculator.cs" />

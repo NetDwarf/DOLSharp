@@ -3,6 +3,7 @@ using DOL.Database;
 using DOL.GS;
 using DOL.GS.Keeps;
 using NSubstitute;
+using System.Collections.Generic;
 
 namespace DOL.UnitTests.GameServer
 {
@@ -16,6 +17,7 @@ namespace DOL.UnitTests.GameServer
         private int totalConLostOnDeath;
 		public bool isInCombat = false;
 		public bool isSprinting = false;
+		public List<string> abilities = new List<string>();
 
         public override ICharacterClass CharacterClass { get { return characterClass; } }
 
@@ -58,7 +60,14 @@ namespace DOL.UnitTests.GameServer
             get { return totalConLostOnDeath; }
             set { totalConLostOnDeath = value; }
         }
-    }
+
+		public override bool HasAbility(string abilityName)
+		{
+			return abilities.Contains(abilityName);
+		}
+
+		public override int ChampionLevel { get; set; } = 0;
+	}
 
 	public class FakeNPC : GameNPC
 	{
