@@ -51,10 +51,9 @@ namespace DOL.GS.Spells
 			// First check current item bonuses for constitution and hits
 			// (including cap increases) of the caster, bonuses from
 			// abilities such as Toughness will transfer as well.
-			var healthPoolBonus = new BonusType(eBonusType.HealthPool);
 			int itemBaseCap = Caster.Level * 4;
 			int itemBonusCapIncreaseCap = Caster.Level * 4;
-			int itemBonusCapIncrease = Caster.Boni.RawValueOf(healthPoolBonus.ItemOvercap);
+			int itemBonusCapIncrease = Caster.Boni.RawValueOf(Bonus.HealthPool.ItemOvercap);
 			int capIncrease = Math.Min(itemBonusCapIncrease, itemBonusCapIncreaseCap);
 			int hitsCap = itemBaseCap + capIncrease;
 			

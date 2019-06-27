@@ -190,7 +190,7 @@ namespace DOL.GS
 
 				return itemBonus + buffBonus;
 			}
-			else if (bonusType.Equals(new BonusType(eBonusType.HealthPool)))
+			else if (bonusType.Equals(Bonus.HealthPool))
 			{
 				int conBonus = (int)(3.1 * Constitution);
 				int hitsBonus = (int)(32.5 * Level + m_summonHitsBonus);

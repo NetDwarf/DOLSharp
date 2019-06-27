@@ -314,7 +314,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType HealthPool => new BonusType(eBonusType.HealthPool);
+		private BonusType HealthPool => Bonus.HealthPool;
 		private BonusType ExtraHP => new BonusType(eBonusType.ExtraHP);
 
 		private MaxHealthCalculator createMaxHealthCalc()

@@ -32,9 +32,8 @@ namespace DOL.GS
 					hpBase = (int)(hpBase * (100 + levelbonus) * 0.01);
 				}
 				
-				var healthPoolBonus = new BonusType(eBonusType.HealthPool);
 				var minHealth = 1;
-				return Math.Max(hpBase + owner.Boni.ValueOf(healthPoolBonus), minHealth);
+				return Math.Max(hpBase + owner.Boni.ValueOf(Bonus.HealthPool), minHealth);
 			}
 		}
 	}
@@ -102,8 +101,7 @@ namespace DOL.GS
 		{
 			get
 			{
-				var healthPoolBonus = new BonusType(eBonusType.HealthPool);
-				var hpFromBaseBuffs = owner.Boni.RawValueOf(healthPoolBonus.BaseBuff);
+				var hpFromBaseBuffs = owner.Boni.RawValueOf(Bonus.HealthPool.BaseBuff);
 				int hp = 0;
 
 				if (owner.Level < 10)
@@ -154,8 +152,7 @@ namespace DOL.GS
 		{
 			get
 			{
-				var healthPoolBonus = new BonusType(eBonusType.HealthPool);
-				var hpFromBaseBuffs = owner.Boni.RawValueOf(healthPoolBonus.BaseBuff);
+				var hpFromBaseBuffs = owner.Boni.RawValueOf(Bonus.HealthPool.BaseBuff);
 				if (owner.Level < 10)
 				{
 					return owner.Level * 20 + 20 + hpFromBaseBuffs;

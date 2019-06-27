@@ -4,15 +4,6 @@ using DOL.GS.Keeps;
 
 namespace DOL.GS.PropertyCalc
 {
-	/// <summary>
-	/// The Max HP calculator
-	///
-	/// BuffBonusCategory1 is used for absolute HP buffs
-	/// BuffBonusCategory2 unused
-	/// BuffBonusCategory3 unused
-	/// BuffBonusCategory4 unused
-	/// BuffBonusMultCategory1 unused
-	/// </summary>
 	[PropertyCalculator(eProperty.MaxHealth)]
 	public class MaxHealthCalculator : PropertyCalculator
 	{

@@ -40,7 +40,7 @@ namespace DOL.GS
 			if (type.Equals(new BonusType(eBonusType.ArmorFactor))) { return new ArmorFactorCap(owner); }
 			if (type.Equals(new BonusType(eBonusType.ArmorAbsorption))) { return new ArmorAbsorptionCap(owner); }
 			if (type.IsRegen) { return new RegenCap(owner); }
-			if (type.Equals(new BonusType(eBonusType.HealthPool))) { return new MaxHealthCap(owner); }
+			if (type.Equals(Bonus.HealthPool)) { return new MaxHealthCap(owner); }
 
 			throw new ArgumentException("There is no PropertyCap for " + type.ID);
 		}

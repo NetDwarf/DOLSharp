@@ -39,6 +39,7 @@ namespace DOL.GS
 		public static BonusType Empathy { get { return new BonusType(eBonusType.Empathy); } }
 		public static BonusType Charisma { get { return new BonusType(eBonusType.Charisma); } }
 		public static BonusType Acuity { get { return new BonusType(eBonusType.Acuity); } }
+		public static BonusType HealthPool => new BonusType(eBonusType.HealthPool);
 	}
 
 	public class BonusFactory
