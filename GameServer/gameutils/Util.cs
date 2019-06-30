@@ -35,6 +35,15 @@ namespace DOL.GS
 	/// </summary>
 	public class Util
 	{
+		private static Util soleInstance = new Util();
+
+		public static void LoadTestDouble(Util testDouble) { soleInstance = testDouble; }
+
+		protected virtual double RandomDoubleImpl()
+		{
+			return RandomGen.NextDouble();
+		}
+
 		#region Random
 		/// <summary>
 		/// Holds the random number generator instance
@@ -193,7 +202,7 @@ namespace DOL.GS
 		/// </returns>
 		public static double RandomDouble()
 		{
-			return RandomGen.NextDouble();
+			return soleInstance.RandomDoubleImpl();
 		}
 
 		/// <summary>
