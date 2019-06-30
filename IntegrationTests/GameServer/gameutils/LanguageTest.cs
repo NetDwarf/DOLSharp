@@ -23,6 +23,7 @@ using DOL.UnitTests.GameServer;
 using NUnit.Framework;
 using NSubstitute;
 using DOL.Database;
+using DOL.AI.Brain;
 
 namespace DOL.Server.Tests
 {	
@@ -70,7 +71,7 @@ namespace DOL.Server.Tests
 		}
 
 		[Test]
-		public void GetTranslation_ClientExtension_AccountLanguageEN_GameNPCSayToSays_()
+		public void GetTranslation_ClientExtension_AccountLanguageEN_GameNPCSayToSays_Same()
 		{
 			var client = new GameClient(null);
 			client.Account = new Account();
