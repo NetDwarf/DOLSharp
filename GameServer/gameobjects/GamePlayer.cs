@@ -12193,7 +12193,7 @@ namespace DOL.GS
 			string tmpStr = character.SerializedSpecs;
 			if (tmpStr != null && tmpStr.Length > 0)
 			{
-				foreach (string spec in tmpStr.SplitCSV())
+				foreach (string spec in Util.SplitCSV(tmpStr))
 				{
 					string[] values = spec.Split('|');
 					if (values.Length >= 2)
@@ -12236,7 +12236,7 @@ namespace DOL.GS
 			tmpStr = character.SerializedAbilities;
 			if (tmpStr != null && tmpStr.Length > 0 && m_usableSkills.Count == 0)
 			{
-				foreach (string abilities in tmpStr.SplitCSV())
+				foreach (string abilities in Util.SplitCSV(tmpStr))
 				{
 					string[] values = abilities.Split('|');
 					if (values.Length >= 2)
@@ -12259,7 +12259,7 @@ namespace DOL.GS
 			tmpStr = character.SerializedRealmAbilities;
 			if (tmpStr != null && tmpStr.Length > 0)
 			{
-				foreach (string abilities in tmpStr.SplitCSV())
+				foreach (string abilities in Util.SplitCSV(tmpStr))
 				{
 					string[] values = abilities.Split('|');
 					if (values.Length >= 2)
@@ -12288,7 +12288,7 @@ namespace DOL.GS
 			tmpStr = character.DisabledAbilities;
 			if (tmpStr != null && tmpStr.Length > 0)
 			{
-				foreach (string str in tmpStr.SplitCSV())
+				foreach (string str in Util.SplitCSV(tmpStr))
 				{
 					string[] values = str.Split('|');
 					if (values.Length >= 2)
@@ -12313,7 +12313,7 @@ namespace DOL.GS
 			tmpStr = character.DisabledSpells;
 			if (!string.IsNullOrEmpty(tmpStr))
 			{
-				foreach (string str in tmpStr.SplitCSV())
+				foreach (string str in Util.SplitCSV(tmpStr))
 				{
 					string[] values = str.Split('|');
 					int spellid;
@@ -13803,7 +13803,7 @@ namespace DOL.GS
 
 				lock (CraftingLock)
 				{
-					foreach (string skill in DBCharacter.SerializedCraftingSkills.SplitCSV())
+					foreach (string skill in Util.SplitCSV(DBCharacter.SerializedCraftingSkills))
 					{
 						string[] values = skill.Split('|');
 						//Load by crafting skill name
