@@ -30,10 +30,15 @@ using log4net;
 
 namespace DOL.Language
 {
-    public class LanguageMgr
-    {
-        #region Variables
-        private const string TRANSLATION_ID_EMPTY = "Empty translation id.";
+	public class LanguageMgr
+	{
+		private static LanguageMgr soleInstance = new LanguageMgr();
+		public static void LoadTestDouble(LanguageMgr testDouble) { soleInstance = testDouble; }
+
+		protected virtual string LangPath => Path.Combine(GameServer.Instance.Configuration.RootDirectory, "languages");
+
+		#region Variables
+		private const string TRANSLATION_ID_EMPTY = "Empty translation id.";
         private const string TRANSLATION_NULL = "NULL";
 
         /// <summary>
@@ -61,11 +66,6 @@ namespace DOL.Language
         /// </summary>
         private static IDictionary<string, IDictionary<LanguageDataObject.eTranslationIdentifier, IList<LanguageDataObject>>> m_translations;
         //                         lang                              identifier                            translations
-
-        /// <summary>
-        /// Give a way to change or relocate the lang files
-        /// </summary>
-        private static string LangPath = Path.Combine(GameServer.Instance.Configuration.RootDirectory, "languages");
         #endregion Variables
 
         #region Properties
@@ -89,11 +89,6 @@ namespace DOL.Language
 
                 yield break;
             }
-        }
-
-        public static void SetLangPath(string path)
-        {
-            LangPath = path;
         }
 
         /// <summary>
@@ -126,18 +121,18 @@ namespace DOL.Language
             ArrayList fileSentences = new ArrayList();
             bool defaultLanguageDirectoryFound = false;
             bool defaultLanguageFilesFound = false;
-            foreach (string langDir in Directory.GetDirectories(LangPath, "*", SearchOption.TopDirectoryOnly))
+            foreach (string langDir in Directory.GetDirectories(soleInstance.LangPath, "*", SearchOption.TopDirectoryOnly))
             {
                 string language = (langDir.Substring(langDir.LastIndexOf(Path.DirectorySeparatorChar) + 1)).ToUpper();
                 if (language != DefaultLanguage)
                 {
                     if (language != "CU") // Ignore the custom language folder. This check should be removed in the future! (code written: may 2012)
-                        fileSentences.AddRange(ReadLanguageDirectory(Path.Combine(LangPath, language), language));
+                        fileSentences.AddRange(ReadLanguageDirectory(Path.Combine(soleInstance.LangPath, language), language));
                 }
                 else
                 {
                     defaultLanguageDirectoryFound = true;
-                    ArrayList sentences = ReadLanguageDirectory(Path.Combine(LangPath, language), language);
+                    ArrayList sentences = ReadLanguageDirectory(Path.Combine(soleInstance.LangPath, language), language);
 
                     if (sentences.Count < 1)
                         break;
@@ -311,7 +306,7 @@ namespace DOL.Language
         private static int CountLanguageFiles(string language)
         {
             int count = 0;
-            string langPath = Path.Combine(LangPath, language);
+            string langPath = Path.Combine(soleInstance.LangPath, language);
 
             if (!Directory.Exists(langPath))
                 return count;
