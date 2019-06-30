@@ -1063,7 +1063,7 @@ namespace DOL.GS.PacketHandler.Client.v168
 			}
 			else
 			{
-				output.AddRange(spellHandler.DelveInfo);
+				Util.AddRange(output, spellHandler.DelveInfo);
 				//Subspells
 				if (spell.SubSpellID > 0)
 				{
@@ -1071,7 +1071,7 @@ namespace DOL.GS.PacketHandler.Client.v168
 					output.Add(" ");
 
 					ISpellHandler sh = ScriptMgr.CreateSpellHandler(client.Player, s, SkillBase.GetSpellLine(GlobalSpellsLines.Reserved_Spells));
-					output.AddRange(sh.DelveInfo);
+					Util.AddRange(output, sh.DelveInfo);
 				}
 			}
 			if (client.Account.PrivLevel > 1)
@@ -1306,7 +1306,7 @@ namespace DOL.GS.PacketHandler.Client.v168
 
 			output.Add(LanguageMgr.GetTranslation(client.Account.Language, "DetailDisplayHandler.WriteUsableClasses.UsableBy"));
 
-			foreach (string allowed in item.AllowedClasses.SplitCSV(true))
+			foreach (string allowed in Util.SplitCSV(item.AllowedClasses, true))
 			{
 				int classID = -1;
 				if (int.TryParse(allowed, out classID))
@@ -1501,7 +1501,7 @@ namespace DOL.GS.PacketHandler.Client.v168
 							ISpellHandler spellHandler = ScriptMgr.CreateSpellHandler(client.Player, procSpell, line);
 							if (spellHandler != null)
 							{
-								output.AddRange(spellHandler.DelveInfo);
+								Util.AddRange(output, spellHandler.DelveInfo);
 								output.Add(" ");
 							}
 							else
@@ -1548,7 +1548,7 @@ namespace DOL.GS.PacketHandler.Client.v168
 							ISpellHandler spellHandler = ScriptMgr.CreateSpellHandler(client.Player, procSpell, line);
 							if (spellHandler != null)
 							{
-								output.AddRange(spellHandler.DelveInfo);
+								Util.AddRange(output, spellHandler.DelveInfo);
 								output.Add(" ");
 							}
 							else
@@ -1592,7 +1592,7 @@ namespace DOL.GS.PacketHandler.Client.v168
 									output.Add(" ");
 								}
 
-								output.AddRange(spellHandler.DelveInfo);
+								Util.AddRange(output, spellHandler.DelveInfo);
 								output.Add(" ");
 								output.Add("- This spell is cast when the item is used.");
 							}
@@ -1631,7 +1631,7 @@ namespace DOL.GS.PacketHandler.Client.v168
 									output.Add(" ");
 								}
 
-								output.AddRange(spellHandler.DelveInfo);
+								Util.AddRange(output, spellHandler.DelveInfo);
 								output.Add(" ");
 								output.Add("- This spell is cast when the item is used.");
 							}
@@ -1674,7 +1674,7 @@ namespace DOL.GS.PacketHandler.Client.v168
 									ISpellHandler spellHandler = ScriptMgr.CreateSpellHandler(client.Player, spl, poisonLine);
 									if (spellHandler != null)
 									{
-										output.AddRange(spellHandler.DelveInfo);
+										Util.AddRange(output, spellHandler.DelveInfo);
 										output.Add(" ");
 									}
 									else
@@ -1715,7 +1715,7 @@ namespace DOL.GS.PacketHandler.Client.v168
 								ISpellHandler spellHandler = ScriptMgr.CreateSpellHandler(client.Player, spl, chargeEffectsLine);
 								if (spellHandler != null)
 								{
-									output.AddRange(spellHandler.DelveInfo);
+									Util.AddRange(output, spellHandler.DelveInfo);
 									output.Add(" ");
 								}
 								else
@@ -1881,7 +1881,7 @@ namespace DOL.GS.PacketHandler.Client.v168
 							ISpellHandler spellHandler = ScriptMgr.CreateSpellHandler(client.Player, spl, poisonLine);
 							if (spellHandler != null)
 							{
-								list.AddRange(spellHandler.DelveInfo);
+								Util.AddRange(list, spellHandler.DelveInfo);
 							}
 							else
 							{
