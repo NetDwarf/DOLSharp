@@ -177,7 +177,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Returns the PacketSender for this player
 		/// </summary>
-		public IPacketLib Out
+		public virtual IPacketLib Out
 		{
 			get { return Client.Out; }
 		}
@@ -2504,21 +2504,16 @@ namespace DOL.GS
 		{
 			constitution -= 50;
 			if (constitution < 0) constitution *= 2;
-			
-			int hpFromLevel = CharacterClass.BaseHP * level;
-			int hpFromConstitutition = hpFromLevel * constitution / 10000;
-			int hpFromChampionLevel = 0;
-			if (ChampionLevel >= 1)
-			{
-				hpFromChampionLevel = ServerProperties.Properties.HPS_PER_CHAMPIONLEVEL * ChampionLevel;
-			}
-			double hpFromArtifacts = 20 + hpFromLevel / 50 + hpFromConstitutition + hpFromChampionLevel;
-			if (GetModified(eProperty.ExtraHP) > 0)
-			{
-				hpFromArtifacts += Math.Round(hpFromArtifacts * GetModified(eProperty.ExtraHP) / 100);
-			}
 
-			return Math.Max(1, (int)hpFromArtifacts);
+			double hpFromLevel = (CharacterClass.BaseHP * Level) / 50;
+			int hpFromConstitutition = (int)hpFromLevel * constitution / 200;
+			int hpFromChampionLevel = 20 + ChampionLevel * ServerProperties.Properties.HPS_PER_CHAMPIONLEVEL;
+			double artifactMultiplier = 1 + GetModified(eProperty.ExtraHP) * 0.01;
+			int hpBase = (int)Math.Round(artifactMultiplier * (hpFromLevel + hpFromConstitutition + hpFromChampionLevel));
+			hpBase = Math.Max(1, hpBase);
+
+			var minHealth = 1;
+			return Math.Max(hpBase, minHealth);
 		}
 
 		public override byte HealthPercentGroupWindow

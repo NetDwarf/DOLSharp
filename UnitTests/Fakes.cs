@@ -2,6 +2,7 @@
 using DOL.Database;
 using DOL.GS;
 using DOL.GS.Keeps;
+using DOL.GS.PacketHandler;
 using NSubstitute;
 using System.Collections.Generic;
 
@@ -66,6 +67,12 @@ namespace DOL.UnitTests.GameServer
 			return abilities.Contains(abilityName);
 		}
 
+		public override ushort Model { get; set; }
+
+		public override void Emote(eEmote emote) { /*do nothing*/ }
+
+		public override IPacketLib Out => Substitute.For<IPacketLib>();
+
 		public override int ChampionLevel { get; set; } = 0;
 	}
 
@@ -94,6 +101,21 @@ namespace DOL.UnitTests.GameServer
 		public override int GetResist(eResist resistID)
 		{
 			return 0;
+		}
+	}
+
+	public class FixedRandomUtil : Util
+	{
+		private double fixedRandomValue;
+
+		public FixedRandomUtil(double fixedRandomValue)
+		{
+			this.fixedRandomValue = fixedRandomValue;
+		}
+
+		protected override double RandomDoubleImpl()
+		{
+			return fixedRandomValue;
 		}
 	}
 }

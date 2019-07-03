@@ -308,7 +308,10 @@ namespace DOL.GS
 		/// </summary>
 		public override int MaxHealth
 		{
-			get {	return 5 * GetModified(eProperty.MaxHealth);}
+			get
+			{
+				return base.MaxHealth * 5;
+			}
 		}
 		
 		/// <summary>

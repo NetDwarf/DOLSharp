@@ -7,12 +7,12 @@ namespace DOL.GS
 {
 	public class Boni
 	{
-		private BonusPropertyFactory factory;
+		private CappedBoniFactory factory;
 		private UncappedBoni uncappedBoni = new UncappedBoni();
 		
 		public Boni(GameLiving owner)
 		{
-			this.factory = new BonusPropertyFactory(owner);
+			this.factory = new CappedBoniFactory(owner);
 		}
 
 		public void Add(Bonus bonus)
@@ -42,33 +42,33 @@ namespace DOL.GS
 
 		public int ValueOf(BonusType type)
 		{
-			var bonusProperty = factory.CreatePropertyOf(type);
+			var bonusProperty = factory.CreateCappedBonus(type);
 			return bonusProperty.Value;
 		}
 
 		public int BuffValueOf(BonusType type)
 		{
-			var bonusProperty = factory.CreatePropertyOf(type);
+			var bonusProperty = factory.CreateCappedBonus(type);
 			return bonusProperty.BuffValue;
 		}
 
 		public int ItemValueOf(BonusType type)
 		{
-			var bonusProperty = factory.CreatePropertyOf(type);
+			var bonusProperty = factory.CreateCappedBonus(type);
 			return bonusProperty.ItemValue;
 		}
 	}
 
-	public class BonusPropertyFactory
+	public class CappedBoniFactory
 	{
 		private GameLiving owner;
 
-		public BonusPropertyFactory(GameLiving owner)
+		public CappedBoniFactory(GameLiving owner)
 		{
 			this.owner = owner;
 		}
 
-		public IBonusProperty CreatePropertyOf(BonusType type)
+		public ICappedBonus CreateCappedBonus(BonusType type)
 		{
 			if (owner is GamePlayer)
 			{
@@ -79,10 +79,10 @@ namespace DOL.GS
 				bool typeIsManaStat = type.Equals(new BonusType((eBonusType)player.CharacterClass.ManaStat));
 				if (typeIsManaStat && !ownerIsArcher)
 				{
-					return new PlayerBonusProperty(player, type, Bonus.Acuity);
+					return new PlayerCappedBonus(player, type, Bonus.Acuity);
 				}
 
-				return new PlayerBonusProperty(player, type);
+				return new PlayerCappedBonus(player, type);
 			}
 			else if(owner is GameKeepDoor || owner is GameKeepComponent)
 			{
@@ -90,28 +90,28 @@ namespace DOL.GS
 				{
 					throw new ArgumentException("KeepComponent has only AF Property.");
 				}
-				return new KeepComponentArmorFactorProperty(owner);
+				return new KeepComponentCappedArmorBonus(owner);
 			}
 			else
 			{
-				return new NPCBonusProperty(owner, type);
+				return new NPCCappedBonus(owner, type);
 			}
 		}
 	}
 
-	public interface IBonusProperty
+	public interface ICappedBonus
 	{
 		int Value { get; }
 		int BuffValue { get; }
 		int ItemValue { get; }
 	}
 
-	public class PlayerBonusProperty : IBonusProperty
+	public class PlayerCappedBonus : ICappedBonus
 	{
 		private GamePlayer owner;
 		private BonusType[] affectingTypes;
 
-		public PlayerBonusProperty(GamePlayer owner, params BonusType[] affectingTypes)
+		public PlayerCappedBonus(GamePlayer owner, params BonusType[] affectingTypes)
 		{
 			this.owner = owner;
 			this.affectingTypes = affectingTypes;
@@ -249,12 +249,12 @@ namespace DOL.GS
 		}
 	}
 
-	public class NPCBonusProperty : IBonusProperty
+	public class NPCCappedBonus : ICappedBonus
 	{
 		private GameLiving owner;
 		private BonusType type;
 
-		public NPCBonusProperty(GameLiving owner, BonusType type)
+		public NPCCappedBonus(GameLiving owner, BonusType type)
 		{
 			this.owner = owner;
 			this.type = type;
@@ -324,11 +324,11 @@ namespace DOL.GS
 		}
 	}
 
-	public class KeepComponentArmorFactorProperty : IBonusProperty
+	public class KeepComponentCappedArmorBonus : ICappedBonus
 	{
 		private GameLiving owner;
 
-		public KeepComponentArmorFactorProperty(GameLiving owner)
+		public KeepComponentCappedArmorBonus(GameLiving owner)
 		{
 			this.owner = owner;
 		}

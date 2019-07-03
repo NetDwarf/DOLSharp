@@ -74,31 +74,31 @@ namespace DOL.GS.Effects
 		{
 			base.Start(living);
 
-			m_originalModel = living.Model;
+			m_originalModel = m_owner.Model;
 
-			if (living is GamePlayer)
+			if (m_owner is GamePlayer)
 			{
-				if ((living as GamePlayer).Race == (int)eRace.Lurikeen)
-					living.Model = 859;
-				else living.Model = 583;
+				if ((m_owner as GamePlayer).Race == (int)eRace.Lurikeen)
+					m_owner.Model = 859;
+				else m_owner.Model = 583;
 			}			
 
 
 			double m_amountPercent = (m_level + 0.5 + Util.RandomDouble()) / 10; //+-5% random
-			if (living is GamePlayer)
-				m_amount = (int)((living as GamePlayer).CalculateMaxHealth(living.Level, living.GetModified(eProperty.Constitution)) * m_amountPercent);
-			else m_amount = (int)(living.MaxHealth * m_amountPercent);
+			if (m_owner is GamePlayer)
+				m_amount = (int)((m_owner as GamePlayer).CalculateMaxHealth(m_owner.Level, m_owner.Boni.ValueOf(Bonus.Constitution)) * m_amountPercent);
+			else m_amount = (int)(m_owner.MaxHealth * m_amountPercent);
 
-			living.BaseBuffBonusCategory[(int)eProperty.MaxHealth] += m_amount;
-			living.Health += (int)(living.GetModified(eProperty.MaxHealth) * m_amountPercent);
-			if (living.Health > living.MaxHealth) living.Health = living.MaxHealth;
+			m_owner.Boni.Add(Bonus.HealthPool.BaseBuff.Create(m_amount));
+			m_owner.Health += (int)(m_owner.MaxHealth * m_amountPercent);
+			if (m_owner.Health > m_owner.MaxHealth) m_owner.Health = m_owner.MaxHealth;
 
-			living.Emote(eEmote.StagFrenzy);
+			m_owner.Emote(eEmote.StagFrenzy);
 
-			if (living is GamePlayer)
+			if (m_owner is GamePlayer)
 			{
-				(living as GamePlayer).Out.SendUpdatePlayer();
-				(living as GamePlayer).Out.SendMessage(LanguageMgr.GetTranslation((living as GamePlayer).Client, "Effects.StagEffect.HuntsSpiritChannel"), eChatType.CT_YouHit, eChatLoc.CL_SystemWindow);
+				(m_owner as GamePlayer).Out.SendUpdatePlayer();
+				(m_owner as GamePlayer).Out.SendMessage(LanguageMgr.GetTranslation((m_owner as GamePlayer).Client, "Effects.StagEffect.HuntsSpiritChannel"), eChatType.CT_YouHit, eChatLoc.CL_SystemWindow);
 			}
 		}
 
@@ -107,9 +107,9 @@ namespace DOL.GS.Effects
 			base.Stop();
 			m_owner.Model = m_originalModel;
 
-			double m_amountPercent = m_amount / m_owner.GetModified(eProperty.MaxHealth);
+			double m_amountPercent = m_amount / m_owner.MaxHealth;
 			int playerHealthPercent = m_owner.HealthPercent;
-			m_owner.BaseBuffBonusCategory[(int)eProperty.MaxHealth] -= m_amount;
+			m_owner.Boni.Remove(Bonus.HealthPool.BaseBuff.Create(m_amount));
 			if (m_owner.IsAlive)
 				m_owner.Health = (int)Math.Max(1, 0.01 * m_owner.MaxHealth * playerHealthPercent);
 

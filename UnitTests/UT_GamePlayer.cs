@@ -220,6 +220,141 @@ namespace DOL.UnitTests.GameServer
 			Assert.AreEqual(1, actual);
 		}
 
+		[Test]
+		public void CalculateMaxHealth_LevelOneAndOneConstitution_27()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 1;
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+
+			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+
+			var expected = 27;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_LevelOneAndElevenConstitution_28()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 1;
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(11));
+
+			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+
+			var expected = 28;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_L50PlayerWithOneConstitution_326()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 50;
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+
+			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+
+			var expected = 326;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalcValue_L50PlayerWithElevenConstitution_386()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 50;
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(11));
+
+			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+
+			var expected = 386;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalculateMaxHealth_Level50AndOneConstitution_OneItemHP_326()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 50;
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			player.Boni.SetTo(Bonus.HealthPool.Item.Create(1));
+
+			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+
+			var expected = 326;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalculateMaxHealth_Level50AndOneConstitution_WithScarsOfBattle_358()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 50;
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			player.abilities.Add("Scars of Battle");
+
+			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+
+			var expected = 326;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalculateMaxHealth_Level50And50Constitution_620()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 50;
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(50));
+
+			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+
+			var expected = 620;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalculateMaxHealth_Level50And60Constitution_650()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 50;
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(60));
+
+			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+
+			var expected = 650;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalculateMaxHealth_Level50AndOneConstitution_CLOne_366()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 50;
+			player.ChampionLevel = 1;
+			GS.ServerProperties.Properties.HPS_PER_CHAMPIONLEVEL = 40; //default
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+
+			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+
+			var expected = 366;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void CalculateMaxHealth_Level50AndOneConstitution_WithTenExtraHP_359()
+		{
+			var player = Create.FakePlayer();
+			player.Level = 50;
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			player.Boni.SetTo(new BonusType(eBonusType.ExtraHP).Item.Create(10));
+
+			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+
+			var expected = 359;
+			Assert.AreEqual(expected, actual);
+		}
+
 		private static GamePlayer createPlayer()
         {
             return GamePlayer.CreateTestableGamePlayer();

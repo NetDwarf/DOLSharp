@@ -3,7 +3,12 @@ using System;
 
 namespace DOL.GS
 {
-	public class PlayerHealthPool
+	public interface IHealthPool
+	{
+		int Value { get; }
+	}
+
+	public class PlayerHealthPool : IHealthPool
 	{
 		private GamePlayer owner;
 
@@ -38,7 +43,7 @@ namespace DOL.GS
 		}
 	}
 
-	public class KeepComponentHealthPool
+	public class KeepComponentHealthPool : IHealthPool
 	{
 		GameKeepComponent owner;
 
@@ -61,7 +66,7 @@ namespace DOL.GS
 		}
 	}
 
-	public class KeepDoorHealthPool
+	public class KeepDoorHealthPool : IHealthPool
 	{
 		GameKeepDoor owner;
 
@@ -88,16 +93,16 @@ namespace DOL.GS
 		}
 	}
 
-	public class NPCHealthPool
+	public class NPCHealthPool : IHealthPool
 	{
-		GameNPC owner;
+		protected GameLiving owner;
 
-		public NPCHealthPool(GameNPC owner)
+		public NPCHealthPool(GameLiving owner)
 		{
 			this.owner = owner;
 		}
 
-		public int Value
+		public virtual int Value
 		{
 			get
 			{
@@ -115,7 +120,7 @@ namespace DOL.GS
 						hp += 20;
 				}
 
-				int basecon = (owner as GameNPC).Constitution;
+				int basecon = owner.Boni.RawValueOf(Bonus.Constitution.Base);
 				int conmod = 20; // at level 50 +75 con ~= +300 hit points
 
 				// first adjust hitpoints based on base CON
@@ -129,7 +134,7 @@ namespace DOL.GS
 
 				// adjust hit points based on constitution difference from base con
 				// modified from http://www.btinternet.com/~challand/hp_calculator.htm
-				int conhp = hp + (conmod * owner.Level * (owner.GetModified(eProperty.Constitution) - basecon) / 250);
+				int conhp = hp + (conmod * owner.Level * (owner.Boni.ValueOf(Bonus.Constitution) - basecon) / 250);
 
 				conhp = Math.Min((int)(hp * 1.5), conhp);
 				conhp = Math.Max(hp / 2, conhp);
@@ -139,7 +144,7 @@ namespace DOL.GS
 		}
 	}
 
-	public class GenericLivingHealthPool
+	public class GenericLivingHealthPool : IHealthPool
 	{
 		GameLiving owner;
 
@@ -148,7 +153,7 @@ namespace DOL.GS
 			this.owner = owner;
 		}
 
-		public int Value
+		public virtual int Value
 		{
 			get
 			{
@@ -166,6 +171,33 @@ namespace DOL.GS
 					}
 					return hp;
 				}
+			}
+		}
+	}
+
+	public class HealthPoolFactory
+	{
+		public static IHealthPool Create(GameLiving owner)
+		{
+			if (owner is GamePlayer)
+			{
+				return new PlayerHealthPool(owner as GamePlayer);
+			}
+			else if (owner is GameKeepDoor)
+			{
+				return new KeepDoorHealthPool(owner as GameKeepDoor);
+			}
+			else if (owner is GameKeepComponent)
+			{
+				return new KeepComponentHealthPool(owner as GameKeepComponent);
+			}
+			else if (owner is GameNPC)
+			{
+				return new NPCHealthPool(owner);
+			}
+			else
+			{
+				return new GenericLivingHealthPool(owner);
 			}
 		}
 	}

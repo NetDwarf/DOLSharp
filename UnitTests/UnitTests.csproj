@@ -48,7 +48,9 @@
     <Compile Include="PropertyCalculator\UT_RegenCalculators.cs" />
     <Compile Include="PropertyCalculator\UT_ResistCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_ToABonusCalculator.cs" />
+    <Compile Include="UT_GameDoor.cs" />
     <Compile Include="UT_GameEffectList.cs" />
+    <Compile Include="UT_GameKeepGuard.cs" />
     <Compile Include="UT_GameNPC.cs" />
     <Compile Include="UT_GamePlayer.cs" />
     <Compile Include="PropertyCalculator\UT_IndexerBoniAdapter.cs" />
@@ -56,6 +58,7 @@
     <Compile Include="UT_NecromancerPets.cs" />
     <Compile Include="UT_SpellHandler.cs" />
     <Compile Include="PropertyCalculator\UT_StatCalculator.cs" />
+    <Compile Include="UT_StagEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">

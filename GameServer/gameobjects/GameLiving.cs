@@ -5305,6 +5305,8 @@ namespace DOL.GS
 		#endregion
 
 		#region Mana/Health/Endurance/Concentration/Delete
+		private IHealthPool healthPool;
+
 		/// <summary>
 		/// Amount of mana
 		/// </summary>
@@ -5361,7 +5363,7 @@ namespace DOL.GS
 
 		public override int MaxHealth
 		{
-			get {	return GetModified(eProperty.MaxHealth); }
+			get { return healthPool.Value; }
 		}
 
 		public virtual int Mana
@@ -6867,6 +6869,7 @@ namespace DOL.GS
 			: base()
 		{
 			Boni = new Boni(this);
+			healthPool = HealthPoolFactory.Create(this);
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);
 			m_groundTarget = new Point3D(0, 0, 0);
