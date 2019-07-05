@@ -5305,7 +5305,9 @@ namespace DOL.GS
 		#endregion
 
 		#region Mana/Health/Endurance/Concentration/Delete
-		private IHealthPool healthPool;
+		private IBonusProperty healthPool;
+		private IBonusProperty manaPool;
+		protected IBonusProperty endurancePool;
 
 		/// <summary>
 		/// Amount of mana
@@ -5389,7 +5391,7 @@ namespace DOL.GS
 		{
 			get
 			{
-				return GetModified(eProperty.MaxMana);
+				return manaPool.Value;
 			}
 		}
 
@@ -6870,6 +6872,8 @@ namespace DOL.GS
 		{
 			Boni = new Boni(this);
 			healthPool = HealthPoolFactory.Create(this);
+			manaPool = ManaPoolFactory.Create(this);
+			endurancePool = EndurancePoolFactory.Create(this);
 			m_guildName = string.Empty;
 			m_targetObjectWeakReference = new WeakRef(null);
 			m_groundTarget = new Point3D(0, 0, 0);

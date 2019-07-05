@@ -190,6 +190,17 @@ namespace DOL.UnitTests.GameServer
 			Assert.AreEqual(expected, actual, 0.001);
 		}
 
+		[Test]
+		public void MaxMana_Always_1000()
+		{
+			var npc = createGenericNPC();
+
+			var actual = npc.MaxMana;
+
+			var expected = 1000;
+			Assert.AreEqual(expected, actual);
+		}
+
 		private BonusType FumbleChance => new BonusType(eBonusType.FumbleChance);
 		private BonusType ArmorFactor => new BonusType(eBonusType.ArmorFactor);
 

@@ -48,6 +48,7 @@
     <Compile Include="PropertyCalculator\UT_RegenCalculators.cs" />
     <Compile Include="PropertyCalculator\UT_ResistCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_ToABonusCalculator.cs" />
+    <Compile Include="UT_FatigueCalculator.cs" />
     <Compile Include="UT_GameDoor.cs" />
     <Compile Include="UT_GameEffectList.cs" />
     <Compile Include="UT_GameKeepGuard.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="UT_GamePlayer.cs" />
     <Compile Include="PropertyCalculator\UT_IndexerBoniAdapter.cs" />
     <Compile Include="PropertyCalculator\UT_MultiplicativePropertiesBoniAdapter.cs" />
+    <Compile Include="UT_MaxManaCalculator.cs" />
     <Compile Include="UT_NecromancerPets.cs" />
     <Compile Include="UT_SpellHandler.cs" />
     <Compile Include="PropertyCalculator\UT_StatCalculator.cs" />
@@ -78,6 +80,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DOLBase\DOLBase.csproj">
+      <Project>{A4A0FB22-124C-45CA-A653-2887DE0CC3E0}</Project>
+      <Name>DOLBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DOLDatabase\DOLDatabase.csproj">
       <Project>{43bfc675-13b7-4aa8-97f6-6109948849cc}</Project>
       <Name>DOLDatabase</Name>

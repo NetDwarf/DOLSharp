@@ -53,7 +53,7 @@ namespace DOL.UnitTests.GameServer
 
 		public override string GetName(int article, bool firstLetterUppercase)
 		{
-			return "";
+			return "FakePlayer";
 		}
 
 		public override int TotalConstitutionLostAtDeath
@@ -74,6 +74,10 @@ namespace DOL.UnitTests.GameServer
 		public override IPacketLib Out => Substitute.For<IPacketLib>();
 
 		public override int ChampionLevel { get; set; } = 0;
+
+		public override bool Champion { get; set; } = false;
+
+		public override void UpdatePlayerStatus() {/*do nothing*/}
 	}
 
 	public class FakeNPC : GameNPC

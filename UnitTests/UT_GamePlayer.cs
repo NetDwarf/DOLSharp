@@ -1,11 +1,12 @@
-﻿using DOL.GS;
+﻿using DOL.Database;
+using DOL.GS;
 using DOL.GS.PlayerClass;
 using NUnit.Framework;
-using System;
+using System.Collections.Generic;
 
 namespace DOL.UnitTests.GameServer
 {
-    [TestFixture]
+	[TestFixture]
     class UT_GamePlayer
     {
         [TestFixtureSetUp]
@@ -223,7 +224,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void CalculateMaxHealth_LevelOneAndOneConstitution_27()
 		{
-			var player = Create.FakePlayer();
+			var player = createPlayer();
 			player.Level = 1;
 			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
 
@@ -236,7 +237,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void CalcValue_LevelOneAndElevenConstitution_28()
 		{
-			var player = Create.FakePlayer();
+			var player = createPlayer();
 			player.Level = 1;
 			player.Boni.SetTo(Bonus.Constitution.Base.Create(11));
 
@@ -249,7 +250,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void CalcValue_L50PlayerWithOneConstitution_326()
 		{
-			var player = Create.FakePlayer();
+			var player = createPlayer();
 			player.Level = 50;
 			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
 
@@ -262,7 +263,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void CalcValue_L50PlayerWithElevenConstitution_386()
 		{
-			var player = Create.FakePlayer();
+			var player = createPlayer();
 			player.Level = 50;
 			player.Boni.SetTo(Bonus.Constitution.Base.Create(11));
 
@@ -275,7 +276,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void CalculateMaxHealth_Level50AndOneConstitution_OneItemHP_326()
 		{
-			var player = Create.FakePlayer();
+			var player = createPlayer();
 			player.Level = 50;
 			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
 			player.Boni.SetTo(Bonus.HealthPool.Item.Create(1));
@@ -287,9 +288,9 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void CalculateMaxHealth_Level50AndOneConstitution_WithScarsOfBattle_358()
+		public void CalculateMaxHealth_Level50AndOneConstitution_WithScarsOfBattle_326()
 		{
-			var player = Create.FakePlayer();
+			var player = createPlayer();
 			player.Level = 50;
 			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
 			player.abilities.Add("Scars of Battle");
@@ -303,7 +304,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void CalculateMaxHealth_Level50And50Constitution_620()
 		{
-			var player = Create.FakePlayer();
+			var player = createPlayer();
 			player.Level = 50;
 			player.Boni.SetTo(Bonus.Constitution.Base.Create(50));
 
@@ -316,7 +317,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void CalculateMaxHealth_Level50And60Constitution_650()
 		{
-			var player = Create.FakePlayer();
+			var player = createPlayer();
 			player.Level = 50;
 			player.Boni.SetTo(Bonus.Constitution.Base.Create(60));
 
@@ -329,7 +330,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void CalculateMaxHealth_Level50AndOneConstitution_CLOne_366()
 		{
-			var player = Create.FakePlayer();
+			var player = createPlayer();
 			player.Level = 50;
 			player.ChampionLevel = 1;
 			GS.ServerProperties.Properties.HPS_PER_CHAMPIONLEVEL = 40; //default
@@ -344,7 +345,7 @@ namespace DOL.UnitTests.GameServer
 		[Test]
 		public void CalculateMaxHealth_Level50AndOneConstitution_WithTenExtraHP_359()
 		{
-			var player = Create.FakePlayer();
+			var player = createPlayer();
 			player.Level = 50;
 			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
 			player.Boni.SetTo(new BonusType(eBonusType.ExtraHP).Item.Create(10));
@@ -355,14 +356,98 @@ namespace DOL.UnitTests.GameServer
 			Assert.AreEqual(expected, actual);
 		}
 
-		private static GamePlayer createPlayer()
+		[Test]
+		public void MaxHealth_Level50AndOneConstitution_WithScarsOfBattle_358()
+		{
+			var player = createPlayer();
+			player.Level = 50;
+			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			player.abilities.Add("Scars of Battle");
+
+			int actual = player.MaxHealth;
+
+			var expected = 358;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void MaxMana_GenericPlayer_Zero()
+		{
+			var player = createPlayer();
+
+			var actual = player.MaxMana;
+
+			var expected = 0;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void MaxMana_LevelOneAnimist_5()
+		{
+			var player = createPlayer(new CharacterClassAnimist());
+
+			var actual = player.MaxMana;
+
+			var expected = 5;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void MaxEndurance_Init_100()
+		{
+			var player = createPlayer();
+
+			var actual = player.MaxEndurance;
+
+			var expected = 100;
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void MaxEndurance_5ItemEndurance_105()
+		{
+			var player = createPlayer();
+			player.Boni.Add(new BonusType(eBonusType.Endurance).Item.Create(5));
+
+			var actual = player.MaxEndurance;
+
+			var expected = 105;
+			Assert.AreEqual(expected, actual);
+		}
+
+		private class TestablePlayer : GamePlayer
+		{
+			public List<string> abilities = new List<string>();
+			public TestablePlayer(GameClient client = null, DOLCharacters dbChar = null) : base(client, dbChar)
+			{
+
+			}
+
+			public TestablePlayer(ICharacterClass characterClass) : this()
+			{
+				CharacterClass = characterClass;
+			}
+
+			public override ICharacterClass CharacterClass { get; } = new DefaultCharacterClass();
+			public override int ChampionLevel { get; set; } = 0;
+
+			public override void LoadFromDatabase(DataObject obj) { /*do nothing*/ }
+
+			public override bool HasAbility(string abilityName)
+			{
+				System.Console.WriteLine(abilityName);
+				return abilities.Contains(abilityName);
+			}
+		}
+
+		private static TestablePlayer createPlayer()
         {
-            return GamePlayer.CreateTestableGamePlayer();
+			return createPlayer(new DefaultCharacterClass());
         }
 
-        private static GamePlayer createPlayer(ICharacterClass charClass)
+        private static TestablePlayer createPlayer(ICharacterClass charClass)
         {
-            return GamePlayer.CreateTestableGamePlayer(charClass);
+			return new TestablePlayer(charClass);
         }
     }
 }

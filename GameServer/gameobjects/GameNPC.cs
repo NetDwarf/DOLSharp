@@ -3993,14 +3993,6 @@ namespace DOL.GS
 		}
 
 		/// <summary>
-		/// The Max Mana for this NPC
-		/// </summary>
-		public override int MaxMana
-		{
-			get { return 1000; }
-		}
-
-		/// <summary>
 		/// The Concentration for this NPC
 		/// </summary>
 		public override int Concentration

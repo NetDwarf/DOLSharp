@@ -363,7 +363,10 @@
     <Compile Include="gameobjects\Atlantis\Teleporter\SpawnDjinnStone.cs" />
     <Compile Include="gameobjects\Atlantis\Teleporter\SummonDjinnStone.cs" />
     <Compile Include="gameobjects\Atlantis\Teleporter\SummonedDjinn.cs" />
-    <Compile Include="gameobjects\Boni\HealthPoolProperties.cs" />
+    <Compile Include="gameobjects\Boni\BonusProperty.cs" />
+    <Compile Include="gameobjects\Boni\EndurancePool.cs" />
+    <Compile Include="gameobjects\Boni\HealthPool.cs" />
+    <Compile Include="gameobjects\Boni\ManaPool.cs" />
     <Compile Include="gameobjects\Boni\UncappedBoni.cs" />
     <Compile Include="gameobjects\Boni\Bonus.cs" />
     <Compile Include="gameobjects\Boni\BonusCap.cs" />

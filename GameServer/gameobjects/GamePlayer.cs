@@ -2599,14 +2599,6 @@ namespace DOL.GS
 		}
 
 		/// <summary>
-		/// Gets/sets the object max mana
-		/// </summary>
-		public override int MaxMana
-		{
-			get { return GetModified(eProperty.MaxMana); }
-		}
-
-		/// <summary>
 		/// Gets/sets the object endurance
 		/// </summary>
 		public override int Endurance
@@ -2644,7 +2636,7 @@ namespace DOL.GS
 		/// </summary>
 		public override int MaxEndurance
 		{
-			get { return GetModified(eProperty.Fatigue); }
+			get { return endurancePool.Value; }
 			set
 			{
 				//If it is already set, don't do anything
@@ -11059,7 +11051,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Updates Health, Mana, Sitting, Endurance, Concentration and Alive status to client
 		/// </summary>
-		public void UpdatePlayerStatus()
+		public virtual void UpdatePlayerStatus()
 		{
 			Out.SendStatusUpdate();
 		}

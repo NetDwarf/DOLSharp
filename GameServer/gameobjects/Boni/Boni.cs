@@ -198,7 +198,11 @@ namespace DOL.GS
 
 				int mythicalCapIncreaseCap = Cap.Mythical;
 				int baseCap = Cap.Item;
-				int capIncrease = Math.Min(mythicalCapIncreaseCap, overcap + rawMythicalCapIncrease);
+				int capIncrease = overcap;
+				if (Cap.Mythical > Cap.ItemOvercap)
+				{
+					capIncrease = Math.Min(mythicalCapIncreaseCap, overcap + rawMythicalCapIncrease);
+				}
 				
 				int cap = baseCap + capIncrease;
 				return Math.Min(rawItemBonus, cap);

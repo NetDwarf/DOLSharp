@@ -41,6 +41,9 @@ namespace DOL.GS
 			if (type.Equals(new BonusType(eBonusType.ArmorAbsorption))) { return new ArmorAbsorptionCap(owner); }
 			if (type.IsRegen) { return new RegenCap(owner); }
 			if (type.Equals(Bonus.HealthPool)) { return new MaxHealthCap(owner); }
+			if (type.Equals(new BonusType(eBonusType.ManaPool))) { return new ManaPoolCap(owner); }
+			if (type.Equals(new BonusType(eBonusType.ManaPoolPercent))) { return new ManaPoolPercentCap(owner); }
+			if(type.Equals(new BonusType(eBonusType.Endurance))) { return new EndurancePoolCap(owner); }
 
 			throw new ArgumentException("There is no PropertyCap for " + type.ID);
 		}
@@ -249,5 +252,26 @@ namespace DOL.GS
 
 		public override int Item => owner.Level * 4;
 		public override int ItemOvercap => owner.Level * 4;
+	}
+
+	public class ManaPoolCap : DefaultBonusCap
+	{
+		public ManaPoolCap(GameLiving owner) : base(owner) { }
+		public override int Item => owner.Level / 2 + 1;
+		public override int ItemOvercap => owner.Level / 2 + 1;
+	}
+
+	public class ManaPoolPercentCap : DefaultBonusCap
+	{
+		public ManaPoolPercentCap(GameLiving owner) : base(owner) { }
+		public override int Item => owner.Level / 2;
+		public override int ItemOvercap => owner.Level;
+	}
+
+	public class EndurancePoolCap : DefaultBonusCap
+	{
+		public EndurancePoolCap(GameLiving owner):base(owner) { }
+
+		public override int Item => 15;
 	}
 }

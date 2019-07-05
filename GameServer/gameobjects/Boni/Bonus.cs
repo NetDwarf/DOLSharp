@@ -40,6 +40,7 @@ namespace DOL.GS
 		public static BonusType Charisma { get { return new BonusType(eBonusType.Charisma); } }
 		public static BonusType Acuity { get { return new BonusType(eBonusType.Acuity); } }
 		public static BonusType HealthPool => new BonusType(eBonusType.HealthPool);
+		public static BonusType ManaPool => new BonusType(eBonusType.ManaPool);
 	}
 
 	public class BonusFactory
@@ -55,8 +56,9 @@ namespace DOL.GS
 			{eProperty.PieCapBonus, eBonusType.Piety },
 			{eProperty.ChaCapBonus, eBonusType.Charisma },
 			{eProperty.AcuCapBonus, eBonusType.Acuity },
+			{eProperty.PowerPoolCapBonus, eBonusType.ManaPoolPercent },
 		};
-		private static Dictionary<eProperty, eBonusType> myticalIDs = new Dictionary<eProperty, eBonusType>()
+		private static Dictionary<eProperty, eBonusType> mythicalIDs = new Dictionary<eProperty, eBonusType>()
 		{
 			{eProperty.MythicalStrCapBonus, eBonusType.Strength },
 			{eProperty.MythicalConCapBonus, eBonusType.Constitution },
@@ -93,9 +95,9 @@ namespace DOL.GS
 				typeID = itemOvercapIDs[propertyID];
 				bonusPart = Bonus.ItemOvercap;
 			}
-			else if(myticalIDs.ContainsKey(propertyID))
+			else if(mythicalIDs.ContainsKey(propertyID))
 			{
-				typeID = myticalIDs[propertyID];
+				typeID = mythicalIDs[propertyID];
 				bonusPart = Bonus.Mythical;
 			}
 			else
@@ -258,7 +260,7 @@ namespace DOL.GS
 		Charisma = 8,
 		Stat_Last = 8,
 
-		MaxMana = 9,
+		ManaPool = 9,
 		HealthPool = 10,
 		#endregion
 
@@ -459,9 +461,9 @@ namespace DOL.GS
 		CastingSpeed = 191,
 		DeathExpLoss = 192,
 		DebuffEffectivness = 193,
-		Fatigue = 194,
+		Endurance = 194,
 		HealingEffectiveness = 195,
-		PowerPool = 196,
+		ManaPoolPercent = 196,
 		ResistPierce = 197,
 		SpellDamage = 198,
 		SpellDuration = 199,

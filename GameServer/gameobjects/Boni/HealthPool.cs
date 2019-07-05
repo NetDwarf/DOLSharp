@@ -3,12 +3,7 @@ using System;
 
 namespace DOL.GS
 {
-	public interface IHealthPool
-	{
-		int Value { get; }
-	}
-
-	public class PlayerHealthPool : IHealthPool
+	public class PlayerHealthPool : IBonusProperty
 	{
 		private GamePlayer owner;
 
@@ -43,7 +38,7 @@ namespace DOL.GS
 		}
 	}
 
-	public class KeepComponentHealthPool : IHealthPool
+	public class KeepComponentHealthPool : IBonusProperty
 	{
 		GameKeepComponent owner;
 
@@ -66,7 +61,7 @@ namespace DOL.GS
 		}
 	}
 
-	public class KeepDoorHealthPool : IHealthPool
+	public class KeepDoorHealthPool : IBonusProperty
 	{
 		GameKeepDoor owner;
 
@@ -93,7 +88,7 @@ namespace DOL.GS
 		}
 	}
 
-	public class NPCHealthPool : IHealthPool
+	public class NPCHealthPool : IBonusProperty
 	{
 		protected GameLiving owner;
 
@@ -144,11 +139,11 @@ namespace DOL.GS
 		}
 	}
 
-	public class GenericLivingHealthPool : IHealthPool
+	public class DefaultHealthPool : IBonusProperty
 	{
 		GameLiving owner;
 
-		public GenericLivingHealthPool(GameLiving owner)
+		public DefaultHealthPool(GameLiving owner)
 		{
 			this.owner = owner;
 		}
@@ -177,7 +172,7 @@ namespace DOL.GS
 
 	public class HealthPoolFactory
 	{
-		public static IHealthPool Create(GameLiving owner)
+		public static IBonusProperty Create(GameLiving owner)
 		{
 			if (owner is GamePlayer)
 			{
@@ -197,7 +192,7 @@ namespace DOL.GS
 			}
 			else
 			{
-				return new GenericLivingHealthPool(owner);
+				return new DefaultHealthPool(owner);
 			}
 		}
 	}
