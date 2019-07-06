@@ -43,7 +43,7 @@ namespace DOL.GS.PropertyCalc
 			regen *= ServerProperties.Properties.MANA_REGEN_RATE;
 
 			double decimals = regen - (int)regen;
-			if (RandomRoudingUpEnabled && Util.ChanceDouble(decimals)) 
+			if (Util.ChanceDouble(decimals)) 
 			{
 				regen += 1;	// compensate int rounding error
 			}
@@ -55,7 +55,5 @@ namespace DOL.GS.PropertyCalc
 
 			return (int)regen;
 		}
-
-		public bool RandomRoudingUpEnabled { get; set; } = true;
 	}
 }

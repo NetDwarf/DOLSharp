@@ -67,9 +67,14 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 		private IPropertyCalculator createCalculator()
 		{
+			setRoundingDown();
 			var calc = new EnduranceRegenerationRateCalculator();
-			calc.RandomRoudingUpEnabled = false;
 			return calc;
+		}
+
+		private void setRoundingDown()
+		{
+			Util.LoadTestDouble(new ConstantRandomUtil(1));
 		}
 
 		private void setRegenMultiplier(double value)
@@ -115,9 +120,14 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 		private IPropertyCalculator createCalculator()
 		{
+			setRoundingDown();
 			var calc = new PowerRegenerationRateCalculator();
-			calc.RandomRoudingUpEnabled = false;
 			return calc;
+		}
+
+		private void setRoundingDown()
+		{
+			Util.LoadTestDouble(new ConstantRandomUtil(1));
 		}
 
 		private void setRegenMultiplier(double value)
@@ -192,9 +202,14 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 		private IPropertyCalculator createCalculator()
 		{
+			setRoundingDown();
 			var calc = new HealthRegenerationRateCalculator();
-			calc.RandomRoudingUpEnabled = false;
 			return calc;
+		}
+
+		private void setRoundingDown()
+		{
+			Util.LoadTestDouble(new ConstantRandomUtil(1));
 		}
 
 		private void setRegenMultiplier(double value)

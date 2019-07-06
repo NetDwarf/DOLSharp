@@ -435,7 +435,6 @@ namespace DOL.UnitTests.GameServer
 
 			public override bool HasAbility(string abilityName)
 			{
-				System.Console.WriteLine(abilityName);
 				return abilities.Contains(abilityName);
 			}
 		}

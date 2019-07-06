@@ -44,6 +44,11 @@ namespace DOL.GS
 			return RandomGen.NextDouble();
 		}
 
+		protected virtual bool ChanceDoubleImpl(double chance)
+		{
+			return chance > RandomDouble();
+		}
+
 		#region Random
 		/// <summary>
 		/// Holds the random number generator instance
@@ -222,7 +227,7 @@ namespace DOL.GS
 		/// <returns></returns>
 		public static bool ChanceDouble(double chancePercent)
 		{
-			return chancePercent > RandomDouble();
+			return soleInstance.ChanceDoubleImpl(chancePercent);
 		}
 		
 		#endregion

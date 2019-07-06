@@ -108,11 +108,11 @@ namespace DOL.UnitTests.GameServer
 		}
 	}
 
-	public class FixedRandomUtil : Util
+	public class ConstantRandomUtil : Util
 	{
 		private double fixedRandomValue;
 
-		public FixedRandomUtil(double fixedRandomValue)
+		public ConstantRandomUtil(double fixedRandomValue)
 		{
 			this.fixedRandomValue = fixedRandomValue;
 		}

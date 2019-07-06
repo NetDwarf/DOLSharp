@@ -125,7 +125,7 @@ namespace DOL.UnitTests.GameServer
 
 		private static void setRandomDoubleTo(double value)
 		{
-			var util = new FixedRandomUtil(value);
+			var util = new ConstantRandomUtil(value);
 			Util.LoadTestDouble(util);
 		}
 
