@@ -83,6 +83,7 @@ namespace DOL.UnitTests.GameServer
 	public class FakeNPC : GameNPC
 	{
 		public bool isInCombat = false;
+		public bool isAlive = false;
 
 		public FakeNPC() : base(Substitute.For<ABrain>()){}
 
@@ -92,6 +93,7 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		public override bool InCombat => isInCombat;
+		public override bool IsAlive => isAlive;
 	}
 
 	public class FakeKeepDoor : GameKeepDoor

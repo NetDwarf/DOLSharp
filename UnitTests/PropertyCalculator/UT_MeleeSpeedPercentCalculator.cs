@@ -8,7 +8,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 	class UT_MeleeSpeedPercentCalculator
 	{
 		[Test]
-		public void CalcValue_NoMeleeSpeedBoni_OneHundred()
+		public void CalcValue_Init_100()
 		{
 			var player = Create.FakePlayer();
 			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();

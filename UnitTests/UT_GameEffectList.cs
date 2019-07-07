@@ -26,8 +26,8 @@ namespace DOL.UnitTests.GameServer
         [Test]
         public void Add_OwnerIsInactiveObject_ReturnFalse()
         {
-            var owner = Substitute.For<GameLiving>();
-            owner.IsAlive.Returns(true);
+            var owner = Create.FakeNPC();
+			owner.isAlive = true;
             owner.ObjectState = GameObject.eObjectState.Inactive;
             var effectList = new GameEffectList(owner);
             var effect = Substitute.For<IGameEffect>();
@@ -40,9 +40,9 @@ namespace DOL.UnitTests.GameServer
         [Test]
         public void Add_OwnerIsActiveObjectAndAlive_ReturnTrue()
         {
-            var owner = Substitute.For<GameLiving>();
-            owner.IsAlive.Returns(true);
-            owner.ObjectState = GameObject.eObjectState.Active;
+			var owner = Create.FakeNPC();
+			owner.isAlive = true;
+			owner.ObjectState = GameObject.eObjectState.Active;
             var effectList = new GameEffectList(owner);
             var effect = Substitute.For<IGameEffect>();
 
@@ -54,9 +54,9 @@ namespace DOL.UnitTests.GameServer
         [Test]
         public void Add_ToFreshListAndOwnerIsAliveAndActiveObject_ListCountIsOne()
         {
-            var owner = Substitute.For<GameLiving>();
-            owner.IsAlive.Returns(true);
-            owner.ObjectState = GameObject.eObjectState.Active;
+			var owner = Create.FakeNPC();
+			owner.isAlive = true;
+			owner.ObjectState = GameObject.eObjectState.Active;
             var effectList = new GameEffectList(owner);
             var effect = Substitute.For<IGameEffect>();
 
@@ -69,9 +69,9 @@ namespace DOL.UnitTests.GameServer
         [Test]
         public void Add_ToFreshListAndOwnerIsNotAlive_ListCountRemainsZero()
         {
-            var owner = Substitute.For<GameLiving>();
-            owner.IsAlive.Returns(false);
-            var effectList = new GameEffectList(owner);
+			var owner = Create.FakeNPC();
+			owner.isAlive = false;
+			var effectList = new GameEffectList(owner);
             var effect = Substitute.For<IGameEffect>();
 
             effectList.Add(effect);
@@ -83,8 +83,8 @@ namespace DOL.UnitTests.GameServer
         [Test]
         public void Remove_EffectFromFreshList_ReturnFalse()
         {
-            var owner = Substitute.For<GameLiving>();
-            var effectList = new GameEffectList(owner);
+			var owner = Create.FakeNPC();
+			var effectList = new GameEffectList(owner);
             var effect = Substitute.For<IGameEffect>();
 
             bool actual = effectList.Remove(effect);
@@ -95,8 +95,8 @@ namespace DOL.UnitTests.GameServer
         [Test]
         public void Remove_EffectFromListContainingSameEffect_ReturnTrue()
         {
-            var owner = Substitute.For<GameLiving>();
-            owner.IsAlive.Returns(true);
+            var owner = Create.FakeNPC();
+			owner.isAlive = true;
             owner.ObjectState = GameObject.eObjectState.Active;
             var effectList = new GameEffectList(owner);
             var effect = Substitute.For<IGameEffect>();
@@ -224,9 +224,9 @@ namespace DOL.UnitTests.GameServer
 
         private static GameEffectList createEffectListWithValidOwner()
         {
-            var owner = Substitute.For<GameLiving>();
-            owner.IsAlive.Returns(true);
-            owner.ObjectState = GameObject.eObjectState.Active;
+			var owner = Create.FakeNPC();
+			owner.isAlive = true;
+			owner.ObjectState = GameObject.eObjectState.Active;
             var effectList = new GameEffectList(owner);
             return effectList;
         }

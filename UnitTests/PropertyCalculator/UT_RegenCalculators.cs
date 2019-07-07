@@ -7,6 +7,12 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 	[TestFixture]
 	public class UT_EnduranceRegenerationRateCalculator
 	{
+		[TestFixtureSetUp]
+		public void init()
+		{
+			setRoundingDown();
+		}
+
 		[Test]
 		public void CalcValue_PlayerOutOfCombat_5()
 		{
@@ -67,7 +73,6 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 		private IPropertyCalculator createCalculator()
 		{
-			setRoundingDown();
 			var calc = new EnduranceRegenerationRateCalculator();
 			return calc;
 		}
@@ -86,6 +91,12 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 	[TestFixture]
 	public class UT_PowerRegenerationRateCalculator
 	{
+		[TestFixtureSetUp]
+		public void init()
+		{
+			setRoundingDown();
+		}
+
 		[Test]
 		public void CalcValue_L50Player_OutOfCombat_23()
 		{
@@ -120,7 +131,6 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 		private IPropertyCalculator createCalculator()
 		{
-			setRoundingDown();
 			var calc = new PowerRegenerationRateCalculator();
 			return calc;
 		}
@@ -139,6 +149,12 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 	[TestFixture]
 	public class UT_HealthRegenerationRateCalculator
 	{
+		[TestFixtureSetUp]
+		public void init()
+		{
+			setRoundingDown();
+		}
+
 		[Test]
 		public void CalcValue_L50Player_OutOfCombat_30()
 		{
@@ -202,7 +218,6 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 		private IPropertyCalculator createCalculator()
 		{
-			setRoundingDown();
 			var calc = new HealthRegenerationRateCalculator();
 			return calc;
 		}

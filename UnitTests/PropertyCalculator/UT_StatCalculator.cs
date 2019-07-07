@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using DOL.GS;
 using DOL.GS.PropertyCalc;
-using DOL.GS.PlayerClass;
 
 namespace DOL.UnitTests.GameServer.PropertyCalc
 {
@@ -10,47 +9,47 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
     {
         #region CalcValueFromBuffs
         [Test]
-        public void CalcValueFromBuffs_GameNPCWith100ConstBaseBuff_Return100()
+        public void CalcValueFromBuffs_GameNPC_With100BaseBuff_100()
         {
             var npc = Create.FakeNPC();
-            npc.BaseBuffBonusCategory[eProperty.Constitution] = 100;
+            npc.BaseBuffBonusCategory[ConstitutionDatabaseID] = 100;
 			var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValueFromBuffs(npc, eProperty.Constitution);
+            int actual = statCalc.CalcValueFromBuffs(npc, ConstitutionDatabaseID);
 
             Assert.AreEqual(100, actual);
         }
 
         [Test]
-        public void CalcValueFromBuffs_Level50PlayerWith100ConstBaseBuff_Return62()
+        public void CalcValueFromBuffs_L50Player_With100BaseBuff_62()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-            player.BaseBuffBonusCategory[eProperty.Constitution] = 100;
+            player.BaseBuffBonusCategory[ConstitutionDatabaseID] = 100;
             var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValueFromBuffs(player, eProperty.Constitution);
+            int actual = statCalc.CalcValueFromBuffs(player, ConstitutionDatabaseID);
 
             int expected = (int)(50 * 1.25);
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void CalcValueFromBuffs_L50PlayerWith100ConstSpecBuff_ReturnCapAt93()
+        public void CalcValueFromBuffs_L50Player_With100SpecBuff_93()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-            player.SpecBuffBonusCategory[eProperty.Constitution] = 100;
+            player.SpecBuffBonusCategory[ConstitutionDatabaseID] = 100;
             var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValueFromBuffs(player, eProperty.Constitution);
+            int actual = statCalc.CalcValueFromBuffs(player, ConstitutionDatabaseID);
 
             int expected = (int)(50 * 1.875);
             Assert.AreEqual(expected, actual);
         }
 
 		[Test]
-		public void CalcValueFromBuffs_L50AnimistIntelligence_With50AcuityBaseBuff_50()
+		public void CalcValueFromBuffs_IntelligenceFromL50Animist_With50AcuityBaseBuff_50()
 		{
 			var player = Create.FakePlayer(new CharacterClassAnimist());
 			player.Level = 50;
@@ -65,11 +64,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         public void CalcValueFromBuffs_BaseBuff3AndSpecBuff4_7()
         {
             var npc = Create.FakeNPC();
-            npc.BaseBuffBonusCategory[eProperty.Constitution] = 3;
-            npc.SpecBuffBonusCategory[eProperty.Constitution] = 4;
+            npc.BaseBuffBonusCategory[ConstitutionDatabaseID] = 3;
+            npc.SpecBuffBonusCategory[ConstitutionDatabaseID] = 4;
 			var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValueFromBuffs(npc, eProperty.Constitution);
+            int actual = statCalc.CalcValueFromBuffs(npc, ConstitutionDatabaseID);
 
             int expected = 7;
             Assert.AreEqual(expected, actual);
@@ -78,21 +77,21 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		
 		#region CalcValue
 		[Test]
-        public void CalcValue_L50Player100ItemBonus_75()
+        public void CalcValue_L50Player_With100ItemBonus_75()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-            player.ItemBonus[eProperty.Constitution] = 100;
+            player.ItemBonus[ConstitutionDatabaseID] = 100;
 			var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValue(player, eProperty.Constitution);
+            int actual = statCalc.CalcValue(player, ConstitutionDatabaseID);
 
             int expected = (int)(1.5 * 50);
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void CalcValue_Intelligence_L50AnimistWith50AcuityFromItems_50()
+        public void CalcValue_IntelligenceFromL50Animist_With50AcuityFromItems_50()
         {
             var player = Create.FakePlayer(new CharacterClassAnimist());
             player.Level = 50;
@@ -105,7 +104,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_L50Player150ConAnd100MythicalConCap_127()
+        public void CalcValue_ConstitutionFromL50Player_With150ConAnd100MythicalConCap_127()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
@@ -119,7 +118,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_L50PlayerWith5MythicalCapAnd100CapBonus_106()
+        public void CalcValue_L50Player_With5MythicalCapAnd100ItemOvercap_106()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
@@ -134,32 +133,32 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_L50Player100ItemBonusAnd10CapBonus_85()
+        public void CalcValue_L50Player_With100ItemBonusAnd10ItemOvercap_85()
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-			player.Boni.Add(Bonus.Constitution.Item.Create(100));
-			player.Boni.Add(Bonus.Constitution.ItemOvercap.Create(10));
+			player.ItemBonus[ConstitutionDatabaseID] = 100;
+			player.ItemBonus[ConstitutionItemOvercapDatabseID] = 10;
 			var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValue(player, eProperty.Constitution);
+            int actual = statCalc.CalcValue(player, ConstitutionDatabaseID);
 
             Assert.AreEqual(85, actual);
         }
         [Test]
-        public void CalcValue_NPCWith100Constitution_100()
+        public void CalcValue_ConstitutionFromNPC_With100Constitution_100()
         {
             var npc = Create.FakeNPC();
             npc.Constitution = 100;
 			var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValue(npc, eProperty.Constitution);
+            int actual = statCalc.CalcValue(npc, ConstitutionDatabaseID);
 
             Assert.AreEqual(100, actual);
         }
 
         [Test]
-        public void CalcValue_NPCWith100Intelligence_100()
+        public void CalcValue_IntelligenceFromNPC_With100Intelligence_100()
         {
             var npc = Create.FakeNPC();
             npc.Intelligence = 100;
@@ -171,7 +170,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_L50AnimistIntelligence_With50Acuity_50()
+        public void CalcValue_IntelligenceL50Animist_With50Acuity_50()
         {
             var player = Create.FakePlayer(new CharacterClassAnimist());
             player.Level = 50;
@@ -187,10 +186,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         public void CalcValue_200AbilityBonus_200()
         {
             var player = Create.FakePlayer();
-            player.AbilityBonus[eProperty.Constitution] = 200;
+            player.AbilityBonus[ConstitutionDatabaseID] = 200;
             var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValue(player, eProperty.Constitution);
+            int actual = statCalc.CalcValue(player, ConstitutionDatabaseID);
 
             Assert.AreEqual(200, actual);
         }
@@ -199,10 +198,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         public void CalcValue_200Debuff_Return1()
         {
             var player = Create.FakePlayer();
-            player.DebuffCategory[eProperty.Constitution] = 200;
+            player.DebuffCategory[ConstitutionDatabaseID] = 200;
             var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValue(player, eProperty.Constitution);
+            int actual = statCalc.CalcValue(player, ConstitutionDatabaseID);
 
             Assert.AreEqual(1, actual);
         }
@@ -211,11 +210,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         public void CalcValue_200AbilityBonusAnd50Debuff_200()
         {
             var player = Create.FakePlayer();
-            player.AbilityBonus[eProperty.Constitution] = 200;
-            player.DebuffCategory[eProperty.Constitution] = 50;
+            player.AbilityBonus[ConstitutionDatabaseID] = 200;
+            player.DebuffCategory[ConstitutionDatabaseID] = 50;
             var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValue(player, eProperty.Constitution);
+            int actual = statCalc.CalcValue(player, ConstitutionDatabaseID);
 
             Assert.AreEqual(200, actual);
         }
@@ -225,11 +224,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-            player.SpecBuffBonusCategory[eProperty.Constitution] = 70;
-            player.DebuffCategory[eProperty.Constitution] = 50;
+            player.SpecBuffBonusCategory[ConstitutionDatabaseID] = 70;
+            player.DebuffCategory[ConstitutionDatabaseID] = 50;
             var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValue(player, eProperty.Constitution);
+            int actual = statCalc.CalcValue(player, ConstitutionDatabaseID);
 
             Assert.AreEqual(20, actual);
         }
@@ -239,11 +238,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         {
             var player = Create.FakePlayer();
             player.Level = 50;
-            player.ItemBonus[eProperty.Constitution] = 70;
-            player.DebuffCategory[eProperty.Constitution] = 50;
+            player.ItemBonus[ConstitutionDatabaseID] = 70;
+            player.DebuffCategory[ConstitutionDatabaseID] = 50;
             var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValue(player, eProperty.Constitution);
+            int actual = statCalc.CalcValue(player, ConstitutionDatabaseID);
 
             int expected = 70 - (50 / 2);
             Assert.AreEqual(expected, actual);
@@ -260,7 +259,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
             int actual = statCalc.CalcValue(player, eProperty.Constitution);
 
-            int expected = 70 - (50 / 2);
+            int expected = 45;
             Assert.AreEqual(expected, actual);
         }
 
@@ -292,20 +291,25 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
         }
 
         [Test]
-        public void CalcValue_50AbilityBonusAnd25PercentMultiplicator_12()
+        public void CalcValue_50AbilityAnd25PercentMultiplicator_12()
         {
             var player = Create.FakePlayer();
-            player.AbilityBonus[eProperty.Dexterity] = 50;
-            player.BuffBonusMultCategory1.Set((int)eProperty.Dexterity, new object(), 0.25);
+            player.AbilityBonus[ConstitutionDatabaseID] = 50;
+            player.BuffBonusMultCategory1.Set((int)ConstitutionDatabaseID, new object(), 0.25);
             var statCalc = createStatCalculator();
 
-            int actual = statCalc.CalcValue(player, eProperty.Dexterity);
+            int actual = statCalc.CalcValue(player, ConstitutionDatabaseID);
 
             Assert.AreEqual(12, actual);
         }
 		#endregion
 
-		public static IPropertyCalculator createStatCalculator()
+		private eProperty ConstitutionDatabaseID => eProperty.Constitution;
+		private eProperty ConstitutionItemOvercapDatabseID => eProperty.ConCapBonus;
+		private eProperty ConstitutionMythicalDatabaseID => eProperty.MythicalConCapBonus;
+		private eProperty DexterityDatabaseID => eProperty.Dexterity;
+
+		private static IPropertyCalculator createStatCalculator()
         {
             return new StatCalculator();
         }

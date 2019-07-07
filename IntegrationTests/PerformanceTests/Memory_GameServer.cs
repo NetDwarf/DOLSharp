@@ -15,7 +15,7 @@ namespace DOL.PerformanceTests.Memory
 			GamePlayer[] players = new GamePlayer[100];
 			for (int i = 0; i < players.Length; i++)
 			{
-				players[i] = GamePlayer.CreateTestableGamePlayer();
+				players[i] = createPlayer();
 			}
 			long after = GC.GetTotalMemory(true);
 			long memoryConsumption = after - before;
@@ -30,7 +30,7 @@ namespace DOL.PerformanceTests.Memory
 			GamePlayer[] players = new GamePlayer[100];
 			for (int i = 0; i < players.Length; i++)
 			{
-				players[i] = GamePlayer.CreateTestableGamePlayer();
+				players[i] = createPlayer();
 				for (int j = 1; j <= 8; j++)
 				{
 					var bonusType = new BonusType((eBonusType)j);
@@ -51,7 +51,7 @@ namespace DOL.PerformanceTests.Memory
 			
 			for (int i = 0; i < players.Length; i++)
 			{
-				players[i] = GamePlayer.CreateTestableGamePlayer();
+				players[i] = createPlayer();
 				eBonusType previous = eBonusType.Stat_Last;
 				ushort counter = 0;
 				foreach (var j in Enum.GetValues(typeof(eBonusType)))
@@ -161,6 +161,11 @@ namespace DOL.PerformanceTests.Memory
 			long memoryConsumption = after - before;
 			Console.WriteLine("1000 Bonus(es) consume " + memoryConsumption + " bytes");
 			Assert.Less(memoryConsumption, 80 * 1000);
+		}
+
+		private GamePlayer createPlayer()
+		{
+			return Create.FakePlayer();
 		}
 	}
 }

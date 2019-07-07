@@ -14,7 +14,7 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void MaxHealth_LevelOne_()
+		public void MaxHealth_LevelOne_200()
 		{
 			var guard = createDoor();
 			guard.Level = 1;
@@ -26,7 +26,7 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void MaxHealth_Level50_()
+		public void MaxHealth_Level50_9850()
 		{
 			var guard = createDoor();
 			guard.Level = 50;

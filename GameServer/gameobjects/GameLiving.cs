@@ -4703,44 +4703,37 @@ namespace DOL.GS
 		}
 
 		private const string useBoniInstead = "Use Boni.RawValueOf(BonusComponent) or Boni.SetTo/.Add(Bonus) instead.";
-
-		[Obsolete(useBoniInstead)]
+		
 		public virtual IPropertyIndexer AbilityBonus
 		{
 			get { return createIndexer(Bonus.Ability); }
 		}
-
-		[Obsolete(useBoniInstead)]
+		
 		public virtual IPropertyIndexer ItemBonus
 		{
 			get { return createIndexer(Bonus.Item); }
 		}
-
-		[Obsolete(useBoniInstead)]
+		
 		public IPropertyIndexer BaseBuffBonusCategory
 		{
 			get { return createIndexer(Bonus.BaseBuff); }
 		}
-
-		[Obsolete(useBoniInstead)]
+		
 		public IPropertyIndexer SpecBuffBonusCategory
 		{
 			get { return createIndexer(Bonus.SpecBuff); }
 		}
-
-		[Obsolete(useBoniInstead)]
+		
 		public IPropertyIndexer BuffBonusCategory4
 		{
 			get { return createIndexer(Bonus.ExtraBuff); }
 		}
-
-		[Obsolete(useBoniInstead)]
+		
 		public IPropertyIndexer DebuffCategory
 		{
 			get { return createIndexer(Bonus.Debuff); }
 		}
-
-		[Obsolete(useBoniInstead)]
+		
 		public IPropertyIndexer SpecDebuffCategory
 		{
 			get { return createIndexer(Bonus.SpecDebuff); }
@@ -4854,15 +4847,13 @@ namespace DOL.GS
 		[Obsolete("Will be deleted without substitution")]
 		public static readonly string[] STAT_NAMES = new string[]{"Unknown Stat","Strength", "Dexterity", "Constitution", "Quickness", "Intelligence",
 			"Piety", "Empathy", "Charisma"};
-
-		[Obsolete("Use Boni.RawValueOf(BonusComponent) instead!")]
+		
 		public int GetBaseStat(eStat stat)
 		{
 			var statType = new BonusType((eBonusType)stat);
 			return Boni.RawValueOf(statType.Base);
 		}
-
-		[Obsolete("Use Boni.Add(Bonus) instead!")]
+		
 		public virtual void ChangeBaseStat(eStat stat, short amount)
 		{
 			var statType = new BonusType((eBonusType)stat);

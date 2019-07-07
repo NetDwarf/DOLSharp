@@ -8,18 +8,18 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 	class UT_ResistCalculator
 	{
 		[Test]
-		public void CalcValue_BodyResist_Init_Zero()
+		public void CalcValue_Init_Zero()
 		{
 			var resistCalc = createResistCalculator();
 			var npc = Create.FakeNPC();
 
-			int actual = resistCalc.CalcValue(npc, eProperty.Resist_First);
+			int actual = resistCalc.CalcValue(npc, SomeResistDatabaseID);
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void CalcValue_2BodyAbilityResistAdded_One()
+		public void CalcValue_2AbilityBonus_2()
 		{
 			var resistCalc = createResistCalculator();
 			var npc = Create.FakeNPC();
@@ -31,7 +31,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		}
 
 		[Test]
-		public void CalcValue_OneItemResistAdded_One()
+		public void CalcValue_OneItemBonus_One()
 		{
 			var resistCalc = createResistCalculator();
 			var player = Create.FakePlayer();
@@ -43,7 +43,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		}
 
 		[Test]
-		public void CalcValue_OneBuffResistAdded_One()
+		public void CalcValue_OneBaseBuffBonus_One()
 		{
 			var resistCalc = createResistCalculator();
 			var npc = Create.FakeNPC();
@@ -55,7 +55,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		}
 
 		[Test]
-		public void CalcValue_8BuffAnd6DebuffBodyResist_2()
+		public void CalcValue_8BuffAnd6Debuff_2()
 		{
 			var resistCalc = createResistCalculator();
 			var npc = Create.FakeNPC();
@@ -82,7 +82,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		}
 
 		[Test]
-		public void CalcValue_100AbilityBodyResist_HardcapAt70()
+		public void CalcValue_100AbilityBonus_HardcapAt70()
 		{
 			var resistCalc = createResistCalculator();
 			var player = Create.FakePlayer();
@@ -107,7 +107,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		}
 
 		[Test]
-		public void CalcValue_L50PlayerWith50ItemResistAnd5ItemResistOvercap_31()
+		public void CalcValue_L50Player_With50ItemAnd5Mythical_31()
 		{
 			var resistCalc = createResistCalculator();
 			var player = Create.FakePlayer();
@@ -121,7 +121,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		}
 
 		[Test]
-		public void CalcValue_L50PlayerWith50ItemResistAnd6ItemResistOvercap_31()
+		public void CalcValue_L50Player_With50ItemAnd6Mythical_31()
 		{
 			var resistCalc = createResistCalculator();
 			var player = Create.FakePlayer();
@@ -135,7 +135,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		}
 
 		[Test]
-		public void CalcValue_15BaseBuffAnd15ExtraBuffResist_24()
+		public void CalcValue_15BaseBuffAnd15ExtraBuff_24()
 		{
 			var resistCalc = createResistCalculator();
 			var player = Create.FakePlayer();
@@ -148,6 +148,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		}
 
 		private BonusType BodyResist => new BonusType(eBonusType.Resist_Body);
+		private eProperty SomeResistDatabaseID => eProperty.Resist_First;
 
 		private static ResistCalculator createResistCalculator()
 		{

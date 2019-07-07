@@ -38,26 +38,31 @@
   <ItemGroup>
     <Compile Include="FakeFactory.cs" />
     <Compile Include="Fakes.cs" />
+    <Compile Include="PropertyCalculator\UT_ArcaneSyphonCalculator.cs" />
+    <Compile Include="PropertyCalculator\UT_ArcheryRangeCalculator.cs" />
+    <Compile Include="PropertyCalculator\UT_ArcherySpeedCalculator.cs" />
+    <Compile Include="PropertyCalculator\UT_ArmorAbsorptionCalculator.cs" />
+    <Compile Include="PropertyCalculator\UT_ArmorFactorCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_MaxHealthCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_MaxSpeedCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_MeleeDamagePercentCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_MeleeSpeedPercentCalculator.cs" />
-    <Compile Include="Boni\UT_UncappedBoni.cs" />
-    <Compile Include="Boni\UT_BonusCompound.cs" />
+    <Compile Include="Boni\UT_Boni.cs" />
+    <Compile Include="PropertyCalculator\UT_MissHitPercentCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_NaturalResistCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_RegenCalculators.cs" />
     <Compile Include="PropertyCalculator\UT_ResistCalculator.cs" />
-    <Compile Include="PropertyCalculator\UT_ToABonusCalculator.cs" />
-    <Compile Include="UT_FatigueCalculator.cs" />
-    <Compile Include="UT_GameDoor.cs" />
+    <Compile Include="PropertyCalculator\UT_SpellRangeCalculator.cs" />
+    <Compile Include="PropertyCalculator\UT_FatigueCalculator.cs" />
+    <Compile Include="Living\UT_GameDoor.cs" />
     <Compile Include="UT_GameEffectList.cs" />
-    <Compile Include="UT_GameKeepGuard.cs" />
-    <Compile Include="UT_GameNPC.cs" />
-    <Compile Include="UT_GamePlayer.cs" />
-    <Compile Include="PropertyCalculator\UT_IndexerBoniAdapter.cs" />
-    <Compile Include="PropertyCalculator\UT_MultiplicativePropertiesBoniAdapter.cs" />
-    <Compile Include="UT_MaxManaCalculator.cs" />
-    <Compile Include="UT_NecromancerPets.cs" />
+    <Compile Include="Living\UT_GameKeepGuard.cs" />
+    <Compile Include="Living\UT_GameNPC.cs" />
+    <Compile Include="Living\UT_GamePlayer.cs" />
+    <Compile Include="Boni\UT_IndexerBoniAdapter.cs" />
+    <Compile Include="Boni\UT_MultiplicativePropertiesBoniAdapter.cs" />
+    <Compile Include="PropertyCalculator\UT_MaxManaCalculator.cs" />
+    <Compile Include="Living\UT_NecromancerPets.cs" />
     <Compile Include="UT_SpellHandler.cs" />
     <Compile Include="PropertyCalculator\UT_StatCalculator.cs" />
     <Compile Include="UT_StagEffect.cs" />
@@ -96,6 +101,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

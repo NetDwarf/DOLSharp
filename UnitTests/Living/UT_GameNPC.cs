@@ -127,7 +127,7 @@ namespace DOL.UnitTests.GameServer
 			var actual = npc.ChanceToFumble;
 
 			var expected = 0.05;
-			Assert.AreEqual(expected, actual, 0.001);
+			Assert.AreEqual(expected, actual, 0.0001);
 		}
 
 		[Test]
@@ -139,7 +139,7 @@ namespace DOL.UnitTests.GameServer
 			var actual = npc.ChanceToFumble;
 
 			var expected = 0.001;
-			Assert.AreEqual(expected, actual, 0.001);
+			Assert.AreEqual(expected, actual, 0.0001);
 		}
 
 		[Test]
@@ -151,7 +151,7 @@ namespace DOL.UnitTests.GameServer
 			var actual = npc.ChanceToFumble;
 
 			var expected = 0.10;
-			Assert.AreEqual(expected, actual, 0.001);
+			Assert.AreEqual(expected, actual, 0.0001);
 		}
 
 		[Test]
@@ -163,7 +163,7 @@ namespace DOL.UnitTests.GameServer
 			var actual = npc.ChanceToFumble;
 
 			var expected = 0.10;
-			Assert.AreEqual(expected, actual, 0.001);
+			Assert.AreEqual(expected, actual, 0.0001);
 		}
 
 		[Test]
@@ -187,7 +187,7 @@ namespace DOL.UnitTests.GameServer
 
 			var actual = npc.GetArmorAF(eArmorSlot.NOTSET);
 			var expected = 9;
-			Assert.AreEqual(expected, actual, 0.001);
+			Assert.AreEqual(expected, actual, 0.0001);
 		}
 
 		[Test]
