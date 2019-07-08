@@ -2,17 +2,26 @@
 using NSubstitute;
 using DOL.GS;
 using DOL.GS.Spells;
+using DOL.GS.Effects;
+using System;
 
-namespace DOL.UnitTests.Gameserver
+namespace DOL.UnitTests.GameServer
 {
     [TestFixture]
     class UT_SpellHandler
     {
+		[TestFixtureSetUp]
+		public void Setup()
+		{
+			GameLiving.LoadCalculators(); //temporal coupling
+		}
+
         #region CalculateDamageVariance
         [Test]
-        public void CalculateDamageVariance_TargetIsGameLiving_MinIs125Percent()
+        public void CalculateDamageVariance_TargetIsSomeGameLiving_MinIs125Percent()
         {
-            var target = Substitute.For<GameLiving>();
+			var someGameLiving = Create.FakeKeepDoor();
+            var target = someGameLiving;
             var spellLine = new SpellLine("", "", "", false);
             var spellHandler = new SpellHandler(null, null, spellLine);
 
@@ -24,7 +33,7 @@ namespace DOL.UnitTests.Gameserver
         [Test]
         public void CalculateDamageVariance_TargetIsGameLiving_MaxIs125Percent()
         {
-            var target = Substitute.For<GameLiving>();
+            var target = Create.FakeNPC();
             var spellLine = new SpellLine("", "", "", false);
             var spellHandler = new SpellHandler(null, null, spellLine);
 
@@ -81,8 +90,8 @@ namespace DOL.UnitTests.Gameserver
         [Test]
         public void CalculateDamageVariance_SourceAndTargetLevel30AndSpecLevel16_MinIs75Percent()
         {
-            var source = new FakePlayer();
-            var target = Substitute.For<GameLiving>();
+            var source = Create.FakePlayer();
+            var target = Create.FakeNPC();
             source.modifiedSpecLevel = 16;
             source.Level = 30;
             target.Level = 30;
@@ -97,8 +106,8 @@ namespace DOL.UnitTests.Gameserver
         [Test]
         public void CalculateDamageVariance_SameLevelButNoSpec_MinIs25Percent()
         {
-            var source = new FakePlayer();
-            var target = Substitute.For<GameLiving>();
+            var source = Create.FakePlayer();
+            var target = Create.FakeNPC();
             source.modifiedSpecLevel = 1;
             source.Level = 30;
             target.Level = 30;
@@ -113,8 +122,8 @@ namespace DOL.UnitTests.Gameserver
         [Test]
         public void CalculateDamageVariance_SameLevelButFiveSpecLevelOverTargetLevel_MinIs127Percent()
         {
-            var source = new FakePlayer();
-            var target = Substitute.For<GameLiving>();
+            var source = Create.FakePlayer();
+            var target = Create.FakeNPC();
             source.modifiedSpecLevel = 35;
             source.Level = 30;
             target.Level = 30;
@@ -129,8 +138,8 @@ namespace DOL.UnitTests.Gameserver
         [Test]
         public void CalculateDamageVariance_NoSpecButSourceHasTwiceTheTargetLevel_MinIs55Percent()
         {
-            var source = new FakePlayer();
-            var target = Substitute.For<GameLiving>();
+            var source = Create.FakePlayer();
+            var target = Create.FakeNPC();
             source.modifiedSpecLevel = 1;
             source.Level = 30;
             target.Level = 15;
@@ -145,8 +154,8 @@ namespace DOL.UnitTests.Gameserver
         [Test]
         public void CalculateDamageVariance_NoSpecButSourceHasTwiceTheTargetLevel_MaxIs155Percente()
         {
-            var source = new FakePlayer();
-            var target = Substitute.For<GameLiving>();
+            var source = Create.FakePlayer();
+            var target = Create.FakeNPC();
             source.modifiedSpecLevel = 1;
             source.Level = 30;
             target.Level = 15;
@@ -180,7 +189,7 @@ namespace DOL.UnitTests.Gameserver
         {
             var spell = Create.DamageSpell(100);
             var source = Create.FakePlayer(new CharacterClassAnimist());
-            source.modifiedIntelligence = 100;
+			source.AbilityBonus[eProperty.Intelligence] = 100;
             var target = Create.FakePlayer();
             var spellLine = new SpellLine("", "", "", false);
             var spellHandler = new SpellHandler(source, spell, spellLine);
@@ -196,7 +205,7 @@ namespace DOL.UnitTests.Gameserver
         {
             var spell = Create.DamageSpell(100);
             var owner = Create.FakePlayer(new CharacterClassAnimist());
-            owner.modifiedIntelligence = 100;
+			owner.ChangeBaseStat((eStat)eProperty.Intelligence, 100);
             owner.Level = 50;
             GamePet source = Create.Pet(owner);
             source.Level = 50; //temporal coupling through AutoSetStat()
@@ -205,7 +214,7 @@ namespace DOL.UnitTests.Gameserver
             var spellLine = new SpellLine("", "", "", false);
             var spellHandler = new SpellHandler(source, spell, spellLine);
 
-            double actual = spellHandler.CalculateDamageBase(target);
+			double actual = spellHandler.CalculateDamageBase(target);
 
             double expected = 100 * (100 + 200) / 275.0 * (100 + 200) / 275.0;
             Assert.AreEqual(expected, actual, 0.001);
@@ -214,7 +223,6 @@ namespace DOL.UnitTests.Gameserver
         [Test]
         public void CalculateDamageBase_SpellDamageIs100FromGameNPCWithoutOwner_ReturnAround119()
         {
-            GameLiving.LoadCalculators(); //temporal coupling and global state
             var spell = Create.DamageSpell(100);
             var source = Create.FakeNPC();
             source.Level = 50;
@@ -298,7 +306,7 @@ namespace DOL.UnitTests.Gameserver
             spell.Level = 50;
             var source = Create.FakePlayer();
             source.modifiedSpellLevel = 10; //spellBonus
-            source.modiefiedToHitBonus = 0;
+            source.modifiedToHitBonus = 0;
             var target = Create.FakePlayer();
             target.Level = 50;
             var spellLine = new SpellLine("", "", "", false);
@@ -316,7 +324,7 @@ namespace DOL.UnitTests.Gameserver
             spell.Level = 50;
             var source = Create.FakePlayer();
             source.modifiedSpellLevel = 0; //spellBonus
-            source.modiefiedToHitBonus = 5;
+            source.modifiedToHitBonus = 5;
             var target = Create.FakePlayer();
             target.Level = 50;
             var spellLine = new SpellLine("", "", "", false);
@@ -325,9 +333,9 @@ namespace DOL.UnitTests.Gameserver
             int actual = spellHandler.CalculateToHitChance(target);
 
             Assert.AreEqual(90, actual);
-        }
+		}
 
-        [Test]
+		[Test]
         public void CalculateToHitChance_TargetIsNPCLevel50SourceIsLevel50PlayerAndSpellLevelIs40_Return80()
         {
             GS.ServerProperties.Properties.PVE_SPELL_CONHITPERCENT = 10;
@@ -337,14 +345,32 @@ namespace DOL.UnitTests.Gameserver
             source.modifiedEffectiveLevel = 50;
             var target = Create.FakeNPC();
             target.Level = 50;
-            target.modifiedEffectiveLevel = 50;
             var spellLine = new SpellLine("", "", "", false);
             var spellHandler = new SpellHandler(source, spell, spellLine);
 
             int actual = spellHandler.CalculateToHitChance(target);
 
             Assert.AreEqual(80, actual);
-        }
-        #endregion
+		}
+		#endregion
+
+		[Test]
+		public void OnEffectStart_20ConstitutionBuffOnNPC_NPChas21Constitution()
+		{
+			var caster = Create.FakePlayer();
+			var target = Create.FakeNPC();
+			var spell = Create.Spell();
+			spell.Value = 20;
+			var spellLine = new SpellLine("", "", "", true);
+			var constitutionBuff = new ConstitutionBuff(caster, spell, spellLine);
+			var spellEffect = new GameSpellEffect(constitutionBuff, 0, 0);
+			
+			spellEffect.Start(target);
+			constitutionBuff.OnEffectStart(spellEffect);
+
+			int actual = target.GetModified(eProperty.Constitution);
+			int expected = 21;
+			Assert.AreEqual(expected, actual);
+		}
     }
 }

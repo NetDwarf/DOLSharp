@@ -1,26 +1,33 @@
-﻿using System;
-using DOL.AI;
+﻿using DOL.AI;
 using DOL.Database;
 using DOL.GS;
+using DOL.GS.Keeps;
+using DOL.GS.PacketHandler;
+using NSubstitute;
+using System.Collections.Generic;
 
-namespace DOL.UnitTests.Gameserver
+namespace DOL.UnitTests.GameServer
 {
     public class FakePlayer : GamePlayer
     {
         public int modifiedSpecLevel;
         public ICharacterClass characterClass;
-        public int modifiedIntelligence;
-        public int modiefiedToHitBonus;
+        public int modifiedToHitBonus;
         public int modifiedSpellLevel;
         public int modifiedEffectiveLevel;
-        public int baseStat;
         private int totalConLostOnDeath;
+		public bool isInCombat = false;
+		public bool isSprinting = false;
+		public List<string> abilities = new List<string>();
 
         public override ICharacterClass CharacterClass { get { return characterClass; } }
 
         public FakePlayer() : base(null, null) { }
 
-        public override void LoadFromDatabase(DataObject obj)
+		public override bool InCombat => isInCombat;
+		public override bool IsSprinting => isSprinting;
+
+		public override void LoadFromDatabase(DataObject obj)
         {
         }
 
@@ -29,55 +36,84 @@ namespace DOL.UnitTests.Gameserver
             return modifiedSpecLevel;
         }
 
-        public override int GetModified(eProperty property)
-        {
-            switch (property)
-            {
-                case eProperty.Intelligence:
-                    return modifiedIntelligence;
-                case eProperty.SpellLevel:
-                    return modifiedSpellLevel;
-                case eProperty.ToHitBonus:
-                    return modiefiedToHitBonus;
-                case eProperty.LivingEffectiveLevel:
-                    return modifiedEffectiveLevel;
-                default: throw new ArgumentException("There is no property with that name");
-            }
-        }
+		public override int GetModified(eProperty property)
+		{
+			switch (property)
+			{
+				case eProperty.SpellLevel:
+					return modifiedSpellLevel;
+				case eProperty.ToHitBonus:
+					return modifiedToHitBonus;
+				case eProperty.LivingEffectiveLevel:
+					return modifiedEffectiveLevel;
+				default:
+					return base.GetModified(property);
+			}
+		}
 
-        public override int GetBaseStat(eStat stat)
-        {
-            return baseStat;
-        }
+		public override string GetName(int article, bool firstLetterUppercase)
+		{
+			return "FakePlayer";
+		}
 
-        public override int TotalConstitutionLostAtDeath
+		public override int TotalConstitutionLostAtDeath
         {
             get { return totalConLostOnDeath; }
             set { totalConLostOnDeath = value; }
         }
-    }
 
-    public class FakeNPC : GameNPC
-    {
-        public int modifiedEffectiveLevel;
+		public override bool HasAbility(string abilityName)
+		{
+			return abilities.Contains(abilityName);
+		}
 
-        public FakeNPC(ABrain defaultBrain) : base(defaultBrain)
-        {
-        }
+		public override ushort Model { get; set; }
 
-        public override int GetModified(eProperty property)
-        {
-            switch(property)
-            {
-                case eProperty.LivingEffectiveLevel:
-                    return modifiedEffectiveLevel;
-                case eProperty.MaxHealth:
-                    return 0;
-                case eProperty.Intelligence:
-                    return Intelligence;
-                default:
-                    throw new ArgumentException("There is no property with that name");
-            }
-        }
-    }
+		public override void Emote(eEmote emote) { /*do nothing*/ }
+
+		public override IPacketLib Out => Substitute.For<IPacketLib>();
+
+		public override int ChampionLevel { get; set; } = 0;
+
+		public override bool Champion { get; set; } = false;
+
+		public override void UpdatePlayerStatus() {/*do nothing*/}
+	}
+
+	public class FakeNPC : GameNPC
+	{
+		public bool isInCombat = false;
+		public bool isAlive = false;
+
+		public FakeNPC() : base(Substitute.For<ABrain>()){}
+
+		public override string GetName(int article, bool firstLetterUppercase)
+		{
+			return "FakeName";
+		}
+
+		public override bool InCombat => isInCombat;
+		public override bool IsAlive => isAlive;
+	}
+
+	public class FakeKeepDoor : GameKeepDoor
+	{
+		public int maxHealth = 0;
+		public override int MaxHealth{ get { return maxHealth; } }
+	}
+
+	public class ConstantRandomUtil : Util
+	{
+		private double fixedRandomValue;
+
+		public ConstantRandomUtil(double fixedRandomValue)
+		{
+			this.fixedRandomValue = fixedRandomValue;
+		}
+
+		protected override double RandomDoubleImpl()
+		{
+			return fixedRandomValue;
+		}
+	}
 }
