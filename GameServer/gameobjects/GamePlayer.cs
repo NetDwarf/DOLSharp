@@ -177,7 +177,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Returns the PacketSender for this player
 		/// </summary>
-		public IPacketLib Out
+		public virtual IPacketLib Out
 		{
 			get { return Client.Out; }
 		}
@@ -10825,7 +10825,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Gets sprinting flag
 		/// </summary>
-		public bool IsSprinting
+		public virtual bool IsSprinting
 		{
 			get { return m_sprintEffect != null; }
 		}
@@ -11064,7 +11064,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Updates Health, Mana, Sitting, Endurance, Concentration and Alive status to client
 		/// </summary>
-		public void UpdatePlayerStatus()
+		public virtual void UpdatePlayerStatus()
 		{
 			Out.SendStatusUpdate();
 		}
