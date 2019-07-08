@@ -14,7 +14,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var npc = Create.FakeNPC();
 			var movementSpeedCalculator = createMovementSpeedCalculator();
 
-			int actual = movementSpeedCalculator.CalcValue(npc, eProperty.MaxSpeed);
+			int actual = movementSpeedCalculator.CalcValue(npc, MaxSpeedID);
 			int expected = 200;
 			Assert.AreEqual(expected, actual);
 		}
@@ -23,15 +23,16 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		public void CalcValue_NPCWith1250PermilleSpeedBuff_250()
 		{
 			var npc = Create.FakeNPC();
-			var maxSpeed = new BonusType(eBonusType.MaxSpeed);
 			var movementSpeedCalculator = createMovementSpeedCalculator();
 			
-			npc.Boni.Add(maxSpeed.Multiplier.Create(1250));
+			npc.BuffBonusMultCategory1.Set((int)MaxSpeedID, new object(), 1.25);
 
-			int actual = movementSpeedCalculator.CalcValue(npc, eProperty.MaxSpeed);
+			int actual = movementSpeedCalculator.CalcValue(npc, MaxSpeedID);
 			int expected = 250;
 			Assert.AreEqual(expected, actual);
 		}
+
+		private eProperty MaxSpeedID => eProperty.MaxSpeed;
 
 		private static MaxSpeedCalculator createMovementSpeedCalculator()
 		{

@@ -20,7 +20,7 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer();
             player.Level = 50;
-            player.BaseBuffBonusCategory[eProperty.Constitution] = 100;
+            player.BaseBuffBonusCategory[ConstitutionID] = 100;
 
             int actual = player.Constitution;
 
@@ -33,7 +33,7 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer();
             player.Level = 50;
-            player.SpecBuffBonusCategory[eProperty.Constitution] = 100;
+            player.SpecBuffBonusCategory[ConstitutionID] = 100;
 
             int actual = player.Constitution;
 
@@ -46,7 +46,7 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer();
             player.Level = 50;
-            player.ItemBonus[eProperty.Constitution] = 100;
+            player.ItemBonus[ConstitutionID] = 100;
 
             int actual = player.Constitution;
 
@@ -59,7 +59,7 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer(new CharacterClassAnimist());
             player.Level = 50;
-            player.ItemBonus[eProperty.Acuity] = 50;
+            player.ItemBonus[AcuityID] = 50;
 
             int actual = player.Intelligence;
 
@@ -71,8 +71,8 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer();
             player.Level = 50;
-			player.Boni.Add(Bonus.Constitution.Mythical.Create(100));
-			player.Boni.Add(Bonus.Constitution.Item.Create(150));
+			player.ItemBonus[eProperty.MythicalConCapBonus] = 100;
+			player.ItemBonus[ConstitutionID] = 150;
 
             int actual = player.Constitution;
 
@@ -86,7 +86,7 @@ namespace DOL.UnitTests.GameServer
             player.Level = 50;
 			player.ItemBonus[eProperty.MythicalConCapBonus] = 5;
 			player.ItemBonus[eProperty.ConCapBonus] = 100;
-			player.ItemBonus[eProperty.Constitution] = 150;
+			player.ItemBonus[ConstitutionID] = 150;
 
             int actual = player.Constitution;
 
@@ -98,8 +98,8 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer();
             player.Level = 50;
-            player.BaseBuffBonusCategory[eProperty.Constitution] = 60;
-            player.DebuffCategory[eProperty.Constitution] = 50;
+            player.BaseBuffBonusCategory[ConstitutionID] = 60;
+            player.DebuffCategory[ConstitutionID] = 50;
 
             int actual = player.Constitution;
 
@@ -111,9 +111,9 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer();
             player.Level = 50;
-            player.BaseBuffBonusCategory[eProperty.Constitution] = 30;
-            player.ItemBonus[eProperty.Constitution] = 30;
-            player.DebuffCategory[eProperty.Constitution] = 50;
+            player.BaseBuffBonusCategory[ConstitutionID] = 30;
+            player.ItemBonus[ConstitutionID] = 30;
+            player.DebuffCategory[ConstitutionID] = 50;
 
             int actual = player.Constitution;
 
@@ -125,7 +125,7 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer(new CharacterClassAnimist());
             player.Level = 50;
-            player.BaseBuffBonusCategory[eProperty.Acuity] = 50;
+            player.BaseBuffBonusCategory[AcuityID] = 50;
 
             int actual = player.Intelligence;
 
@@ -137,9 +137,9 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer(new CharacterClassAnimist());
             player.Level = 50;
-			player.Boni.Add(Bonus.Acuity.Item.Create(200));
-			player.Boni.Add(Bonus.Acuity.ItemOvercap.Create(30));
-			player.Boni.Add(Bonus.Acuity. Mythical.Create(30));
+			player.ItemBonus[AcuityID] = 200;
+			player.ItemBonus[eProperty.AcuCapBonus] = 30;
+			player.ItemBonus[eProperty.MythicalAcuCapBonus] = 30;
 
             int actual = player.Intelligence;
 
@@ -151,7 +151,7 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer(new CharacterClassAnimist());
             player.Level = 50;
-            player.ItemBonus[eProperty.Acuity] = 30;
+            player.ItemBonus[AcuityID] = 30;
             player.ItemBonus[eProperty.Intelligence] = 20;
 
             int actual = player.Intelligence;
@@ -164,9 +164,9 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer(new CharacterClassAnimist());
             player.Level = 30;
-			player.Boni.Add(Bonus.Constitution.Item.Create(200));
-			player.Boni.Add(Bonus.Constitution.ItemOvercap.Create(20));
-			player.Boni.Add(Bonus.Constitution.Mythical.Create(20));
+			player.ItemBonus[ConstitutionID] = 200;
+			player.ItemBonus[ConstitutionOvercapID] = 20;
+			player.ItemBonus[ConstitutionMythicalCapID] = 20;
 
             int actual = player.Constitution;
 
@@ -178,7 +178,7 @@ namespace DOL.UnitTests.GameServer
 		{
 			var player = createPlayer();
 
-			player.ChangeBaseStat(eStat.CON, 1);
+			player.ChangeBaseStat((eStat)ConstitutionID, 1);
 
 			int actual = player.Constitution;
 			Assert.AreEqual(1, actual);
@@ -189,7 +189,7 @@ namespace DOL.UnitTests.GameServer
         {
             var player = createPlayer(new CharacterClassAnimist());
             player.Level = 50;
-            player.AbilityBonus[eProperty.Acuity] = 30;
+            player.AbilityBonus[AcuityID] = 30;
             player.AbilityBonus[eProperty.Intelligence] = 20;
 
             int actual = player.Intelligence;
@@ -202,7 +202,7 @@ namespace DOL.UnitTests.GameServer
 		{
 			var player = createPlayer(new ClassCleric());
 			player.Level = 50;
-			player.ItemBonus[eProperty.Acuity] = 30;
+			player.ItemBonus[AcuityID] = 30;
 
 			int actual = player.Piety;
 
@@ -214,7 +214,7 @@ namespace DOL.UnitTests.GameServer
 		{
 			var player = createPlayer(new ClassCleric());
 			player.Level = 50;
-			player.BaseBuffBonusCategory[eProperty.Acuity] = 30;
+			player.BaseBuffBonusCategory[AcuityID] = 30;
 
 			int actual = player.Piety;
 
@@ -222,82 +222,28 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void CalculateMaxHealth_LevelOneAndOneConstitution_27()
+		public void CalculateMaxHealth_LevelOneAndZeroConstitution_26()
 		{
 			var player = createPlayer();
 			player.Level = 1;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			var constitutionValue = 0;
 
-			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+			int actual = player.CalculateMaxHealth(player.Level, constitutionValue);
 
-			var expected = 27;
+			var expected = 26;
 			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void CalcValue_LevelOneAndElevenConstitution_28()
-		{
-			var player = createPlayer();
-			player.Level = 1;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(11));
-
-			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
-
-			var expected = 28;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void CalcValue_L50PlayerWithOneConstitution_326()
+		public void CalculateMaxHealth_L50PlayerAndZeroConstitution_320()
 		{
 			var player = createPlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			var constitutionValue = 0;
 
-			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+			int actual = player.CalculateMaxHealth(player.Level, constitutionValue);
 
-			var expected = 326;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void CalcValue_L50PlayerWithElevenConstitution_386()
-		{
-			var player = createPlayer();
-			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(11));
-
-			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
-
-			var expected = 386;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void CalculateMaxHealth_Level50AndOneConstitution_OneItemHP_326()
-		{
-			var player = createPlayer();
-			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
-			player.Boni.SetTo(Bonus.HealthPool.Item.Create(1));
-
-			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
-
-			var expected = 326;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void CalculateMaxHealth_Level50AndOneConstitution_WithScarsOfBattle_326()
-		{
-			var player = createPlayer();
-			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
-			player.abilities.Add("Scars of Battle");
-
-			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
-
-			var expected = 326;
+			var expected = 320;
 			Assert.AreEqual(expected, actual);
 		}
 
@@ -306,9 +252,9 @@ namespace DOL.UnitTests.GameServer
 		{
 			var player = createPlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(50));
+			var constitutionValue = 50;
 
-			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+			int actual = player.CalculateMaxHealth(player.Level, constitutionValue);
 
 			var expected = 620;
 			Assert.AreEqual(expected, actual);
@@ -319,49 +265,49 @@ namespace DOL.UnitTests.GameServer
 		{
 			var player = createPlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(60));
+			var constitutionValue = 60;
 
-			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+			int actual = player.CalculateMaxHealth(player.Level, constitutionValue);
 
 			var expected = 650;
 			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void CalculateMaxHealth_Level50AndOneConstitution_CLOne_366()
+		public void CalculateMaxHealth_Level50AndZeroConstitution_CLOne_360()
 		{
 			var player = createPlayer();
 			player.Level = 50;
 			player.ChampionLevel = 1;
 			GS.ServerProperties.Properties.HPS_PER_CHAMPIONLEVEL = 40; //default
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			var constitutionValue = 0;
 
-			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+			int actual = player.CalculateMaxHealth(player.Level, constitutionValue);
 
-			var expected = 366;
+			var expected = 360;
 			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void CalculateMaxHealth_Level50AndOneConstitution_WithTenExtraHP_359()
+		public void CalculateMaxHealth_Level50AndZeroConstitution_WithTenExtraHP_352()
 		{
 			var player = createPlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
-			player.Boni.SetTo(new BonusType(eBonusType.ExtraHP).Item.Create(10));
+			player.ItemBonus[eProperty.ExtraHP] = 10;
+			var constitutionValue = 0;
 
-			int actual = player.CalculateMaxHealth(player.Level, player.Boni.ValueOf(Bonus.Constitution));
+			int actual = player.CalculateMaxHealth(player.Level, constitutionValue);
 
-			var expected = 359;
+			var expected = 352;
 			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void MaxHealth_Level50AndOneConstitution_WithScarsOfBattle_358()
+		public void MaxHealth_Level50AndOneConstitutionAndWithScarsOfBattle_358()
 		{
 			var player = createPlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			player.AbilityBonus[ConstitutionID] = 1;
 			player.abilities.Add("Scars of Battle");
 
 			int actual = player.MaxHealth;
@@ -407,13 +353,18 @@ namespace DOL.UnitTests.GameServer
 		public void MaxEndurance_5ItemEndurance_105()
 		{
 			var player = createPlayer();
-			player.Boni.Add(new BonusType(eBonusType.Endurance).Item.Create(5));
+			player.ItemBonus[eProperty.Fatigue] = 5;
 
 			var actual = player.MaxEndurance;
 
 			var expected = 105;
 			Assert.AreEqual(expected, actual);
 		}
+
+		private eProperty ConstitutionID => eProperty.Constitution;
+		private eProperty ConstitutionOvercapID => eProperty.ConCapBonus;
+		private eProperty ConstitutionMythicalCapID => eProperty.MythicalConCapBonus;
+		private eProperty AcuityID => eProperty.Acuity;
 
 		private class TestablePlayer : GamePlayer
 		{

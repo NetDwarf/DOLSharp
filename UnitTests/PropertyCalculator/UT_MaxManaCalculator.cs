@@ -21,7 +21,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var living = new GameDoor();
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(living, eProperty.MaxMana);
+			int actual = calc.CalcValue(living, MaxManaID);
 
 			int expected = 1000000;
 			Assert.AreEqual(expected, actual);
@@ -34,7 +34,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Level = 1;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
@@ -47,7 +47,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Level = 1;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 5;
 			Assert.AreEqual(expected, actual);
@@ -60,7 +60,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Level = 50;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 201;
 			Assert.AreEqual(expected, actual);
@@ -71,10 +71,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer(new CharacterClassAnimist());
 			player.Level = 50;
-			player.Boni.Add(ManaPool.Item.Create(1));
+			player.ItemBonus[MaxManaID] = 1;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 202;
 			Assert.AreEqual(expected, actual);
@@ -85,10 +85,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer(new CharacterClassAnimist());
 			player.Level = 50;
-			player.Boni.Add(ManaPool.Item.Create(100));
+			player.ItemBonus[MaxManaID] = 100;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 227;
 			Assert.AreEqual(expected, actual);
@@ -99,11 +99,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer(new CharacterClassAnimist());
 			player.Level = 50;
-			player.Boni.Add(ManaPool.Item.Create(100));
-			player.Boni.Add(ManaPool.ItemOvercap.Create(100));
+			player.ItemBonus[MaxManaID] = 100;
+			player.ItemBonus[MaxManaPercentOvercapID] = 100;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 253;
 			Assert.AreEqual(expected, actual);
@@ -114,10 +114,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer(new CharacterClassAnimist());
 			player.Level = 50;
-			player.Boni.Add(ManaPoolPercent.Item.Create(100));
+			player.ItemBonus[MaxManaPercentID] = 100;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 251;
 			Assert.AreEqual(expected, actual);
@@ -128,26 +128,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer(new CharacterClassAnimist());
 			player.Level = 50;
-			player.Boni.Add(ManaPoolPercent.Item.Create(100));
-			player.Boni.Add(ManaPool.ItemOvercap.Create(100));
+			player.ItemBonus[MaxManaPercentID] = 100;
+			player.ItemBonus[MaxManaPercentOvercapID] = 100;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
-
-			int expected = 351;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void CalcValue_Level50Animist_WithHundredItemManaPercentAndHundredOvercap_351()
-		{
-			var player = Create.FakePlayer(new CharacterClassAnimist());
-			player.Level = 50;
-			player.Boni.Add(ManaPoolPercent.Item.Create(100));
-			player.Boni.Add(ManaPoolPercent.ItemOvercap.Create(100));
-			var calc = createMaxManaCalculator();
-
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 351;
 			Assert.AreEqual(expected, actual);
@@ -158,11 +143,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer(new CharacterClassAnimist());
 			player.Level = 50;
-			player.Boni.Add(ManaPool.Item.Create(100));
-			player.Boni.Add(ManaPoolPercent.ItemOvercap.Create(100));
+			player.ItemBonus[MaxManaID] = 100;
+			player.ItemBonus[MaxManaPercentOvercapID] = 100;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 253;
 			Assert.AreEqual(expected, actual);
@@ -173,10 +158,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer(new CharacterClassAnimist());
 			player.Level = 50;
-			player.Boni.Add(Bonus.Acuity.Item.Create(50));
+			var acuityID = eProperty.Acuity;
+			player.ItemBonus[acuityID] = 50;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 250;
 			Assert.AreEqual(expected, actual);
@@ -187,10 +173,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer(new CharacterClassAnimist());
 			player.Level = 50;
-			player.Boni.Add(ManaPool.Ability.Create(20));
+			player.AbilityBonus[MaxManaID] = 20;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 221;
 			Assert.AreEqual(expected, actual);
@@ -205,7 +191,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Champion = true;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 100;
 			Assert.AreEqual(expected, actual);
@@ -220,7 +206,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Champion = true;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 100;
 			Assert.AreEqual(expected, actual);
@@ -233,7 +219,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Level = 50;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 201;
 			Assert.AreEqual(expected, actual);
@@ -244,10 +230,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer(new ClassVampiir());
 			player.Level = 50;
-			player.Boni.Add(ManaPool.Item.Create(100));
+			player.ItemBonus[MaxManaID] = 100;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 227;
 			Assert.AreEqual(expected, actual);
@@ -258,17 +244,19 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer(new ClassVampiir());
 			player.Level = 50;
-			player.Boni.Add(Bonus.Strength.Item.Create(50));
+			var strengthID = eProperty.Strength;
+			player.ItemBonus[strengthID] = 50;
 			var calc = createMaxManaCalculator();
 
-			int actual = calc.CalcValue(player, eProperty.MaxMana);
+			int actual = calc.CalcValue(player, MaxManaID);
 
 			int expected = 250;
 			Assert.AreEqual(expected, actual);
 		}
-
-		private BonusType ManaPool => new BonusType(eBonusType.ManaPool);
-		private BonusType ManaPoolPercent => new BonusType(eBonusType.ManaPoolPercent);
+		
+		private eProperty MaxManaID => eProperty.MaxMana;
+		private eProperty MaxManaPercentID => eProperty.PowerPool;
+		private eProperty MaxManaPercentOvercapID => eProperty.PowerPoolCapBonus;
 
 		private static MaxManaCalculator createMaxManaCalculator()
 		{

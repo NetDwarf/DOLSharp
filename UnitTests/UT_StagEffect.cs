@@ -18,7 +18,7 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void Start_L50Player_LowerBoundIs505()
+		public void Start_L50Player_EffectLevel5_LowerBoundMaxHealthIs505()
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
@@ -35,14 +35,13 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void Start_L50Player_UpperBoundIs537()
+		public void Start_L50Player_EffectLevel5_UpperBoundMaxHealthIs537()
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
 			player.CurrentRegion = new Region(new GameTimer.TimeManager("test"), new RegionData());
 			var stagEffect = new StagEffect(5);
 			setRandomDoubleTo(1);
-			Assert.AreEqual(326, player.MaxHealth, "Player has different base health pool");
 
 			stagEffect.Start(player);
 
@@ -52,15 +51,14 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void Start_L50PlayerAnd100BaseBuffHealthPool_LowerBoundIs605()
+		public void Start_L50PlayerAnd100BaseBuffHealthPool_LowerBoundMaxHealthIs605()
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
 			player.CurrentRegion = new Region(new GameTimer.TimeManager("test"), new RegionData());
 			var stagEffect = new StagEffect(5);
-			player.Boni.Add(Bonus.HealthPool.BaseBuff.Create(100));
+			player.BaseBuffBonusCategory[MaxHealthID] = 100;
 			setRandomDoubleTo(0);
-			Assert.AreEqual(426, player.MaxHealth, "Player has different base health pool");
 
 			stagEffect.Start(player);
 
@@ -70,14 +68,13 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void Stop_L50Player_326()
+		public void Stop_L50Player_MaxHealthIs326()
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
 			player.CurrentRegion = new Region(new GameTimer.TimeManager("test"), new RegionData());
 			var stagEffect = new StagEffect(5);
 			setRandomDoubleToDefault();
-			Assert.AreEqual(326, player.MaxHealth, "Player has different base health pool");
 
 			stagEffect.Start(player);
 			stagEffect.Stop();
@@ -94,7 +91,7 @@ namespace DOL.UnitTests.GameServer
 			player.Level = 50;
 			player.CurrentRegion = new Region(new GameTimer.TimeManager("test"), new RegionData());
 			var stagEffect = new StagEffect(5);
-			player.Boni.Add(Bonus.HealthPool.BaseBuff.Create(100));
+			player.BaseBuffBonusCategory[MaxHealthID] = 100;
 			setRandomDoubleToDefault();
 			Assert.AreEqual(426, player.MaxHealth, "Player has different base health pool");
 
@@ -107,7 +104,7 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void Stop_L50PlayerWithScarsOfBattle_LowerBoundIs537()
+		public void Stop_L50PlayerWithScarsOfBattle_LowerBoundMaxHealthIs537()
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
@@ -122,6 +119,8 @@ namespace DOL.UnitTests.GameServer
 			var expected = 537;
 			Assert.AreEqual(expected, actual);
 		}
+
+		private eProperty MaxHealthID => eProperty.MaxHealth;
 
 		private static void setRandomDoubleTo(double value)
 		{

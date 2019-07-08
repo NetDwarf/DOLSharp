@@ -8,12 +8,12 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 	class UT_MeleeDamagePercentCalculator
 	{
 		[Test]
-		public void CalcValue_NoMeleeDamageBoni_Zero()
+		public void CalcValue_Init_Zero()
 		{
 			var player = Create.FakePlayer();
 			var meleeDamageCalc = createMeleeDamageCalculator();
 
-			int actual = meleeDamageCalc.CalcValue(player, eProperty.MeleeDamage);
+			int actual = meleeDamageCalc.CalcValue(player, MeleeDamageID);
 
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
@@ -23,10 +23,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		public void CalcValue_OneMeleeDamageBaseBuff_One()
 		{
 			var player = Create.FakePlayer();
-			player.Boni.Add(MeleeDamage.BaseBuff.Create(1));
+			player.BaseBuffBonusCategory[MeleeDamageID] = 1;
 			var meleeDamageCalc = createMeleeDamageCalculator();
 
-			int actual = meleeDamageCalc.CalcValue(player, eProperty.MeleeDamage);
+			int actual = meleeDamageCalc.CalcValue(player, MeleeDamageID);
 
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
@@ -37,10 +37,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(MeleeDamage.Debuff.Create(11));
+			player.DebuffCategory[MeleeDamageID] = 11;
 			var meleeDamageCalc = createMeleeDamageCalculator();
 
-			int actual = meleeDamageCalc.CalcValue(player, eProperty.MeleeDamage);
+			int actual = meleeDamageCalc.CalcValue(player, MeleeDamageID);
 
 			int expected = -10;
 			Assert.AreEqual(expected, actual);
@@ -51,10 +51,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(MeleeDamage.Ability.Create(1));
+			player.AbilityBonus[MeleeDamageID] = 1;
 			var meleeDamageCalc = createMeleeDamageCalculator();
 
-			int actual = meleeDamageCalc.CalcValue(player, eProperty.MeleeDamage);
+			int actual = meleeDamageCalc.CalcValue(player, MeleeDamageID);
 
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
@@ -65,10 +65,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(MeleeDamage.Item.Create(11));
+			player.ItemBonus[MeleeDamageID] = 11;
 			var meleeDamageCalc = createMeleeDamageCalculator();
 
-			int actual = meleeDamageCalc.CalcValue(player, eProperty.MeleeDamage);
+			int actual = meleeDamageCalc.CalcValue(player, MeleeDamageID);
 
 			int expected = 10;
 			Assert.AreEqual(expected, actual);
@@ -79,11 +79,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(MeleeDamage.BaseBuff.Create(9));
-			player.Boni.Add(MeleeDamage.Item.Create(9));
+			player.BaseBuffBonusCategory[MeleeDamageID] = 9;
+			player.ItemBonus[MeleeDamageID] = 9;
 			var meleeDamageCalc = createMeleeDamageCalculator();
 
-			int actual = meleeDamageCalc.CalcValue(player, eProperty.MeleeDamage);
+			int actual = meleeDamageCalc.CalcValue(player, MeleeDamageID);
 
 			int expected = 18;
 			Assert.AreEqual(expected, actual);
@@ -94,16 +94,16 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(MeleeDamage.Ability.Create(11));
+			player.AbilityBonus[MeleeDamageID] = 11;
 			var meleeDamageCalc = createMeleeDamageCalculator();
 
-			int actual = meleeDamageCalc.CalcValue(player, eProperty.MeleeDamage);
+			int actual = meleeDamageCalc.CalcValue(player, MeleeDamageID);
 
 			int expected = 11;
 			Assert.AreEqual(expected, actual);
 		}
-
-		private BonusType MeleeDamage => new BonusType(eBonusType.MeleeDamage);
+		
+		private eProperty MeleeDamageID => eProperty.MeleeDamage;
 
 		private static MeleeDamagePercentCalculator createMeleeDamageCalculator()
 		{

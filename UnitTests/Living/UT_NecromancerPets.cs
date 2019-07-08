@@ -22,7 +22,7 @@ namespace DOL.UnitTests.GameServer
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
 
-			int actual = necroPet.GetModified(Strength.DatabaseID);
+			int actual = necroPet.GetModified(StrengthID);
 
 			int expected = 60;
 			Assert.AreEqual(expected, actual);
@@ -35,7 +35,7 @@ namespace DOL.UnitTests.GameServer
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 50;
 
-			int actual = necroPet.GetModified(Strength.DatabaseID);
+			int actual = necroPet.GetModified(StrengthID);
 
 			int expected = 110;
 			Assert.AreEqual(expected, actual);
@@ -46,11 +46,11 @@ namespace DOL.UnitTests.GameServer
 		{
 			var owner = Create.FakePlayer();
 			owner.Level = 50;
-			owner.Boni.Add(Strength.Item.Create(20));
+			owner.ItemBonus[StrengthID] = 20;
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
 
-			int actual = necroPet.GetModified(Strength.DatabaseID);
+			int actual = necroPet.GetModified(StrengthID);
 
 			int expected = 80;
 			Assert.AreEqual(expected, actual);
@@ -62,9 +62,9 @@ namespace DOL.UnitTests.GameServer
 			var owner = Create.FakePlayer();
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
-			necroPet.Boni.Add(Strength.BaseBuff.Create(20));
+			necroPet.BaseBuffBonusCategory[StrengthID] = 20;
 
-			int actual = necroPet.GetModified(Strength.DatabaseID);
+			int actual = necroPet.GetModified(StrengthID);
 
 			int expected = 80;
 			Assert.AreEqual(expected, actual);
@@ -76,9 +76,9 @@ namespace DOL.UnitTests.GameServer
 			var owner = Create.FakePlayer();
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
-			necroPet.Boni.Add(Strength.Item.Create(20));
+			necroPet.ItemBonus[StrengthID] = 20;
 
-			int actual = necroPet.GetModified(Strength.DatabaseID);
+			int actual = necroPet.GetModified(StrengthID);
 
 			int expected = 60;
 			Assert.AreEqual(expected, actual);
@@ -90,9 +90,9 @@ namespace DOL.UnitTests.GameServer
 			var owner = Create.FakePlayer();
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
-			necroPet.Boni.Add(Strength.Debuff.Create(20));
+			necroPet.DebuffCategory[StrengthID] = 20;
 
-			int actual = necroPet.GetModified(Strength.DatabaseID);
+			int actual = necroPet.GetModified(StrengthID);
 
 			int expected = 50;
 			Assert.AreEqual(expected, actual);
@@ -105,7 +105,7 @@ namespace DOL.UnitTests.GameServer
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
 
-			int actual = necroPet.GetModified(Constitution.DatabaseID);
+			int actual = necroPet.GetModified(ConstitutionID);
 
 			int expected = 60;
 			Assert.AreEqual(expected, actual);
@@ -118,7 +118,7 @@ namespace DOL.UnitTests.GameServer
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 50;
 
-			int actual = necroPet.GetModified(Constitution.DatabaseID);
+			int actual = necroPet.GetModified(ConstitutionID);
 
 			int expected = 85;
 			Assert.AreEqual(expected, actual);
@@ -130,9 +130,9 @@ namespace DOL.UnitTests.GameServer
 			var owner = Create.FakePlayer();
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
-			necroPet.Boni.Add(Constitution.BaseBuff.Create(20));
+			necroPet.BaseBuffBonusCategory[ConstitutionID] = 20;
 
-			int actual = necroPet.GetModified(Constitution.DatabaseID);
+			int actual = necroPet.GetModified(ConstitutionID);
 
 			int expected = 80;
 			Assert.AreEqual(expected, actual);
@@ -144,9 +144,9 @@ namespace DOL.UnitTests.GameServer
 			var owner = Create.FakePlayer();
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
-			necroPet.Boni.Add(Constitution.Item.Create(20));
+			necroPet.ItemBonus[ConstitutionID] = 20;
 
-			int actual = necroPet.GetModified(Constitution.DatabaseID);
+			int actual = necroPet.GetModified(ConstitutionID);
 
 			int expected = 60;
 			Assert.AreEqual(expected, actual);
@@ -158,9 +158,9 @@ namespace DOL.UnitTests.GameServer
 			var owner = Create.FakePlayer();
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
-			necroPet.Boni.Add(Constitution.Debuff.Create(20));
+			necroPet.DebuffCategory[ConstitutionID] = 20;
 
-			int actual = necroPet.GetModified(Constitution.DatabaseID);
+			int actual = necroPet.GetModified(ConstitutionID);
 
 			int expected = 50;
 			Assert.AreEqual(expected, actual);
@@ -173,34 +173,34 @@ namespace DOL.UnitTests.GameServer
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
 
-			int actual = necroPet.GetModified(MaxHealth.DatabaseID);
+			int actual = necroPet.GetModified(MaxHealthID);
 
 			int expected = 186;
 			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void GetModified_MaxHealth_Level50_1888()
+		public void GetModified_MaxHealthLevel50_Init_1888()
 		{
 			var owner = Create.FakePlayer();
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 50;
 
-			int actual = necroPet.GetModified(MaxHealth.DatabaseID);
+			int actual = necroPet.GetModified(MaxHealthID);
 
 			int expected = 1888;
 			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void GetModified_MaxHealth_LevelZeroAndTenConstitution_186()
+		public void GetModified_MaxHealthLevelZero_WithTenMaxHealth_186()
 		{
 			var owner = Create.FakePlayer();
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
-			necroPet.Boni.Add(MaxHealth.BaseBuff.Create(10));
+			necroPet.BaseBuffBonusCategory[MaxHealthID] = 10;
 
-			int actual = necroPet.GetModified(MaxHealth.DatabaseID);
+			int actual = necroPet.GetModified(MaxHealthID);
 
 			int expected = 186;
 			Assert.AreEqual(expected, actual);
@@ -212,17 +212,17 @@ namespace DOL.UnitTests.GameServer
 			var owner = Create.FakePlayer();
 			var necroPet = createNecroPet(owner);
 			necroPet.Level = 0;
-			necroPet.Boni.Add(MaxHealth.Debuff.Create(20));
+			necroPet.DebuffCategory[MaxHealthID] = 20;
 
-			int actual = necroPet.GetModified(MaxHealth.DatabaseID);
+			int actual = necroPet.GetModified(MaxHealthID);
 
 			int expected = 176;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType Strength => Bonus.Strength;
-		private BonusType Constitution => Bonus.Constitution;
-		private BonusType MaxHealth => Bonus.HealthPool;
+		private eProperty StrengthID => eProperty.Strength;
+		private eProperty ConstitutionID => eProperty.Constitution;
+		private eProperty MaxHealthID => eProperty.MaxHealth;
 
 		private NecromancerPet createNecroPet(GamePlayer owner)
 		{

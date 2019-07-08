@@ -4848,7 +4848,7 @@ namespace DOL.GS
 		public static readonly string[] STAT_NAMES = new string[]{"Unknown Stat","Strength", "Dexterity", "Constitution", "Quickness", "Intelligence",
 			"Piety", "Empathy", "Charisma"};
 		
-		public int GetBaseStat(eStat stat)
+		public virtual int GetBaseStat(eStat stat)
 		{
 			var statType = new BonusType((eBonusType)stat);
 			return Boni.RawValueOf(statType.Base);

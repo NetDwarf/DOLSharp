@@ -14,7 +14,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
+			int actual = resistCalc.CalcValue(player, NaturalResistID);
 			int expected = 0;
 			Assert.AreEqual(expected, actual);
 		}
@@ -25,9 +25,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(NaturalResist.Ability.Create(2));
+			player.AbilityBonus[NaturalResistID] = 2;
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
+			int actual = resistCalc.CalcValue(player, NaturalResistID);
 			int expected = 2;
 			Assert.AreEqual(expected, actual);
 		}
@@ -38,9 +38,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(NaturalResist.Item.Create(2));
+			player.ItemBonus[NaturalResistID] = 2;
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
+			int actual = resistCalc.CalcValue(player, NaturalResistID);
 			int expected = 2;
 			Assert.AreEqual(expected, actual);
 		}
@@ -50,9 +50,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
-			player.Boni.Add(NaturalResist.BaseBuff.Create(2));
+			player.BaseBuffBonusCategory[NaturalResistID] = 2;
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
+			int actual = resistCalc.CalcValue(player, NaturalResistID);
 			int expected = 2;
 			Assert.AreEqual(expected, actual);
 		}
@@ -62,10 +62,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
-			player.Boni.Add(NaturalResist.BaseBuff.Create(8));
-			player.Boni.Add(NaturalResist.Debuff.Create(6));
+			player.BaseBuffBonusCategory[NaturalResistID] = 8;
+			player.DebuffCategory[NaturalResistID] = 6;
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
+			int actual = resistCalc.CalcValue(player, NaturalResistID);
 			int expected = 2;
 			Assert.AreEqual(expected, actual);
 		}
@@ -76,10 +76,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(NaturalResist.Item.Create(6));
-			player.Boni.Add(NaturalResist.Debuff.Create(6));
+			player.ItemBonus[NaturalResistID] = 6;
+			player.DebuffCategory[NaturalResistID] = 6;
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
+			int actual = resistCalc.CalcValue(player, NaturalResistID);
 			int expected = 3;
 			Assert.AreEqual(expected, actual);
 		}
@@ -90,9 +90,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.Add(NaturalResist.Item.Create(50));
+			player.ItemBonus[NaturalResistID] = 50;
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
+			int actual = resistCalc.CalcValue(player, NaturalResistID);
 			int expected = 26;
 			Assert.AreEqual(expected, actual);
 		}
@@ -102,15 +102,15 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var resistCalc = createNaturalResistCalculator();
 			var player = Create.FakePlayer();
-			player.Boni.Add(NaturalResist.ExtraBuff.Create(50));
-			player.Boni.Add(NaturalResist.BaseBuff.Create(50));
+			player.BaseBuffBonusCategory[NaturalResistID] = 50;
+			player.BuffBonusCategory4[NaturalResistID] = 50;
 
-			int actual = resistCalc.CalcValue(player, eProperty.Resist_Natural);
+			int actual = resistCalc.CalcValue(player, NaturalResistID);
 			int expected = 25;
 			Assert.AreEqual(expected, actual);
 		}
-
-		private BonusType NaturalResist => new BonusType(eBonusType.Resist_Natural);
+		
+		private eProperty NaturalResistID => eProperty.Resist_Natural;
 
 		private static ResistNaturalCalculator createNaturalResistCalculator()
 		{

@@ -12,9 +12,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			var calc = createCalculator();
-			player.Boni.Add(ArmorAbsorptionType.Ability.Create(100));
+			player.AbilityBonus[ArmorAbsorptionID] = 100;
 
-			int actual = calc.CalcValue(player, ArmorAbsorptionType.DatabaseID);
+			int actual = calc.CalcValue(player, ArmorAbsorptionID);
 
 			int expected = 50;
 			Assert.AreEqual(expected, actual);
@@ -27,7 +27,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			npc.Level = 50;
 			var calc = createCalculator();
 
-			int actual = calc.CalcValue(npc, ArmorAbsorptionType.DatabaseID);
+			int actual = calc.CalcValue(npc, ArmorAbsorptionID);
 
 			int expected = 17;
 			Assert.AreEqual(expected, actual);
@@ -40,13 +40,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			npc.Level = 1;
 			var calc = createCalculator();
 
-			int actual = calc.CalcValue(npc, ArmorAbsorptionType.DatabaseID);
+			int actual = calc.CalcValue(npc, ArmorAbsorptionID);
 
 			int expected = -10;
 			Assert.AreEqual(expected, actual);
 		}
-
-		private BonusType ArmorAbsorptionType => new BonusType(eBonusType.ArmorAbsorption);
+		
+		private eProperty ArmorAbsorptionID => eProperty.ArmorAbsorption;
 
 		private static IPropertyCalculator createCalculator()
 		{

@@ -13,10 +13,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			var calc = createArcheryRangeCalculator();
-			player.Boni.Add(ArcheryRangeBonus.SpecBuff.Create(5));
-			player.Boni.Add(ArcheryRangeBonus.Item.Create(5));
+			player.SpecBuffBonusCategory[ArcheryRangeID] = 5;
+			player.ItemBonus[ArcheryRangeID] = 5;
 
-			int actual = calc.CalcValue(player, ArcheryRangeBonus.DatabaseID);
+			int actual = calc.CalcValue(player, ArcheryRangeID);
 
 			int expected = 105;
 			Assert.AreEqual(expected, actual);
@@ -27,9 +27,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			var calc = createArcheryRangeCalculator();
-			player.Boni.Add(ArcheryRangeBonus.SpecBuff.Create(12));
+			player.SpecBuffBonusCategory[ArcheryRangeID] = 12;
 
-			int actual = calc.CalcValue(player, ArcheryRangeBonus.DatabaseID);
+			int actual = calc.CalcValue(player, ArcheryRangeID);
 
 			int expected = 100;
 			Assert.AreEqual(expected, actual);
@@ -43,13 +43,13 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var calc = createArcheryRangeCalculator();
 			player.RangedAttackType = GameLiving.eRangedAttackType.Long;
 
-			int actual = calc.CalcValue(player, ArcheryRangeBonus.DatabaseID);
+			int actual = calc.CalcValue(player, ArcheryRangeID);
 
 			int expected = 150;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType ArcheryRangeBonus => new BonusType(eBonusType.ArcheryRange);
+		private eProperty ArcheryRangeID => eProperty.ArcheryRange;
 
 		private static IPropertyCalculator createArcheryRangeCalculator()
 		{

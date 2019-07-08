@@ -18,7 +18,7 @@ namespace DOL.UnitTests.GameServer
         public void GetModified_GameNPCWith75Constitution_Return75()
         {
 			var npc = createGenericNPC();
-			npc.Boni.SetTo(Bonus.Constitution.Base.Create(75));
+			npc.Constitution = 75;
 
             int actual = npc.GetModified(eProperty.Constitution);
             
@@ -26,13 +26,14 @@ namespace DOL.UnitTests.GameServer
         }
 
 		[Test]
-		public void GetModified_Acuity_75BaseAcuityAndIntelligenceAdded_Zero()
+		public void GetModified_Acuity_With75AbilityAcuityAndIntelligence_Zero()
 		{
 			var npc = createGenericNPC();
-			npc.Boni.Add(Bonus.Acuity.Base.Create(75));
-			npc.Boni.Add(Bonus.Intelligence.Base.Create(75));
+			npc.Intelligence = 75;
+			npc.AbilityBonus[AcuityID] = 75;
+			npc.AbilityBonus[IntelligenceID] = 75;
 
-			int actual = npc.GetModified(eProperty.Acuity);
+			int actual = npc.GetModified(AcuityID);
 
 			Assert.AreEqual(0, actual);
 		}
@@ -41,22 +42,21 @@ namespace DOL.UnitTests.GameServer
 		public void GetModified_MeleeDamage_Has9AbilityMeleeDamage_9()
 		{
 			var npc = createGenericNPC();
-			var meleeDamage = new BonusType(eBonusType.MeleeDamage);
-			npc.Boni.Add(meleeDamage.Ability.Create(9));
+			var meleeDamageID = eProperty.MeleeDamage;
+			npc.AbilityBonus[meleeDamageID] = 9;
 
-			int actual = npc.GetModified(eProperty.MeleeDamage);
+			int actual = npc.GetModified(meleeDamageID);
 
 			Assert.AreEqual(9, actual);
 		}
 
 		[Test]
-		public void GetModified_MatterResist_Has9ItemMatterResist_9()
+		public void GetModified_MatterResist_Has9AbilityResist_9()
 		{
 			var npc = createGenericNPC();
-			var matterResist = new BonusType(eBonusType.Resist_Matter);
-			npc.Boni.Add(matterResist.Ability.Create(9));
+			npc.AbilityBonus[SomeResistID] = 9;
 
-			int actual = npc.GetModified(eProperty.Resist_Matter);
+			int actual = npc.GetModified(SomeResistID);
 
 			Assert.AreEqual(9, actual);
 		}
@@ -71,7 +71,7 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void ChangeBaseStat_AddOneCon_NPCHasTwoConstitution()
+		public void ChangeBaseStat_OneConstitution_ConstitutionIs2()
 		{
 			var npc = createGenericNPC();
 
@@ -93,11 +93,10 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void GetResistBase_FromMatter_NPCHasOneMatterBaseBuff_One()
+		public void GetResistBase_Matter_WithOneMatterBaseBuff_One()
 		{
 			var npc = createGenericNPC();
-			var matterResist = new BonusType(eBonusType.Resist_Matter);
-			npc.Boni.Add(matterResist.BaseBuff.Create(1));
+			npc.BaseBuffBonusCategory[eProperty.Resist_Matter] = 1;
 
 			int actual = npc.GetResistBase(eDamageType.Matter);
 
@@ -106,11 +105,10 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void GetResistBase_FromNatural_NPCHasOneNaturalBaseBuff_Zero()
+		public void GetResistBase_Natural_WithOneNaturalBaseBuff_Zero()
 		{
 			var npc = createGenericNPC();
-			var naturalResist = new BonusType(eBonusType.Resist_Natural);
-			npc.Boni.Add(naturalResist.BaseBuff.Create(1));
+			npc.BaseBuffBonusCategory[eProperty.Resist_Natural] = 1;
 
 			int actual = npc.GetResistBase(eDamageType.Natural);
 
@@ -146,7 +144,7 @@ namespace DOL.UnitTests.GameServer
 		public void ChanceToFumble_TenDebuff_TenPercent()
 		{
 			var npc = createGenericNPC();
-			npc.Boni.Add(FumbleChance.Debuff.Create(10));
+			npc.DebuffCategory[FumbleChanceID] = 10;
 
 			var actual = npc.ChanceToFumble;
 
@@ -158,7 +156,7 @@ namespace DOL.UnitTests.GameServer
 		public void ChanceToFumble_TenAbility_TenPercent()
 		{
 			var npc = createGenericNPC();
-			npc.Boni.Add(FumbleChance.Ability.Create(10));
+			npc.AbilityBonus[FumbleChanceID] = 10;
 
 			var actual = npc.ChanceToFumble;
 
@@ -167,11 +165,11 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void GetWeaponStat_Add100StrengthBaseBuff_101()
+		public void GetWeaponStat_With100StrengthBaseBuff_101()
 		{
 			var npc = createGenericNPC();
-
-			npc.Boni.Add(Bonus.Strength.BaseBuff.Create(100));
+			
+			npc.BaseBuffBonusCategory[eProperty.Strength] = 100;
 
 			var actual = npc.GetWeaponStat(null);
 			var expected = 101;
@@ -179,11 +177,11 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void GetArmorAF_Add100BaseBuff_101()
+		public void GetArmorAF_UnsetSlot_With100BaseBuff_101()
 		{
 			var npc = createGenericNPC();
-
-			npc.Boni.Add(ArmorFactor.BaseBuff.Create(100));
+			
+			npc.BaseBuffBonusCategory[ArmorFactorID] = 100;
 
 			var actual = npc.GetArmorAF(eArmorSlot.NOTSET);
 			var expected = 9;
@@ -200,11 +198,15 @@ namespace DOL.UnitTests.GameServer
 			var expected = 1000;
 			Assert.AreEqual(expected, actual);
 		}
+		
+		private eProperty AcuityID => eProperty.Acuity;
+		private eProperty IntelligenceID => eProperty.Intelligence;
+		private eProperty ArmorFactorID => eProperty.ArmorFactor;
+		private eProperty BaseStatID => eProperty.Constitution;
+		private eProperty SomeResistID => eProperty.Resist_Matter;
+		private eProperty FumbleChanceID => eProperty.FumbleChance;
 
-		private BonusType FumbleChance => new BonusType(eBonusType.FumbleChance);
-		private BonusType ArmorFactor => new BonusType(eBonusType.ArmorFactor);
-
-		private static GameNPC createGenericNPC()
+		private GameNPC createGenericNPC()
 		{
 			var brain = Substitute.For<ABrain>();
 			var npc = new GameNPC(brain);

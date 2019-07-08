@@ -21,10 +21,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 1;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			player.ChangeBaseStat((eStat)ConstitutionID, 1);
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(player, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(player, MaxHealthID);
 
 			var expected = 27;
 			Assert.AreEqual(expected, actual);
@@ -35,10 +35,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 1;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(11));
+			player.ChangeBaseStat((eStat)ConstitutionID, 11);
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(player, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(player, MaxHealthID);
 
 			var expected = 28;
 			Assert.AreEqual(expected, actual);
@@ -49,10 +49,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			player.ChangeBaseStat((eStat)ConstitutionID, 1);
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(player, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(player, MaxHealthID);
 
 			var expected = 326;
 			Assert.AreEqual(expected, actual);
@@ -63,10 +63,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(11));
+			player.ChangeBaseStat((eStat)ConstitutionID, 11);
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(player, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(player, MaxHealthID);
 
 			var expected = 386;
 			Assert.AreEqual(expected, actual);
@@ -77,11 +77,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
-			player.Boni.SetTo(HealthPool.Item.Create(1));
+			player.ChangeBaseStat((eStat)ConstitutionID, 1);
+			player.ItemBonus[MaxHealthID] = 1;
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(player, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(player, MaxHealthID);
 
 			var expected = 327;
 			Assert.AreEqual(expected, actual);
@@ -92,11 +92,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			player.ChangeBaseStat((eStat)ConstitutionID, 1);
 			player.abilities.Add("Scars of Battle");
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(player, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(player, MaxHealthID);
 
 			var expected = 358;
 			Assert.AreEqual(expected, actual);
@@ -107,10 +107,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(50));
+			player.ChangeBaseStat((eStat)ConstitutionID, 50);
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(player, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(player, MaxHealthID);
 
 			var expected = 620;
 			Assert.AreEqual(expected, actual);
@@ -121,10 +121,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(60));
+			player.ChangeBaseStat((eStat)ConstitutionID, 60);
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(player, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(player, MaxHealthID);
 
 			var expected = 650;
 			Assert.AreEqual(expected, actual);
@@ -137,10 +137,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Level = 50;
 			player.ChampionLevel = 1;
 			GS.ServerProperties.Properties.HPS_PER_CHAMPIONLEVEL = 40; //default
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
+			player.ChangeBaseStat((eStat)ConstitutionID, 1);
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(player, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(player, MaxHealthID);
 
 			var expected = 366;
 			Assert.AreEqual(expected, actual);
@@ -151,12 +151,12 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(Bonus.Constitution.Base.Create(1));
-			player.Boni.SetTo(ExtraHP.Item.Create(10));
+			player.ChangeBaseStat((eStat)ConstitutionID, 1);
+			player.ItemBonus[ExtraHPID] = 10;
 			
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(player, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(player, MaxHealthID);
 
 			var expected = 359;
 			Assert.AreEqual(expected, actual);
@@ -168,7 +168,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var keepComponent = new GameKeepComponent();
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(keepComponent, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(keepComponent, MaxHealthID);
 
 			var expected = 0;
 			Assert.AreEqual(expected, actual);
@@ -186,7 +186,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(keepComponent, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(keepComponent, MaxHealthID);
 
 			var expected = 5000;
 			Assert.AreEqual(expected, actual);
@@ -199,7 +199,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(keepDoor, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(keepDoor, MaxHealthID);
 
 			var expected = 0;
 			Assert.AreEqual(expected, actual);
@@ -218,7 +218,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(keepDoor, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(keepDoor, MaxHealthID);
 
 			var expected = 5000;
 			Assert.AreEqual(expected, actual);
@@ -229,11 +229,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var npc = Create.FakeNPC();
 			npc.Level = 0;
-			npc.Boni.SetTo(Bonus.Constitution.Base.Create(1));
 
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(npc, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(npc, MaxHealthID);
 
 			var expected = 21;
 			Assert.AreEqual(expected, actual);
@@ -244,26 +243,26 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var npc = Create.FakeNPC();
 			npc.Level = 50;
-			npc.Boni.SetTo(Bonus.Constitution.Base.Create(1));
 
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(npc, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(npc, MaxHealthID);
 
 			var expected = 1971;
 			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void CalcValue_NPC_Level50And50Constitution_1971()
+		public void CalcValue_NPC_Level50And50Constitution_2020()
 		{
 			var npc = Create.FakeNPC();
 			npc.Level = 50;
-			npc.Boni.SetTo(Bonus.Constitution.Base.Create(50));
+			//has 1 Constitution on creation
+			npc.ChangeBaseStat((eStat)ConstitutionID, 49);
 
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(npc, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(npc, MaxHealthID);
 
 			var expected = 2020;
 			Assert.AreEqual(expected, actual);
@@ -274,12 +273,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var npc = Create.FakeNPC();
 			npc.Level = 50;
-			npc.Boni.SetTo(Bonus.Constitution.Base.Create(1));
-			npc.Boni.SetTo(Bonus.Constitution.BaseBuff.Create(2000));
+			npc.BaseBuffBonusCategory[ConstitutionID] = 2000;
 
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(npc, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(npc, MaxHealthID);
 
 			var expected = 2956;
 			Assert.AreEqual(expected, actual);
@@ -293,7 +291,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(living, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(living, MaxHealthID);
 
 			var expected = 1970;
 			Assert.AreEqual(expected, actual);
@@ -304,18 +302,20 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var living = Substitute.For<GameLiving>();
 			living.Level = 50;
-			living.Boni.SetTo(Bonus.Constitution.Base.Create(20));
+			//has 1 Constitution on creation
+			living.ChangeBaseStat((eStat)ConstitutionID, 19);
 
 			var calc = createMaxHealthCalc();
 
-			int actual = calc.CalcValue(living, HealthPool.DatabaseID);
+			int actual = calc.CalcValue(living, MaxHealthID);
 
 			var expected = 1970;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType HealthPool => Bonus.HealthPool;
-		private BonusType ExtraHP => new BonusType(eBonusType.ExtraHP);
+		private eProperty ConstitutionID => eProperty.Constitution;
+		private eProperty MaxHealthID => eProperty.MaxHealth;
+		private eProperty ExtraHPID => eProperty.ExtraHP;
 
 		private MaxHealthCalculator createMaxHealthCalc()
 		{

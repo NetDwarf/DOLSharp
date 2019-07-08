@@ -31,6 +31,16 @@ namespace DOL.GS
 
 		public void SetTo(Bonus bonus)
 		{
+			if (bonus.Type.Equals(new BonusType(eBonusType.ManaPool)) && bonus.Part.Equals(Bonus.ItemOvercap))
+			{
+				var bonusCompound2 = GetBonusOf(new BonusType(eBonusType.ManaPoolPercent), true);
+				bonusCompound2.Set(bonus.Value, bonus.Part);
+			}
+			if (bonus.Type.Equals(new BonusType(eBonusType.ManaPoolPercent)) && bonus.Part.Equals(Bonus.ItemOvercap))
+			{
+				var bonusCompound2 = GetBonusOf(new BonusType(eBonusType.ManaPool), true);
+				bonusCompound2.Set(bonus.Value, bonus.Part);
+			}
 			var bonusCompound = GetBonusOf(bonus.Type, true);
 			bonusCompound.Set(bonus.Value, bonus.Part);
 		}

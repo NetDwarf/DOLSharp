@@ -11,9 +11,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		public void CalcValue_Init_100()
 		{
 			var player = Create.FakePlayer();
-			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
+			var speedCalc = createMeleeSpeedCalculator();
 
-			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
+			int actual = speedCalc.CalcValue(player, MeleeSpeedID);
 
 			int expected = 100;
 			Assert.AreEqual(expected, actual);
@@ -23,10 +23,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		public void CalcValue_OneMeleeSpeedBaseBuff_99()
 		{
 			var player = Create.FakePlayer();
-			player.Boni.SetTo(MeleeSpeed.BaseBuff.Create(1));
-			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
+			player.BaseBuffBonusCategory[MeleeSpeedID] = 1;
+			var speedCalc = createMeleeSpeedCalculator();
 
-			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
+			int actual = speedCalc.CalcValue(player, MeleeSpeedID);
 
 			int expected = 99;
 			Assert.AreEqual(expected, actual);
@@ -37,10 +37,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(MeleeSpeed.Debuff.Create(1));
-			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
+			player.DebuffCategory[MeleeSpeedID] = 1;
+			var speedCalc = createMeleeSpeedCalculator();
 
-			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
+			int actual = speedCalc.CalcValue(player, MeleeSpeedID);
 
 			int expected = 101;
 			Assert.AreEqual(expected, actual);
@@ -51,10 +51,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(MeleeSpeed.Item.Create(1));
-			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
+			player.ItemBonus[MeleeSpeedID] = 1;
+			var speedCalc = createMeleeSpeedCalculator();
 
-			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
+			int actual = speedCalc.CalcValue(player, MeleeSpeedID);
 
 			int expected = 99;
 			Assert.AreEqual(expected, actual);
@@ -65,10 +65,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(MeleeSpeed.Item.Create(11));
-			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
+			player.ItemBonus[MeleeSpeedID] = 11;
+			var speedCalc = createMeleeSpeedCalculator();
 
-			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
+			int actual = speedCalc.CalcValue(player, MeleeSpeedID);
 
 			int expected = 90;
 			Assert.AreEqual(expected, actual);
@@ -79,10 +79,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(MeleeSpeed.BaseBuff.Create(100));
-			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
+			player.BaseBuffBonusCategory[MeleeSpeedID] = 100;
+			var speedCalc = createMeleeSpeedCalculator();
 
-			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
+			int actual = speedCalc.CalcValue(player, MeleeSpeedID);
 
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
@@ -93,11 +93,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			player.Level = 50;
-			player.Boni.SetTo(MeleeSpeed.BaseBuff.Create(9));
-			player.Boni.SetTo(MeleeSpeed.Item.Create(9));
-			MeleeSpeedPercentCalculator speedCalc = createMeleeSpeedCalculator();
+			player.BaseBuffBonusCategory[MeleeSpeedID] = 9;
+			player.ItemBonus[MeleeSpeedID] = 9;
+			var speedCalc = createMeleeSpeedCalculator();
 
-			int actual = speedCalc.CalcValue(player, eProperty.MeleeSpeed);
+			int actual = speedCalc.CalcValue(player, MeleeSpeedID);
 
 			int expected = 82;
 			Assert.AreEqual(expected, actual);
@@ -108,15 +108,15 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var npc = Create.FakeNPC();
 			npc.Level = 50;
-			npc.Boni.Add(MeleeSpeed.BaseBuff.Create(2));
+			npc.BaseBuffBonusCategory[MeleeSpeedID] = 2;
 			var speedCalc = createMeleeSpeedCalculator();
 
-			int actual = speedCalc.CalcValue(npc, eProperty.MeleeSpeed);
+			int actual = speedCalc.CalcValue(npc, MeleeSpeedID);
 			int expected = 98;
 			Assert.AreEqual(expected, actual);
 		}
-
-		private BonusType MeleeSpeed => new BonusType(eBonusType.MeleeSpeed);
+		
+		private eProperty MeleeSpeedID => eProperty.MeleeSpeed;
 
 		private static MeleeSpeedPercentCalculator createMeleeSpeedCalculator()
 		{

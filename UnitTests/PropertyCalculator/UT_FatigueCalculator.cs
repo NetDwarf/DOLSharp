@@ -13,7 +13,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var living = Create.FakeNPC();
 			var calc = createFatigueCalculator();
 
-			int actual = calc.CalcValue(living, EnduranceDatabaseID);
+			int actual = calc.CalcValue(living, EnduranceID);
 
 			int expected = 100;
 			Assert.AreEqual(expected, actual);
@@ -25,7 +25,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var player = Create.FakePlayer();
 			var calc = createFatigueCalculator();
 
-			int actual = calc.CalcValue(player, EnduranceDatabaseID);
+			int actual = calc.CalcValue(player, EnduranceID);
 
 			int expected = 100;
 			Assert.AreEqual(expected, actual);
@@ -35,10 +35,10 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		public void CalcValue_Player_With5ItemEnduranceBonus_105()
 		{
 			var player = Create.FakePlayer();
-			player.Boni.Add(Endurance.Item.Create(5));
+			player.ItemBonus[EnduranceID] = 5;
 			var calc = createFatigueCalculator();
 
-			int actual = calc.CalcValue(player, EnduranceDatabaseID);
+			int actual = calc.CalcValue(player, EnduranceID);
 
 			int expected = 105;
 			Assert.AreEqual(expected, actual);
@@ -48,17 +48,16 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		public void CalcValue_Player_With100ItemEnduranceBonus_115()
 		{
 			var player = Create.FakePlayer();
-			player.Boni.Add(Endurance.Item.Create(100));
+			player.ItemBonus[EnduranceID] = 100;
 			var calc = createFatigueCalculator();
 
-			int actual = calc.CalcValue(player, EnduranceDatabaseID);
+			int actual = calc.CalcValue(player, EnduranceID);
 
 			int expected = 115;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private eProperty EnduranceDatabaseID => eProperty.Fatigue;
-		private BonusType Endurance => new BonusType(eBonusType.Endurance);
+		private eProperty EnduranceID => eProperty.Fatigue;
 
 		private FatigueCalculator createFatigueCalculator()
 		{

@@ -15,9 +15,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var player = Create.FakePlayer();
 			player.Level = 25;
 			var calc = createCalculator();
-			player.Boni.Add(ArmorFactorType.Item.Create(30));
+			player.ItemBonus[ArmorFactorID] = 30;
 
-			int actual = calc.CalcValue(player, ArmorFactorType.DatabaseID);
+			int actual = calc.CalcValue(player, ArmorFactorID);
 
 			int expected = 25;
 			Assert.AreEqual(expected, actual);
@@ -29,9 +29,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			var player = Create.FakePlayer();
 			player.Level = 50;
 			var calc = createCalculator();
-			player.Boni.Add(ArmorFactorType.SpecBuff.Create(100));
+			player.SpecBuffBonusCategory[ArmorFactorID] = 100;
 
-			int actual = calc.CalcValue(player, ArmorFactorType.DatabaseID);
+			int actual = calc.CalcValue(player, ArmorFactorID);
 
 			int expected = 93;
 			Assert.AreEqual(expected, actual);
@@ -42,9 +42,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			var calc = createCalculator();
-			player.Boni.Add(ArmorFactorType.Debuff.Create(12));
+			player.DebuffCategory[ArmorFactorID] = 12;
 
-			int actual = calc.CalcValue(player, ArmorFactorType.DatabaseID);
+			int actual = calc.CalcValue(player, ArmorFactorID);
 
 			int expected = -12;
 			Assert.AreEqual(expected, actual);
@@ -55,9 +55,9 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			var calc = createCalculator();
-			player.Boni.Add(ArmorFactorType.ExtraBuff.Create(100));
+			player.BuffBonusCategory4[ArmorFactorID] = 100;
 
-			int actual = calc.CalcValue(player, ArmorFactorType.DatabaseID);
+			int actual = calc.CalcValue(player, ArmorFactorID);
 
 			int expected = 100;
 			Assert.AreEqual(expected, actual);
@@ -70,7 +70,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			player.Level = 50;
 			var calc = createCalculator();
 
-			int actual = calc.CalcValue(player, ArmorFactorType.DatabaseID);
+			int actual = calc.CalcValue(player, ArmorFactorID);
 
 			int expected = 604;
 			Assert.AreEqual(expected, actual);
@@ -87,7 +87,7 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			keepDoor.Component.AbstractKeep = keep;
 			var calc = createCalculator();
 
-			int actual = calc.CalcValue(keepDoor, ArmorFactorType.DatabaseID);
+			int actual = calc.CalcValue(keepDoor, ArmorFactorID);
 			int expected = 50;
 			Assert.AreEqual(expected, actual);
 		}
@@ -103,12 +103,12 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 			keepDoor.Component.AbstractKeep = tower;
 			var calc = createCalculator();
 
-			int actual = calc.CalcValue(keepDoor, ArmorFactorType.DatabaseID);
+			int actual = calc.CalcValue(keepDoor, ArmorFactorID);
 			int expected = 25;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType ArmorFactorType => new BonusType(eBonusType.ArmorFactor);
+		private eProperty ArmorFactorID => eProperty.ArmorFactor;
 
 		private static IPropertyCalculator createCalculator()
 		{

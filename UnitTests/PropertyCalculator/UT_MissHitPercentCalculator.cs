@@ -12,11 +12,11 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			var calc = createMissHitCalculator();
-			player.Boni.Add(MissHitType.BaseBuff.Create(5));
-			player.Boni.Add(MissHitType.SpecBuff.Create(4));
-			player.Boni.Add(MissHitType.ExtraBuff.Create(3));
+			player.BaseBuffBonusCategory[MissHitID] = 5;
+			player.SpecBuffBonusCategory[MissHitID] = 4;
+			player.BuffBonusCategory4[MissHitID] = 3;
 
-			int actual = calc.CalcValue(player, MissHitType.DatabaseID);
+			int actual = calc.CalcValue(player, MissHitID);
 
 			int expected = 12;
 			Assert.AreEqual(expected, actual);
@@ -27,15 +27,15 @@ namespace DOL.UnitTests.GameServer.PropertyCalc
 		{
 			var player = Create.FakePlayer();
 			var calc = createMissHitCalculator();
-			player.Boni.Add(MissHitType.Debuff.Create(5));
+			player.DebuffCategory[MissHitID] = 5;
 
-			int actual = calc.CalcValue(player, MissHitType.DatabaseID);
+			int actual = calc.CalcValue(player, MissHitID);
 
 			int expected = -5;
 			Assert.AreEqual(expected, actual);
 		}
 
-		private BonusType MissHitType => new BonusType(eBonusType.MissHit);
+		private eProperty MissHitID => eProperty.MissHit;
 
 		private static IPropertyCalculator createMissHitCalculator()
 		{
