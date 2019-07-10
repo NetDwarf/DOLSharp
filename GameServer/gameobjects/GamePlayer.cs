@@ -11510,18 +11510,18 @@ namespace DOL.GS
 
 		public virtual void RefreshItemBonuses()
 		{
-			ItemBonus = new PropertyIndexer();
+			ClearItemBonuses();
 			string slotToLoad = "";
 			switch (VisibleActiveWeaponSlots)
 			{
-					case 16: slotToLoad = "rightandleftHandSlot"; break;
-					case 18: slotToLoad = "leftandtwoHandSlot"; break;
-					case 31: slotToLoad = "leftHandSlot"; break;
-					case 34: slotToLoad = "twoHandSlot"; break;
-					case 51: slotToLoad = "distanceSlot"; break;
-					case 240: slotToLoad = "righttHandSlot"; break;
-					case 242: slotToLoad = "twoHandSlot"; break;
-					default: break;
+				case 16: slotToLoad = "rightandleftHandSlot"; break;
+				case 18: slotToLoad = "leftandtwoHandSlot"; break;
+				case 31: slotToLoad = "leftHandSlot"; break;
+				case 34: slotToLoad = "twoHandSlot"; break;
+				case 51: slotToLoad = "distanceSlot"; break;
+				case 240: slotToLoad = "righttHandSlot"; break;
+				case 242: slotToLoad = "twoHandSlot"; break;
+				default: break;
 			}
 
 			//log.Debug("VisibleActiveWeaponSlots= " + VisibleActiveWeaponSlots);
@@ -11562,7 +11562,7 @@ namespace DOL.GS
 								add = false;
 							}
 							break;
-							default: break;
+						default: break;
 					}
 				}
 

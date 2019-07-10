@@ -4689,7 +4689,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Property Item Bonus field
 		/// </summary>
-		public IPropertyIndexer ItemBonus { get; protected set; } = new PropertyIndexer();
+		public IPropertyIndexer ItemBonus { get; private set; } = new PropertyIndexer();
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
@@ -4720,6 +4720,11 @@ namespace DOL.GS
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
 		public IPropertyIndexer SpecDebuffCategory { get; } = new PropertyIndexer();
+
+		protected void ClearItemBonuses()
+		{
+			ItemBonus = new PropertyIndexer();
+		}
 
 		/// <summary>
 		/// property calculators for each property
