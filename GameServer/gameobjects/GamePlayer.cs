@@ -15606,15 +15606,6 @@ namespace DOL.GS
 				.ToString();
 		}
 
-        public static GamePlayer CreateTestableGamePlayer() { return CreateTestableGamePlayer(new DefaultCharacterClass()); }
-
-        public static GamePlayer CreateTestableGamePlayer(ICharacterClass charClass) { return new GamePlayer(charClass); }
-
-        private GamePlayer(ICharacterClass charClass) : base()
-        {
-            m_characterClass = charClass;
-        }
-
 		/// <summary>
 		/// Creates a new player
 		/// </summary>
