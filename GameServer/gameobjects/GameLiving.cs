@@ -4682,49 +4682,46 @@ namespace DOL.GS
 		}
 		#endregion
 		#region Property/Bonus/Buff/PropertyCalculator fields
+		public BonusAggregator Bonuses { get; } = new BonusAggregator();
 		/// <summary>
 		/// Ability bonus property
 		/// </summary>
-		public IPropertyIndexer AbilityBonus { get; } = new PropertyIndexer();
+		public IPropertyIndexer AbilityBonus => Bonuses.AbilityBonus;
 		/// <summary>
 		/// Property Item Bonus field
 		/// </summary>
-		public IPropertyIndexer ItemBonus { get; private set; } = new PropertyIndexer();
+		public IPropertyIndexer ItemBonus => Bonuses.ItemBonus;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
-		public IPropertyIndexer BaseBuffBonusCategory { get; } = new PropertyIndexer();
+		public IPropertyIndexer BaseBuffBonusCategory => Bonuses.BaseBuffBonusCategory;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
-		public IPropertyIndexer SpecBuffBonusCategory { get; } = new PropertyIndexer();
+		public IPropertyIndexer SpecBuffBonusCategory => Bonuses.SpecBuffBonusCategory;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
-		public IPropertyIndexer DebuffCategory { get; } = new PropertyIndexer();
+		public IPropertyIndexer DebuffCategory => Bonuses.DebuffCategory;
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
-		public IPropertyIndexer BuffBonusCategory4 { get; } = new PropertyIndexer();
+		public IPropertyIndexer BuffBonusCategory4 => Bonuses.BuffBonusCategory4;
+		/// <summary>
+		/// Property Buff bonus category
+		/// what it means depends from the PropertyCalculator for a property element
+		/// </summary>
+		public IPropertyIndexer SpecDebuffCategory => Bonuses.SpecDebuffCategory;
+
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
 		public IMultiplicativeProperties BuffBonusMultCategory1 { get; } = new MultiplicativePropertiesHybrid();
-		/// <summary>
-		/// Property Buff bonus category
-		/// what it means depends from the PropertyCalculator for a property element
-		/// </summary>
-		public IPropertyIndexer SpecDebuffCategory { get; } = new PropertyIndexer();
-
-		protected void ClearItemBonuses()
-		{
-			ItemBonus = new PropertyIndexer();
-		}
 
 		/// <summary>
 		/// property calculators for each property
