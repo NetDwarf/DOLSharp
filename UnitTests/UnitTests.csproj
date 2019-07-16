@@ -54,6 +54,7 @@
     <Compile Include="PropertyCalculator\UT_SpellRangeCalculator.cs" />
     <Compile Include="PropertyCalculator\UT_FatigueCalculator.cs" />
     <Compile Include="Living\UT_GameDoor.cs" />
+    <Compile Include="UT_BonusAggregator.cs" />
     <Compile Include="UT_GameEffectList.cs" />
     <Compile Include="Living\UT_GameKeepGuard.cs" />
     <Compile Include="Living\UT_GameNPC.cs" />
