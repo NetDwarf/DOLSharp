@@ -60,6 +60,8 @@
     <Compile Include="Managers\FriendsManagerTest.cs" />
     <Compile Include="Managers\InvalidNamesManagerTest.cs" />
     <Compile Include="Managers\WeatherManagerTest.cs" />
+    <Compile Include="PerformanceTests\Memory_BuiltIns.cs" />
+    <Compile Include="PerformanceTests\Memory_GameServer.cs" />
     <Compile Include="SchedulerTest.cs" />
     <Compile Include="SetUpTests.cs" />
     <Compile Include="TestPacketLib.cs" />
@@ -163,7 +165,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Managers" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
