@@ -4686,36 +4686,36 @@ namespace DOL.GS
 		/// <summary>
 		/// Ability bonus property
 		/// </summary>
-		public IPropertyIndexer AbilityBonus => Bonuses.GetIndexerFor(eBonusSource.Ability);
+		public IPropertyIndexer AbilityBonus => Bonuses.GetIndexerFor(Bonus.Ability);
 		/// <summary>
 		/// Property Item Bonus field
 		/// </summary>
-		public IPropertyIndexer ItemBonus => Bonuses.GetIndexerFor(eBonusSource.Item);
+		public IPropertyIndexer ItemBonus => Bonuses.GetIndexerFor(Bonus.Item);
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
-		public IPropertyIndexer BaseBuffBonusCategory => Bonuses.GetIndexerFor(eBonusSource.BaseBuff);
+		public IPropertyIndexer BaseBuffBonusCategory => Bonuses.GetIndexerFor(Bonus.BaseBuff);
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
-		public IPropertyIndexer SpecBuffBonusCategory => Bonuses.GetIndexerFor(eBonusSource.SpecBuff);
+		public IPropertyIndexer SpecBuffBonusCategory => Bonuses.GetIndexerFor(Bonus.SpecBuff);
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
-		public IPropertyIndexer BuffBonusCategory4 => Bonuses.GetIndexerFor(eBonusSource.ExtraBuff);
+		public IPropertyIndexer BuffBonusCategory4 => Bonuses.GetIndexerFor(Bonus.ExtraBuff);
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
-		public IPropertyIndexer DebuffCategory => Bonuses.GetIndexerFor(eBonusSource.Debuff);
+		public IPropertyIndexer DebuffCategory => Bonuses.GetIndexerFor(Bonus.Debuff);
 		/// <summary>
 		/// Property Buff bonus category
 		/// what it means depends from the PropertyCalculator for a property element
 		/// </summary>
-		public IPropertyIndexer SpecDebuffCategory => Bonuses.GetIndexerFor(eBonusSource.SpecDebuff);
+		public IPropertyIndexer SpecDebuffCategory => Bonuses.GetIndexerFor(Bonus.SpecDebuff);
 
 		/// <summary>
 		/// Property Buff bonus category

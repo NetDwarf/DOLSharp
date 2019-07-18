@@ -10,8 +10,6 @@ namespace DOL.UnitTests.GameServer
 		public void GetValueOf_ConstitutionAbility_Init_Zero()
 		{
 			var bonusAggregator = createBonusAggregator();
-			var constitution = eProperty.Constitution;
-			var ability = eBonusSource.Ability;
 
 			int actual = bonusAggregator.GetValueOf(Bonus.Constitution.Ability);
 			int expected = 0;
@@ -19,27 +17,11 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void GetValueOf_ConstitutionAbility_AbilityIndexerSetToOneForConstitution_One()
+		public void GetValueOf_ConstitutionItem_SetToOne_One()
 		{
 			var bonusAggregator = createBonusAggregator();
-			var constitution = eProperty.Constitution;
-			var ability = eBonusSource.Ability;
 
-			bonusAggregator.GetIndexerFor(ability)[constitution] = 1;
-
-			int actual = bonusAggregator.GetValueOf(Bonus.Constitution.Ability);
-			int expected = 1;
-			Assert.AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void GetValueOf_ConstitutionItem_ItemIndexerSetToOneForConstitution_One()
-		{
-			var bonusAggregator = createBonusAggregator();
-			var constitution = eProperty.Constitution;
-			var item = eBonusSource.Item;
-
-			bonusAggregator.GetIndexerFor(item)[constitution] = 1;
+			bonusAggregator.Set(Bonus.Constitution.Item.WithValue(1));
 
 			int actual = bonusAggregator.GetValueOf(Bonus.Constitution.Item);
 			int expected = 1;
@@ -47,13 +29,11 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void Set_ConstitutionItem2_GetValueOfConstitutionItemIs2()
+		public void Set_ConstitutionItem2_GetValueOfIs2()
 		{
 			var bonusAggregator = createBonusAggregator();
-			var constitution = eProperty.Constitution;
-			var item = eBonusSource.Item;
 			
-			bonusAggregator.Set(Bonus.Constitution.Item.Create(2));
+			bonusAggregator.Set(Bonus.Constitution.Item.WithValue(2));
 
 			int actual = bonusAggregator.GetValueOf(Bonus.Constitution.Item);
 			int expected = 2;
@@ -61,12 +41,10 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void Set_OneAbilityConstitution_GetValueOfAbilityConstitutionIsOne()
+		public void Set_OneAbilityConstitution_GetValueOfIsOne()
 		{
 			var bonusAggregator = createBonusAggregator();
-			var constitution = eProperty.Constitution;
-			var ability = eBonusSource.Ability;
-			var bonus = Bonus.Constitution.Ability.Create(1);
+			var bonus = Bonus.Constitution.Ability.WithValue(1);
 
 			bonusAggregator.Set(bonus);
 
@@ -76,14 +54,15 @@ namespace DOL.UnitTests.GameServer
 		}
 
 		[Test]
-		public void GetValueOf_ConstitutionAbility_AbilityIndexerOfConstitutionSetToOne_One()
+		public void Set_ExistingBonusFromTwoToOne_GetValueOfIsOne()
 		{
 			var bonusAggregator = createBonusAggregator();
-			var bonus = Bonus.Constitution.Ability.Create(1);
+			var bonusComponent = Bonus.Constitution.Ability;
 
-			bonusAggregator.GetIndexerFor(bonus.Source.ID)[bonus.Type.ID] = bonus.Value;
+			bonusAggregator.Set(bonusComponent.WithValue(2));
+			bonusAggregator.Set(bonusComponent.WithValue(1));
 
-			int actual = bonusAggregator.GetValueOf(bonus.Component);
+			int actual = bonusAggregator.GetValueOf(bonusComponent);
 			int expected = 1;
 			Assert.AreEqual(expected, actual);
 		}

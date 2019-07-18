@@ -65,4 +65,45 @@ namespace DOL.GS.PropertyCalc
 			}
 		}
 	}
+
+	public class BonusAggregatorToIndexerAdapter : IPropertyIndexer
+	{
+		private BonusAggregator bonusAggregator;
+		private BonusSource source;
+
+		public BonusAggregatorToIndexerAdapter(BonusAggregator bonusAggregator, BonusSource source)
+		{
+			this.bonusAggregator = bonusAggregator;
+			this.source = source;
+		}
+
+		public int this[int index]
+		{
+			get
+			{
+				return this[(eProperty)index];
+			}
+			set
+			{
+				this[(eProperty)index] = value;
+			}
+		}
+
+		public int this[eProperty index]
+		{
+			get
+			{
+				var bonusType = new BonusType(index);
+				var component = new BonusComponent(bonusType, source);
+				return bonusAggregator.GetValueOf(component);
+			}
+			set
+			{
+				var bonusType = new BonusType(index);
+				var component = new BonusComponent(bonusType, source);
+				var bonus = component.WithValue(value);
+				bonusAggregator.Set(bonus);
+			}
+		}
+	}
 }

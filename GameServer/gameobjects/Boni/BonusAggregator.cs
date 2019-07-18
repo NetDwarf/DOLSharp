@@ -1,46 +1,54 @@
 ﻿using DOL.GS.PropertyCalc;
 using System;
+using System.Collections.Generic;
 
 namespace DOL.GS
 {
 	public class BonusAggregator
 	{
-		private IPropertyIndexer AbilityBonus { get; } = new PropertyIndexer();
-		private IPropertyIndexer ItemBonus { get; set; } = new PropertyIndexer();
-		private IPropertyIndexer BaseBuffBonusCategory { get; } = new PropertyIndexer();
-		private IPropertyIndexer SpecBuffBonusCategory { get; } = new PropertyIndexer();
-		private IPropertyIndexer ExtraBuffBonusCategory { get; } = new PropertyIndexer();
-		private IPropertyIndexer DebuffCategory { get; } = new PropertyIndexer();
-		private IPropertyIndexer SpecDebuffCategory { get; } = new PropertyIndexer();
+		private List<Bonus> bonuses = new List<Bonus>();
 
 		public int GetValueOf(BonusComponent component)
 		{
-			return GetIndexerFor(component.Source.ID)[component.Type.ID];
+			var cachedBonus = bonuses.Find(s => component.Equals(s.Component));
+
+			if (cachedBonus is null) { return 0; }
+			return cachedBonus.Value;
 		}
 
 		public void Set(Bonus bonus)
 		{
-			GetIndexerFor(bonus.Source.ID)[bonus.Type.ID] = bonus.Value;
+			var cachedBonusIndex = bonuses.FindIndex(s => s.Component.Equals(bonus.Component));
+			bool noBonusFound = cachedBonusIndex == -1;
+			bool resetBonus = bonus.Value == 0;
+
+			if(resetBonus)
+			{
+				if (noBonusFound) { return; }
+				else { bonuses.RemoveAt(cachedBonusIndex); }
+			}
+			else if (noBonusFound)
+			{
+				bonuses.Add(bonus);
+			}
+			else
+			{
+				bonuses[cachedBonusIndex] = bonus;
+			}
 		}
 
 		public void ClearItemBonuses()
 		{
-			ItemBonus = new PropertyIndexer();
+			for(int i=0; i<byte.MaxValue; i++)
+			{
+				var bonusType = new BonusType((eProperty)i);
+				Set(bonusType.Item.WithValue(0));
+			}
 		}
 
-		public IPropertyIndexer GetIndexerFor(eBonusSource source)
+		public IPropertyIndexer GetIndexerFor(BonusSource source)
 		{
-			switch (source)
-			{
-				case eBonusSource.Ability: return AbilityBonus;
-				case eBonusSource.Item: return ItemBonus;
-				case eBonusSource.BaseBuff: return BaseBuffBonusCategory;
-				case eBonusSource.SpecBuff: return SpecBuffBonusCategory;
-				case eBonusSource.ExtraBuff: return ExtraBuffBonusCategory;
-				case eBonusSource.Debuff: return DebuffCategory;
-				case eBonusSource.SpecDebuff: return SpecBuffBonusCategory;
-				default: throw new ArgumentException();
-			}
+			return new BonusAggregatorToIndexerAdapter(this, source);
 		}
 	}
 
@@ -79,9 +87,21 @@ namespace DOL.GS
 			Source = source;
 		}
 
-		public Bonus Create(int value)
+		public Bonus WithValue(int value)
 		{
 			return new Bonus(this, value);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is BonusComponent)
+			{
+				var component2 = obj as BonusComponent;
+				bool isSameType = Type.Equals(component2.Type);
+				bool isSameSource = Source.Equals(component2.Source);
+				return isSameType && isSameSource;
+			}
+			return false;
 		}
 	}
 
@@ -101,6 +121,15 @@ namespace DOL.GS
 		public BonusComponent ExtraBuff => new BonusComponent(this, Bonus.ExtraBuff);
 		public BonusComponent Debuff => new BonusComponent(this, Bonus.Debuff);
 		public BonusComponent SpecDebuff => new BonusComponent(this, Bonus.SpecDebuff);
+
+		public override bool Equals(object obj)
+		{
+			if (obj is BonusType)
+			{
+				return (obj as BonusType).ID == this.ID;
+			}
+			return false;
+		}
 	}
 
 	public class BonusSource
@@ -110,6 +139,15 @@ namespace DOL.GS
 		public BonusSource(eBonusSource sourceID)
 		{
 			ID = sourceID;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if(obj is BonusSource)
+			{
+				return (obj as BonusSource).ID == this.ID;
+			}
+			return false;
 		}
 	}
 
