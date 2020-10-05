@@ -458,20 +458,6 @@ namespace DOL.GS.Quests
 			}
 		}
 
-		private List<string> TextParser(string arrayString)
-		{
-			List<string> result = new List<string>();
-			if (arrayString != null)
-			{
-				string[] parse = arrayString.Split('|');
-				for (int i = 0; i < parse.Length; i++)
-				{
-					result.Add(parse[i]);
-				}
-			}
-			return result;
-		}
-
         /// <summary>
         /// Parse or re-parse all the search areas for this quest and add to the static list of all dataquest search areas
         /// </summary>
@@ -2588,24 +2574,6 @@ namespace DOL.GS.Quests
 			}
 
 			return true;
-		}
-
-
-		/// <summary>
-		/// Replace special characters in an item string
-		/// Supported parsing:
-		/// %c = character class
-		/// </summary>
-		/// <param name="idnb"></param>
-		/// <param name="player"></param>
-		/// <returns></returns>
-		protected virtual string ParseItemString(string idnb, GamePlayer player)
-		{
-			string parsed = idnb;
-
-			parsed = parsed.Replace("%c", ((eCharacterClass)player.CharacterClass.ID).ToString());
-
-			return parsed;
 		}
 
 
