@@ -353,9 +353,9 @@ namespace DOL.GS.Quests
 			if (m_dataQuest == null)
 				return;
 
-			var parser = new DataQuestParser(m_dataQuest);
-			definition = parser.ParseDefinition();
-			steps = parser.ParseSteps();
+			var parser = DataQuestParser.Load(m_dataQuest);
+			definition = parser.DataQuestDefinition;
+			steps = parser.DataQuestSteps;
 
 			string lastParse = "";
 
@@ -2691,35 +2691,31 @@ namespace DOL.GS.Quests
 	internal class DataQuestParser
 	{
 		DBDataQuest dbDataQuest;
-		DataQuestDefinition dataQuestDefinition = new DataQuestDefinition();
-		List<DataQuestStep> steps = new List<DataQuestStep>();
 
-		public DataQuestParser(DBDataQuest dbDataQuest)
+		public DataQuestDefinition DataQuestDefinition { get; private set; } = new DataQuestDefinition();
+		public List<DataQuestStep> DataQuestSteps { get; private set; } = new List<DataQuestStep>();
+
+		private DataQuestParser(DBDataQuest dbDataQuest)
 		{
 			this.dbDataQuest = dbDataQuest;
 		}
 
-		public List<byte> AllowedClasses
+		public static DataQuestParser Load(DBDataQuest dbDataQuest)
 		{
-			get
-			{
-				List<byte> result = new List<byte>();
-				foreach (var element in ParseArrayString(dbDataQuest.AllowedClasses))
-				{
-					result.Add(Convert.ToByte(element));
-				}
-				return result;
-			}
+			var parser = new DataQuestParser(dbDataQuest);
+			parser.ParseSteps();
+			parser.ParseDefinition();
+			return parser;
 		}
 
-		public DataQuestDefinition ParseDefinition()
+		private void ParseDefinition()
 		{
-			dataQuestDefinition.AllowedClasses = ConvertToListOf<byte>(dbDataQuest.AllowedClasses);
+			DataQuestDefinition.AllowedClasses = ConvertToListOf<byte>(dbDataQuest.AllowedClasses);
 
-			return dataQuestDefinition;
+			this.DataQuestDefinition = DataQuestDefinition;
 		}
 
-		public List<DataQuestStep> ParseSteps()
+		private void ParseSteps()
 		{
 			var moneyRewards = ConvertToListOf<long>(dbDataQuest.RewardMoney);
 			var xpRewards = ConvertToListOf<long>(dbDataQuest.RewardXP);
@@ -2740,7 +2736,7 @@ namespace DOL.GS.Quests
 				bpRewards.Count, targetTexts.Count, stepTexts.Count, targetNames.Count}.Max();
 			if(numberOfSteps == 0)
 			{
-				return new List<DataQuestStep>() { new DataQuestStep() };
+				this.DataQuestSteps.Add( new DataQuestStep());
 			}
 
 			for (int index = 0; index < numberOfSteps; index++)
@@ -2760,10 +2756,10 @@ namespace DOL.GS.Quests
 				newStep.CollectItem = collectItems.ElementAtOrDefault(index);
 				newStep.TargetName = targetNames.ElementAtOrDefault(index);
 				newStep.TargetRegion = targetRegions.ElementAtOrDefault(index);
-				steps.Add(newStep);
+				DataQuestSteps.Add(newStep);
 			}
 
-			return steps;
+			this.DataQuestSteps = DataQuestSteps;
 		}
 
 		private List<T> ConvertToListOf<T>(string arrayString)
