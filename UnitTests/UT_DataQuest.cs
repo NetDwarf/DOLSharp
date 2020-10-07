@@ -161,6 +161,18 @@ namespace DOL.UnitTests.Gameserver
             var expected = 0;
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void StepText_Init_EmptyString()
+        {
+            var dataQuest = NewDataQuest();
+
+            dataQuest.Step = 1;
+
+            var actual = dataQuest.SpyStepText;
+            var expected = string.Empty;
+            Assert.AreEqual(expected, actual);
+        }
         #endregion Accessor
 
         #region CheckQuestQualification
@@ -367,6 +379,7 @@ namespace DOL.UnitTests.Gameserver
             public long SpyRewardRP => RewardRP;
             public long SpyRewardBP => RewardBP;
             public string SpyTargetText => TargetText;
+            public string SpyStepText => StepText;
 
             public DBDataQuest SpyDBDataQuest => m_dataQuest;
             public CharacterXDataQuest SpyCharQuest => m_charQuest;

@@ -1692,7 +1692,6 @@ namespace DOL.GS.Quests
 					if (offerNPC != null)
 					{
 						TryTurnTo(obj, player);
-
 						// Note: If the offer is handled by the custom step then it should return false to prevent a double offer
 						if (ExecuteCustomQuestStep(player, 0, eStepCheckType.Offer))
 						{
@@ -2702,29 +2701,33 @@ namespace DOL.GS.Quests
 
 			var numberOfSteps = new int[] {stepTypes.Count, moneyRewards.Count, xpRewards.Count, clxpRewards.Count, rpRewards.Count, 
 				bpRewards.Count, targetTexts.Count, stepTexts.Count, targetNames.Count}.Max();
-			if(numberOfSteps == 0)
+			if (numberOfSteps == 0)
 			{
-				this.DataQuestSteps.Add( new DataQuestStep());
+				this.DataQuestSteps.Add(new DataQuestStep());
 			}
-
-			for (int index = 0; index < numberOfSteps; index++)
+			else
 			{
-				var newStep = new DataQuestStep();
-				newStep.RewardMoney = moneyRewards.ElementAtOrDefault(index);
-				newStep.RewardXP = xpRewards.ElementAtOrDefault(index);
-				newStep.RewardCLXP = clxpRewards.ElementAtOrDefault(index);
-				newStep.RewardRP = rpRewards.ElementAtOrDefault(index);
-				newStep.RewardBP = bpRewards.ElementAtOrDefault(index);
-				newStep.StepType = (DataQuest.eStepType)stepTypes.ElementAtOrDefault(index);
-				newStep.SourceText = sourceTexts.ElementAtOrDefault(index);
-				newStep.TargetText = targetTexts.ElementAtOrDefault(index);
-				newStep.StepText = stepTexts.ElementAtOrDefault(index);
-				newStep.StepItemTemplate = stepItemTemplates.ElementAtOrDefault(index);
-				newStep.AdvanceText = advanceTexts.ElementAtOrDefault(index);
-				newStep.CollectItem = collectItems.ElementAtOrDefault(index);
-				newStep.TargetName = targetNames.ElementAtOrDefault(index);
-				newStep.TargetRegion = targetRegions.ElementAtOrDefault(index);
-				DataQuestSteps.Add(newStep);
+				for (int index = 0; index < numberOfSteps; index++)
+				{
+					var newStep = new DataQuestStep();
+
+					newStep.RewardMoney = moneyRewards.ElementAtOrDefault(index);
+					newStep.RewardXP = xpRewards.ElementAtOrDefault(index);
+					newStep.RewardCLXP = clxpRewards.ElementAtOrDefault(index);
+					newStep.RewardRP = rpRewards.ElementAtOrDefault(index);
+					newStep.RewardBP = bpRewards.ElementAtOrDefault(index);
+					newStep.StepType = (DataQuest.eStepType)stepTypes.ElementAtOrDefault(index);
+					newStep.SourceText = sourceTexts.ElementAtOrDefault(index);
+					newStep.TargetText = GetElementAtOrDefault(targetTexts, index, string.Empty);
+					newStep.StepText = GetElementAtOrDefault(stepTexts, index, string.Empty);
+					newStep.StepItemTemplate = GetElementAtOrDefault(stepItemTemplates, index, string.Empty);
+					newStep.AdvanceText = GetElementAtOrDefault(advanceTexts, index, string.Empty);
+					newStep.CollectItem = GetElementAtOrDefault(collectItems, index, string.Empty);
+					newStep.TargetName = GetElementAtOrDefault(targetNames, index, string.Empty);
+					newStep.TargetRegion = GetElementAtOrDefault(targetRegions, index, (ushort)0);
+
+					DataQuestSteps.Add(newStep);
+				}
 			}
 
 			this.DataQuestSteps = DataQuestSteps;
@@ -2735,7 +2738,14 @@ namespace DOL.GS.Quests
 			var result = new List<T>();
 			foreach (var element in ParseArrayString(arrayString))
 			{
-				result.Add((T)Convert.ChangeType(element, typeof(T)));
+				if(element != string.Empty || typeof(T) == typeof(string))
+				{
+					result.Add((T)Convert.ChangeType(element, typeof(T)));
+				}
+				else
+				{
+					result.Add(default);
+				}
 			}
 			return result;
 		}
@@ -2770,6 +2780,15 @@ namespace DOL.GS.Quests
 				}
 			}
 			return result;
+		}
+
+		private T GetElementAtOrDefault<T>(IList<T> enumerable, int index, T @default)
+		{
+			if(index >= enumerable.Count)
+			{
+				return @default;
+			}
+			return enumerable.ElementAt<T>(index);
 		}
 	}
 }

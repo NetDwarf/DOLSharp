@@ -30,7 +30,7 @@ namespace DOL.Integration.GameServer
             dbDataQuest.AdvanceText = "||important mission|warn|";
             dbDataQuest.TargetName = "tic;10|trick;9|truck;8|track;7|trock;6";
             dbDataQuest.TargetText = "foo|bar|baz|bork|fuu";
-            dbDataQuest.CollectItemTemplate = null;
+            dbDataQuest.CollectItemTemplate = "bring|me|this|darn|item";
             dbDataQuest.MaxCount = 1;
             dbDataQuest.MinLevel = 1;
             dbDataQuest.MaxLevel = 11;
@@ -64,6 +64,7 @@ namespace DOL.Integration.GameServer
             Assert.AreEqual("", dataQuest.FinalRewards);
             Assert.AreEqual(new List<string>() { "Basics of Combat (Hibernia)" }, dataQuest.SpyQuestDependency);
             Assert.AreEqual(new List<byte> { 1, 2, 3 }, dataQuest.SpyAllowedClasses);
+            Assert.AreEqual("storyA", dataQuest.Story);
         }
 
         [Test]
@@ -84,10 +85,10 @@ namespace DOL.Integration.GameServer
                 Assert.AreEqual(new string[] { "tic", "trick", "truck", "track", "trock" }[index], dataQuest.TargetName);
                 Assert.AreEqual(new long[] { 10, 9, 8, 7, 6 }[index], dataQuest.TargetRegion);
                 Assert.AreEqual(new string[] { "foo", "bar", "baz", "bork", "fuu" }[index], dataQuest.SpyTargetText);
-                Assert.AreEqual("storyA", dataQuest.Story);
                 Assert.AreEqual(new string[] { "storyA", "", "storyC", "storyD", "storyEnd" }[index], dataQuest.SpySourceText);
                 Assert.AreEqual(new string[] { "step1", "step2", "step3", "step4", "step5"}[index], dataQuest.StepTexts[index]);
                 Assert.AreEqual(new string[] { "item1", "item2", "item3", "item4", "item5" }[index], dataQuest.SpyStepItemTemplate);
+                Assert.AreEqual(new string[] { "bring", "me", "this", "darn", "item" }[index], dataQuest.SpyCollectItemTemplate);
             }
         }
 
@@ -107,6 +108,7 @@ namespace DOL.Integration.GameServer
             public string SpySourceText => SourceText;
             public string SpyTargetText => TargetText;
             public string SpyStepItemTemplate => StepItemTemplate;
+            public string SpyCollectItemTemplate => CollectItemTemplate;
         }
     }
 }
