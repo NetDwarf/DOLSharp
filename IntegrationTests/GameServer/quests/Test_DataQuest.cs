@@ -50,6 +50,7 @@ namespace DOL.Integration.GameServer
         [Test]
         public void ParseQuest_GivenDBDataQuest_SetData()
         {
+            FakeServer.LoadAndReturn();
             var dataQuest = new DataQuestSpy(dbDataQuest);
 
             Assert.AreEqual(23886, dataQuest.ID);
@@ -70,8 +71,8 @@ namespace DOL.Integration.GameServer
         [Test]
         public void ParseQuest_GivenDBDataQuest_CompareStepData()
         {
-            var dataQuest = new DataQuestSpy(dbDataQuest);
             FakeServer.LoadAndReturn();
+            var dataQuest = new DataQuestSpy(dbDataQuest);
 
             var stepCount = 5;
             for (int i = 1; i <= stepCount; i++)

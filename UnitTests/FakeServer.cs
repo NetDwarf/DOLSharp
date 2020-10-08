@@ -80,6 +80,8 @@ namespace DOL.UnitTests.Gameserver
 
     public class FakeDatabase : IObjectDatabase
     {
+        public object fakeFindObjectByKey = null;
+
         public IList<CharacterXDataQuest> SelectObjectReturns { get; set; } = new List<CharacterXDataQuest>();
 
         public bool AddObject(DataObject dataObject) => throw new NotImplementedException();
@@ -90,7 +92,7 @@ namespace DOL.UnitTests.Gameserver
         public bool ExecuteNonQuery(string rawQuery) => throw new NotImplementedException();
         public void FillObjectRelations(DataObject dataObject) => throw new NotImplementedException();
         public void FillObjectRelations(IEnumerable<DataObject> dataObject) => throw new NotImplementedException();
-        public TObject FindObjectByKey<TObject>(object key) where TObject : DataObject => throw new NotImplementedException();
+        public virtual TObject FindObjectByKey<TObject>(object key) where TObject : DataObject => (TObject)fakeFindObjectByKey;
         public IList<TObject> FindObjectsByKey<TObject>(IEnumerable<object> keys) where TObject : DataObject => throw new NotImplementedException();
         public int GetObjectCount<TObject>() where TObject : DataObject => throw new NotImplementedException();
         public int GetObjectCount<TObject>(string whereExpression) where TObject : DataObject => throw new NotImplementedException();

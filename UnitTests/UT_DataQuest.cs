@@ -173,6 +173,101 @@ namespace DOL.UnitTests.Gameserver
             var expected = string.Empty;
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void ShowIndicator_Init_True()
+        {
+            var dataQuest = NewDataQuest();
+
+            var actual = dataQuest.ShowIndicator;
+            var expected = true;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ShowIndicator_StartTypeCollection_False()
+        {
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.StartType = (byte)DataQuest.eStartType.Collection;
+            var dataQuest = NewDataQuest(dbDataQuest);
+
+            var actual = dataQuest.ShowIndicator;
+            var expected = false;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ShowIndicator_SourceNameContainsNoIndicator_False()
+        {
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.SourceName = "No_Indicator";
+            var dataQuest = NewDataQuest(dbDataQuest);
+
+            var actual = dataQuest.ShowIndicator;
+            var expected = false;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void NumOptionalRewards_Init_Zero()
+        {
+            var dataQuest = NewDataQuest();
+
+            var actual = dataQuest.NumOptionalRewardsChoice;
+            var expected = 0;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void NumOptionalRewards_OptionalRewardItemTemplatesStringStartsWith2_2()
+        {
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.OptionalRewardItemTemplates = "2";
+            var dataQuest = NewDataQuest(dbDataQuest);
+
+            var actual = dataQuest.NumOptionalRewardsChoice;
+            var expected = 2;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void OptionalRewards_Init_EmptyList()
+        {
+            var dataQuest = NewDataQuest();
+
+            var actual = dataQuest.OptionalRewards;
+            var expected = new List<ItemTemplate>();
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void OptionalRewards_String2Foo_LastFindObjectByKeyIsStringFoo()
+        {
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.OptionalRewardItemTemplates = "2foo";
+            var databaseSpy = new DatabaseSpy();
+            FakeServer.LoadAndReturn().fakeDatabase = databaseSpy;
+
+            var dataQuest = NewDataQuest(dbDataQuest);
+
+            var lastFindObjectByKey = databaseSpy.SpyFindObjectByKey;
+            var expected = "foo";
+            Assert.AreEqual(expected, lastFindObjectByKey);
+        }
+
+        [Test]
+        public void OptionalRewards_String2FooButItemTemplateFooDoesntExist_EmptyList()
+        {
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.OptionalRewardItemTemplates = "2foo";
+            FakeServer.LoadAndReturn().fakeDatabase.fakeFindObjectByKey = null;
+
+            var dataQuest = NewDataQuest(dbDataQuest);
+
+            var actual = dataQuest.OptionalRewards;
+            var expected = new List<ItemTemplate>();
+            Assert.AreEqual(expected, actual);
+        }
         #endregion Accessor
 
         #region CheckQuestQualification
@@ -385,6 +480,13 @@ namespace DOL.UnitTests.Gameserver
             public CharacterXDataQuest SpyCharQuest => m_charQuest;
 
             public DataQuestSpy(GamePlayer player, DBDataQuest dbDataQuest, CharacterXDataQuest charXDataQuest) : base(player, dbDataQuest, charXDataQuest) { }
+        }
+
+        private class DatabaseSpy : FakeDatabase
+        {
+            public object SpyFindObjectByKey {get; private set;}
+
+            public override TObject FindObjectByKey<TObject>(object key) { SpyFindObjectByKey = key; return null; }
         }
     }
 }
