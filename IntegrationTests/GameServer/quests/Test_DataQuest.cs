@@ -1,4 +1,5 @@
 ﻿using DOL.Database;
+using DOL.GS;
 using DOL.GS.Quests;
 using DOL.UnitTests.Gameserver;
 using NUnit.Framework;
@@ -45,12 +46,19 @@ namespace DOL.Integration.GameServer
             dbDataQuest.RewardCLXP = null;
             dbDataQuest.RewardRP = null;
             dbDataQuest.RewardBP = null;
+
+            FakeServer.LoadAndReturn();
+        }
+
+        [TearDown]
+        public void Final()
+        {
+            GS.GameServer.LoadTestDouble(null);
         }
 
         [Test]
         public void ParseQuest_GivenDBDataQuest_SetData()
         {
-            FakeServer.LoadAndReturn();
             var dataQuest = new DataQuestSpy(dbDataQuest);
 
             Assert.AreEqual(23886, dataQuest.ID);
@@ -71,7 +79,6 @@ namespace DOL.Integration.GameServer
         [Test]
         public void ParseQuest_GivenDBDataQuest_CompareStepData()
         {
-            FakeServer.LoadAndReturn();
             var dataQuest = new DataQuestSpy(dbDataQuest);
 
             var stepCount = 5;
@@ -93,13 +100,68 @@ namespace DOL.Integration.GameServer
             }
         }
 
+        [Test]
+        public void ParseSearchArea_GenericSearchQuest()
+        {
+            var dbDataQuest = new DBDataQuest();
+            dbDataQuest.SourceName = "SEARCH;2;text;3;4;5;6;7";
+
+            var dataQuest = new DataQuestSpy(dbDataQuest, null);
+
+            var actual = dataQuest.SpyAllQuestSearchAreas[0];
+            Assert.AreEqual(typeof(DataQuest), actual.Value.QuestType);
+            Assert.AreEqual(0, actual.Key);
+            Assert.AreEqual(2, actual.Value.Step);
+            Assert.AreEqual(4, actual.Value.X);
+            Assert.AreEqual(5, actual.Value.Y);
+            Assert.AreEqual(6, actual.Value.Radius);
+            Assert.AreEqual(7, actual.Value.SearchSeconds);
+            Assert.AreEqual("text", actual.Value.PopupText);
+
+            Assert.AreEqual(1, dataQuest.SpyNumSearchAreas);
+        }
+
+        [Test]
+        public void ParseSearchArea_GenericSearchStartQuest()
+        {
+            var dbDataQuest = new DBDataQuest();
+            dbDataQuest.SourceName = "SEARCHSTART;itemtemplate;text;3;4;5;6;7";
+
+            var dataQuest = new DataQuestSpy(dbDataQuest, null);
+
+            var actual = dataQuest.SpyAllQuestSearchAreas[0];
+            Assert.AreEqual(typeof(DataQuest), actual.Value.QuestType);
+            Assert.AreEqual(0, actual.Key);
+            Assert.AreEqual("itemtemplate", dataQuest.SpySearchStartItemTemplate);
+            Assert.AreEqual(4, actual.Value.X);
+            Assert.AreEqual(5, actual.Value.Y);
+            Assert.AreEqual(6, actual.Value.Radius);
+            Assert.AreEqual(7, actual.Value.SearchSeconds);
+            Assert.AreEqual("text", actual.Value.PopupText);
+
+            Assert.AreEqual(1, dataQuest.SpyNumSearchAreas);
+        }
+
+        [Test]
+        public void NumSearchAreas_TwoGenericSearchStartQuest_2()
+        {
+            var dbDataQuest = new DBDataQuest();
+            dbDataQuest.SourceName = "SEARCHSTART;itemtemplate;text;3;4;5;6;7|SEARCHSTART;itemtemplate;text;3;4;5;6;7";
+
+            var dataQuest = new DataQuestSpy(dbDataQuest, null);
+
+            Assert.AreEqual(2, dataQuest.SpyNumSearchAreas);
+        }
+
         private class DataQuestSpy : DataQuest
         {
             public DataQuestSpy(DBDataQuest dbDataQuest) : base(dbDataQuest) { m_charQuest = new CharacterXDataQuest(); }
+            public DataQuestSpy(DBDataQuest dbDataQuest, GameObject startingObject) : base(dbDataQuest, startingObject) { m_charQuest = new CharacterXDataQuest(); }
 
             public string SpySourceName => SourceName;
             public List<string> SpyQuestDependency => m_questDependencies;
             public List<byte> SpyAllowedClasses => m_allowedClasses;
+            public List<KeyValuePair<int, QuestSearchArea>> SpyAllQuestSearchAreas => m_allQuestSearchAreas;
 
             public long SpyRewardMoney => RewardMoney;
             public long SpyRewardXP => RewardXP;
@@ -110,6 +172,8 @@ namespace DOL.Integration.GameServer
             public string SpyTargetText => TargetText;
             public string SpyStepItemTemplate => StepItemTemplate;
             public string SpyCollectItemTemplate => CollectItemTemplate;
+            public string SpySearchStartItemTemplate => m_searchStartItemTemplate;
+            public int SpyNumSearchAreas => m_numSearchAreas;
         }
     }
 }

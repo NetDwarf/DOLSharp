@@ -250,14 +250,6 @@ namespace DOL.GS.Quests
 
 		#region Construction
 
-		/// <summary>
-		/// Create an empty Quest
-		/// </summary>
-		public DataQuest()
-			: base()
-		{
-		}
-
         /// <summary>
         /// DataQuest object used for delving RewardItems or other information
         /// </summary>
@@ -385,96 +377,18 @@ namespace DOL.GS.Quests
 			}
 		}
 
-        /// <summary>
-        /// Parse or re-parse all the search areas for this quest and add to the static list of all dataquest search areas
-        /// </summary>
-        protected void ParseSearchAreas()
-        {
-            if (m_dataQuest == null)
-                return;
+		/// <summary>
+		/// Parse or re-parse all the search areas for this quest and add to the static list of all dataquest search areas
+		/// </summary>
+		protected void ParseSearchAreas()
+		{
+			if (m_dataQuest == null)
+				return;
 
-            string lastParse = "";
-
-            try
-            {
-                string[] parse1;
-
-                // If we have any search areas created we delete them first, then re-create if needed
-
-                List<KeyValuePair<int, QuestSearchArea>> areasToDelete = new List<KeyValuePair<int, QuestSearchArea>>();
-
-                foreach (KeyValuePair<int, QuestSearchArea> entry in m_allQuestSearchAreas)
-                {
-                    if (entry.Key == ID)
-                    {
-                        areasToDelete.Add(entry);
-                    }
-                }
-
-                foreach (KeyValuePair<int, QuestSearchArea> entry in areasToDelete)
-                {
-                    m_lastErrorText += " ::Removing QuestSearchArea for DataQuest ID:" + ID + ", Step " + entry.Value.Step;
-                    entry.Value.RemoveArea();
-                    m_allQuestSearchAreas.Remove(entry);
-                }
-
-                lastParse = m_dataQuest.SourceName;
-                if (!string.IsNullOrEmpty(lastParse))
-                {
-                    parse1 = lastParse.Split('|');
-                    foreach (string str in parse1)
-                    {
-                        if (str.ToUpper().StartsWith("SEARCH"))
-                        {
-                            CreateSearchArea(str);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error parsing quest data for " + m_dataQuest.Name + " (" + m_dataQuest.ID + "), last string to parse = '" + lastParse + "'.", ex);
-                m_lastErrorText += " " +lastParse + " " + ex.Message;
-            }
-        }
-
-        /// <summary>
-        /// Add a search area to the static list of all DataQuest search areas
-        /// </summary>
-        /// <param name="str"></param>
-        protected void CreateSearchArea(string areaStr)
-        {
-            try
-            {
-                string[] parse = areaStr.Split(';');
-
-                int requiredStep = 0;
-
-                if (parse[0] == "SEARCHSTART")
-                {
-                    requiredStep = 0;
-                    m_searchStartItemTemplate = parse[1];
-                }
-                else
-                {
-                    requiredStep = Convert.ToInt32(parse[1]);
-                }
-
-                // 0       1 2                        3  4    5     6   7
-                // COMMAND;3;Search for necklace here;12;8000;74665;500;20
-
-                QuestSearchArea questArea = new QuestSearchArea(this, requiredStep, parse[2], Convert.ToUInt16(parse[3]), Convert.ToInt32(parse[4]), Convert.ToInt32(parse[5]), Convert.ToInt32(parse[6]), Convert.ToInt32(parse[7]));
-                m_allQuestSearchAreas.Add(new KeyValuePair<int,QuestSearchArea>(ID, questArea));
-
-                m_lastErrorText += string.Format(" ::Created Search Area for quest {0}, step {1} in region {2} at X:{3}, Y:{4}, Radius:{5}, Text:{6}, Seconds:{7}.", Name, requiredStep, parse[3], parse[4], parse[5], parse[6], parse[2], parse[7]);
-            }
-            catch
-            {
-                string error = "Error creating search area for " + m_dataQuest.Name + " (" + m_dataQuest.ID + "), area str = '" + areaStr + "'";
-                log.Error(error);
-                m_lastErrorText += error;
-            }
-        }
+			var parser = SearchAreaParser.Load(this);
+			m_allQuestSearchAreas = parser.AllQuestSearchAreas;
+			m_searchStartItemTemplate = parser.SearchStartItemTemplate;
+		}
 
 
 		#endregion Parse Quest Data

@@ -1,4 +1,5 @@
 ﻿using DOL.Database;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,10 @@ namespace DOL.GS.Quests
 		public List<string> QuestDependencies { get; internal set; }
 		public string ClassType { get; internal set; }
 		public string AdditionalData { get; internal set; }
+
+		#region SearchQuest
+		public string SearchStartItemTemplate { get; set; }
+		#endregion SearchQuest
 	}
 
 	internal class DataQuestParser
@@ -159,40 +164,6 @@ namespace DOL.GS.Quests
 			return itemTemplates;
 		}
 
-		private void ParseItemsImpl()
-		{
-			var m_questDependencies = new List<string>();
-			var m_classType = "";
-			var AdditionalData = "";
-
-			var m_dataQuest = dbDataQuest;
-
-			string lastParse;
-			string[] parse1;
-
-			lastParse = m_dataQuest.QuestDependency;
-			if (!string.IsNullOrEmpty(lastParse))
-			{
-				parse1 = lastParse.Split('|');
-				foreach (string str in parse1)
-				{
-					if (str != "")
-					{
-						m_questDependencies.Add(str);
-					}
-				}
-			}
-
-			lastParse = m_dataQuest.ClassType;
-			if (!string.IsNullOrEmpty(lastParse))
-			{
-				parse1 = lastParse.Split('|');
-				m_classType = parse1[0];
-				if (parse1.Length > 1)
-					AdditionalData = parse1[1];
-			}
-		}
-
 		private List<T> ConvertToListOf<T>(string arrayString)
 		{
 			var result = new List<T>();
@@ -249,6 +220,64 @@ namespace DOL.GS.Quests
 				return @default;
 			}
 			return enumerable.ElementAt<T>(index);
+		}
+	}
+
+	public class SearchAreaParser
+	{
+		private DataQuest dataQuest;
+
+		private SearchAreaParser(DataQuest dataQuest)
+		{
+			this.dataQuest = dataQuest;
+		}
+
+		public static SearchAreaParser Load(DataQuest dataQuest)
+		{
+			var parser = new SearchAreaParser(dataQuest);
+			parser.ParseSearchAreas();
+			return parser;
+		}
+
+		public string SearchStartItemTemplate { get; private set; }
+		public List<KeyValuePair<int, QuestSearchArea>> AllQuestSearchAreas { get; private set; } = new List<KeyValuePair<int, QuestSearchArea>>();
+
+		private void ParseSearchAreas()
+		{
+			DBDataQuest dbDataQuest = dataQuest.DBDataQuest;
+			int ID = dbDataQuest.ID;
+			if (dbDataQuest == null || string.IsNullOrEmpty(dbDataQuest.SourceName))
+				return;
+
+			string[] parse1;
+
+			var searchAreasString = dbDataQuest.SourceName;
+
+			parse1 = searchAreasString.Split('|');
+			foreach (string areaStr in parse1)
+			{
+				if (areaStr.ToUpper().StartsWith("SEARCH"))
+				{
+					string[] parse = areaStr.Split(';');
+
+					int requiredStep = 0;
+
+					if (parse[0] == "SEARCHSTART")
+					{
+						SearchStartItemTemplate = parse[1];
+					}
+					else
+					{
+						requiredStep = Convert.ToInt32(parse[1]);
+					}
+
+					// 0       1 2                        3  4    5     6   7
+					// COMMAND;3;Search for necklace here;12;8000;74665;500;20
+
+					QuestSearchArea questArea = new QuestSearchArea(dataQuest, requiredStep, parse[2], Convert.ToUInt16(parse[3]), Convert.ToInt32(parse[4]), Convert.ToInt32(parse[5]), Convert.ToInt32(parse[6]), Convert.ToInt32(parse[7]));
+					AllQuestSearchAreas.Add(new KeyValuePair<int, QuestSearchArea>(ID, questArea));
+				}
+			}
 		}
 	}
 }

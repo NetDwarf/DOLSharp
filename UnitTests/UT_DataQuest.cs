@@ -175,6 +175,57 @@ namespace DOL.UnitTests.Gameserver
         }
 
         [Test]
+        public void TargetName_Default_EmptyString()
+        {
+            var dataQuest = NewDataQuest();
+            dataQuest.Step = 1;
+
+            var actual = dataQuest.TargetName;
+            var expected = "";
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void TargetName_SomeName_SomeName()
+        {
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.TargetName = "SomeName";
+            var dataQuest = NewDataQuest(dbDataQuest);
+            dataQuest.Step = 1;
+
+            var actual = dataQuest.TargetName;
+            var expected = "SomeName";
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void TargetName_FooZeroAndBarZeroOnStep2_Bar()
+        {
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.TargetName = "Foo;0|Bar;0";
+            var dataQuest = NewDataQuest(dbDataQuest);
+            dataQuest.Step = 2;
+
+            var actual = dataQuest.TargetName;
+            var expected = "Bar";
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void TargetText_BarPipeBazOnStep2_Baz()
+        {
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.TargetText = "Bar|Baz";
+            var dataQuest = NewDataQuest(dbDataQuest);
+
+            dataQuest.Step = 2;
+
+            var actual = dataQuest.SpyTargetText;
+            var expected = "Baz";
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
         public void ShowIndicator_Init_True()
         {
             var dataQuest = NewDataQuest();
@@ -248,7 +299,7 @@ namespace DOL.UnitTests.Gameserver
             var databaseSpy = new DatabaseSpy();
             FakeServer.LoadAndReturn().fakeDatabase = databaseSpy;
 
-            var dataQuest = NewDataQuest(dbDataQuest);
+            NewDataQuest(dbDataQuest); //trigger parsing
 
             var lastFindObjectByKey = databaseSpy.SpyFindObjectByKey;
             var expected = "foo";
@@ -399,57 +450,6 @@ namespace DOL.UnitTests.Gameserver
             var actual = dataQuest.IsDoingQuest(otherDataQuest);
 
             Assert.IsFalse(actual);
-        }
-
-        [Test]
-        public void TargetName_Default_EmptyString()
-        {
-            var dataQuest = NewDataQuest();
-            dataQuest.Step = 1;
-
-            var actual = dataQuest.TargetName;
-            var expected = "";
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void TargetName_SomeName_SomeName()
-        {
-            var dbDataQuest = NewDBDataQuest();
-            dbDataQuest.TargetName = "SomeName";
-            var dataQuest = NewDataQuest(dbDataQuest);
-            dataQuest.Step = 1;
-
-            var actual = dataQuest.TargetName;
-            var expected = "SomeName";
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void TargetName_FooZeroAndBarZeroOnStep2_Bar()
-        {
-            var dbDataQuest = NewDBDataQuest();
-            dbDataQuest.TargetName = "Foo;0|Bar;0";
-            var dataQuest = NewDataQuest(dbDataQuest);
-            dataQuest.Step = 2;
-
-            var actual = dataQuest.TargetName;
-            var expected = "Bar";
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void TargetText_BarPipeBazOnStep2_Baz()
-        {
-            var dbDataQuest = NewDBDataQuest();
-            dbDataQuest.TargetText = "Bar|Baz";
-            var dataQuest = NewDataQuest(dbDataQuest);
-
-            dataQuest.Step = 2;
-
-            var actual = dataQuest.SpyTargetText;
-            var expected = "Baz";
-            Assert.AreEqual(expected, actual);
         }
 
         private FakeQuestPlayer NewFakePlayer() => new FakeQuestPlayer();
