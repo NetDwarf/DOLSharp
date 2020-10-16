@@ -84,7 +84,7 @@ namespace DOL.UnitTests.Gameserver
 
         public IList<CharacterXDataQuest> SelectObjectReturns { get; set; } = new List<CharacterXDataQuest>();
 
-        public bool AddObject(DataObject dataObject) => throw new NotImplementedException();
+        public bool AddObject(DataObject dataObject) => true;
         public bool AddObject(IEnumerable<DataObject> dataObjects) => throw new NotImplementedException();
         public bool DeleteObject(DataObject dataObject) => throw new NotImplementedException();
         public bool DeleteObject(IEnumerable<DataObject> dataObjects) => throw new NotImplementedException();
@@ -113,6 +113,18 @@ namespace DOL.UnitTests.Gameserver
         public IList<TObject> SelectObjects<TObject>(string whereExpression, IsolationLevel isolation) where TObject : DataObject => throw new NotImplementedException();
         public bool UpdateInCache<TObject>(object key) where TObject : DataObject => throw new NotImplementedException();
         public bool UpdateObjsInCache<TObject>(IEnumerable<object> keys) where TObject : DataObject => throw new NotImplementedException();
+    }
+
+    public class FakeClient : GameClient
+    {
+        public FakeClient() : base(null) { }
+
+        public override Account Account { get => new FakeAccount(); set { } }
+    }
+
+    public class FakeAccount : Account
+    {
+        public override string Language { get; set; } = "";
     }
 
     public class UtilChanceIsHundredPercent : Util

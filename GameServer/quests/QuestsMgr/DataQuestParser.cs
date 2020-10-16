@@ -35,10 +35,6 @@ namespace DOL.GS.Quests
 		public List<string> QuestDependencies { get; internal set; }
 		public string ClassType { get; internal set; }
 		public string AdditionalData { get; internal set; }
-
-		#region SearchQuest
-		public string SearchStartItemTemplate { get; set; }
-		#endregion SearchQuest
 	}
 
 	internal class DataQuestParser

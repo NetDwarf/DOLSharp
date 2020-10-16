@@ -198,7 +198,7 @@ namespace DOL.Database
 		/// The player language
 		/// </summary>
 		[DataElement(AllowDbNull = true)]
-		public string Language
+		public virtual string Language
 		{
 			get { return m_language; }
 			set { Dirty = true; m_language = value.ToUpper(); }

@@ -1,4 +1,5 @@
 ﻿using DOL.Database;
+using DOL.Events;
 using DOL.GS;
 using DOL.GS.Quests;
 using DOL.UnitTests.Gameserver;
@@ -48,6 +49,8 @@ namespace DOL.Integration.GameServer
             dbDataQuest.RewardBP = null;
 
             FakeServer.LoadAndReturn();
+            GS.ServerProperties.Properties.DISABLED_REGIONS = "";
+            GS.ServerProperties.Properties.DISABLED_EXPANSIONS = "";
         }
 
         [TearDown]
@@ -143,15 +146,56 @@ namespace DOL.Integration.GameServer
         }
 
         [Test]
+        public void NumSearchAreas_Init_Zero()
+        {
+            var dataQuest = new DataQuestSpy(dbDataQuest, null);
+
+            Assert.AreEqual(0, dataQuest.SpyNumSearchAreas);
+        }
+
+        [Test]
+        public void NumSearchAreas_TwoSearchAreaQuestsWithDifferentSearchAreaCount_CountIsSeparate()
+        {
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.SourceName = "SEARCHSTART;itemtemplate;text;3;4;5;6;7|SEARCHSTART;itemtemplate;text;3;4;5;6;7";
+            dbDataQuest.ID = 1;
+            var dbDataQuest2 = NewDBDataQuest();
+            dbDataQuest2.SourceName = "SEARCHSTART;itemtemplate;text;3;4;5;6;7";
+            dbDataQuest2.ID = 2;
+
+            var dataQuest = new DataQuestSpy(dbDataQuest, null);
+            var dataQuest2 = new DataQuestSpy(dbDataQuest2, null);
+
+            Assert.AreEqual(3, dataQuest.SpyAllQuestSearchAreas.Count);
+        }
+
+        [Test]
         public void NumSearchAreas_TwoGenericSearchStartQuest_2()
         {
-            var dbDataQuest = new DBDataQuest();
+            var dbDataQuest = NewDBDataQuest();
             dbDataQuest.SourceName = "SEARCHSTART;itemtemplate;text;3;4;5;6;7|SEARCHSTART;itemtemplate;text;3;4;5;6;7";
 
             var dataQuest = new DataQuestSpy(dbDataQuest, null);
 
             Assert.AreEqual(2, dataQuest.SpyNumSearchAreas);
         }
+
+        [Test]
+        public void CheckOfferQuest_PlayerGainsOneExpTotal()
+        {
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.StartType = (byte)DataQuest.eStartType.InteractComplete;
+            dbDataQuest.RewardXP = "1";
+            var dataQuest = new DataQuestSpy(dbDataQuest);
+            var player = new FakePlayerSpy();
+
+            dataQuest.Notify(GameObjectEvent.Interact, new FakeNPC(), new InteractEventArgs(player));
+
+            var actual = player.SpyGainExperienceExpTotal;
+            Assert.AreEqual(1, actual);
+        }
+
+        private DBDataQuest NewDBDataQuest() => new DBDataQuest();
 
         private class DataQuestSpy : DataQuest
         {
@@ -174,6 +218,16 @@ namespace DOL.Integration.GameServer
             public string SpyCollectItemTemplate => CollectItemTemplate;
             public string SpySearchStartItemTemplate => m_searchStartItemTemplate;
             public int SpyNumSearchAreas => m_numSearchAreas;
+        }
+
+        private class FakePlayerSpy : FakePlayer
+        {
+            public long SpyGainExperienceExpTotal { get; private set; }
+
+            public override void GainExperience(eXPSource xpSource, long expTotal, long expCampBonus, long expGroupBonus, long expOutpostBonus, bool sendMessage, bool allowMultiply, bool notify)
+            {
+                SpyGainExperienceExpTotal = expTotal;
+            }
         }
     }
 }

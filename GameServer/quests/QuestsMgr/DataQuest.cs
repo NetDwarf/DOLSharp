@@ -325,7 +325,7 @@ namespace DOL.GS.Quests
 		#endregion Construction
 
 		private DataQuestStep CurrentStep => GetStep(Step);
-		private DataQuestStep FirstStep => GetStep(1);
+		protected DataQuestStep FirstStep => GetStep(1);
 
 		private DataQuestStep GetStep(int stepNumber)
 		{
@@ -386,7 +386,7 @@ namespace DOL.GS.Quests
 				return;
 
 			var parser = SearchAreaParser.Load(this);
-			m_allQuestSearchAreas = parser.AllQuestSearchAreas;
+			m_allQuestSearchAreas.AddRange(parser.AllQuestSearchAreas);
 			m_searchStartItemTemplate = parser.SearchStartItemTemplate;
 		}
 
@@ -1319,6 +1319,7 @@ namespace DOL.GS.Quests
 			}
 			catch (Exception ex)
 			{
+				Console.WriteLine("blubb blubb error" + ex.ToString() + ex.Message);
 				log.Error("DataQuest [" + ID + "] Notify Error for " + e.Name, ex);
                 if (QuestPlayer != null) ChatUtil.SendDebugMessage(QuestPlayer, "DataQuest [" + ID + "] Notify Error for " + e.Name);
             }
@@ -1376,198 +1377,36 @@ namespace DOL.GS.Quests
 			{
 				if (StartType == eStartType.InteractComplete)
 				{
-					// This quest finishes with the interaction
-
-					CharacterXDataQuest charQuest = GetCharacterQuest(player, ID, true);
-
-					if (charQuest.Count < MaxQuestCount)
-					{
-						TryTurnTo(obj, player);
-
-						if (ExecuteCustomQuestStep(player, 0, eStepCheckType.Finish))
-						{
-							if (Description.Trim() != "")
-							{
-								SendMessage(player, Description, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
-							}
-
-							if (m_finalRewards.Count > 0)
-							{
-								lock (player.Inventory)
-								{
-									if (player.Inventory.IsSlotsFree(m_finalRewards.Count, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack))
-									{
-										foreach (ItemTemplate item in m_finalRewards)
-										{
-											if (item != null)
-											{
-												GiveItem((obj is GameLiving ? obj as GameLiving : null), player, item, false);
-											}
-										}
-									}
-									else
-									{
-										SendMessage(player, "Your inventory does not have enough space to finish this quest!", 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
-										return;
-									}
-								}
-							}
-
-							if (FirstStep.RewardXP > 0)
-							{
-								player.GainExperience(GameLiving.eXPSource.Quest, FirstStep.RewardXP);
-							}
-							
-							if (FirstStep.RewardCLXP > 0)
-							{
-								player.GainChampionExperience(FirstStep.RewardCLXP, GameLiving.eXPSource.Quest);
-							}
-							
-							if (FirstStep.RewardRP > 0)
-							{
-								player.GainRealmPoints(FirstStep.RewardRP);
-							}
-							
-							if (FirstStep.RewardBP > 0)
-							{
-								player.GainBountyPoints(FirstStep.RewardBP);
-							}
-							
-							if (FirstStep.RewardMoney > 0)
-							{
-								player.AddMoney(FirstStep.RewardMoney, "You are awarded {0}!");
-                                InventoryLogging.LogInventoryAction("(QUEST;" + Name + ")", player, eInventoryActionType.Quest, FirstStep.RewardMoney);
-							}
-
-							charQuest.Count++;
-							GameServer.Database.SaveObject(charQuest);
-
-							bool add = true;
-							lock (player.QuestListFinished)
-							{
-								foreach (AbstractQuest q in player.QuestListFinished)
-								{
-									if (q is DataQuest && (q as DataQuest).ID == ID)
-									{
-										add = false;
-										break;
-									}
-								}
-							}
-
-							if (add)
-							{
-								player.QuestListFinished.Add(this);
-							}
-
-							player.Out.SendQuestListUpdate();
-
-							player.Out.SendMessage(String.Format(LanguageMgr.GetTranslation(player.Client.Account.Language, "AbstractQuest.FinishQuest.Completed", Name)), eChatType.CT_ScreenCenter, eChatLoc.CL_SystemWindow);
-							player.Out.SendMessage(String.Format(LanguageMgr.GetTranslation(player.Client.Account.Language, "AbstractQuest.FinishQuest.Completed", Name)), eChatType.CT_Important, eChatLoc.CL_SystemWindow);
-						}
-					}
+					var startType = new StartTypeInteractComplete(this);
+					startType.OfferQuest(player, obj);
 					return;
 				}
 
 				if (StartType == eStartType.AutoStart)
 				{
-					CharacterXDataQuest charQuest = GetCharacterQuest(player, ID, true);
-					DataQuest dq = new DataQuest(player, obj, DBDataQuest, charQuest);
-					dq.Step = 1;
-					player.AddQuest(dq);
-
-					if (!string.IsNullOrEmpty(FirstStep.SourceText))
-					{
-						TryTurnTo(obj, player);
-						SendMessage(player, FirstStep.SourceText, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
-					}
-
-					if (obj is GameNPC)
-					{
-						UpdateQuestIndicator(obj as GameNPC, player);
-					}
+					var startType = new StartTypeAutoStart(this);
+					startType.OfferQuest(player, obj);
 					return;
 				}
 
 				if (StartType == eStartType.SearchStart)
 				{
-					if (m_searchStartItemTemplate != "")
-					{
-						lock (player.Inventory)
-						{
-							if (player.Inventory.IsSlotsFree(1, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack))
-							{
-								ItemTemplate item = GameServer.Database.FindObjectByKey<ItemTemplate>(m_searchStartItemTemplate.Trim());
-								if (item == null)
-								{
-									string errorMsg = string.Format("SearchStart Item Template {0} not found in DB!", m_searchStartItemTemplate);
-									ChatUtil.SendDebugMessage(player, errorMsg);
-									log.Error(errorMsg);
-									return;
-								}
-
-								GiveItem(player, item, false);
-							}
-							else
-							{
-								player.Out.SendMessage("Your backpack is full, you can't start this quest!", eChatType.CT_System, eChatLoc.CL_SystemWindow);
-								return;
-							}
-						}
-
-					}
-
-					CharacterXDataQuest charQuest = GetCharacterQuest(player, ID, true);
-					DataQuest dq = new DataQuest(player, obj, DBDataQuest, charQuest);
-					dq.Step = 1;
-					player.AddQuest(dq);
-					if (!string.IsNullOrEmpty(FirstStep.SourceText))
-					{
-						TryTurnTo(obj, player);
-						SendMessage(player, FirstStep.SourceText, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
-					}
-
-					if (obj is GameNPC)
-					{
-						UpdateQuestIndicator(obj as GameNPC, player);
-					}
-
+					var startType = new StartTypeSearchStart(this);
+					startType.OfferQuest(player, obj);
 					return;
 				}
 
 				if (StartType == eStartType.RewardQuest)
 				{
-                    // Send offer quest dialog
-
-                    GameNPC offerNPC = obj as GameNPC;
-					if (offerNPC != null)
-					{
-						TryTurnTo(obj, player);
-						// Note: If the offer is handled by the custom step then it should return false to prevent a double offer
-						if (ExecuteCustomQuestStep(player, 0, eStepCheckType.Offer))
-						{
-							player.Out.SendQuestOfferWindow(offerNPC, player, this);
-						}
-					}
-					return; // Return here so we dont send 'Description' in a separate popup window 
+					var startType = new StartTypeRewardQuest(this);
+					startType.OfferQuest(player, obj);
+					return;
 				}
 				if (StartType == eStartType.Collection)
 				{
-					CharacterXDataQuest charQuest = GetCharacterQuest(player, ID, false);
-					
-					if (charQuest != null && charQuest.Count >= 1 && charQuest.Count < MaxQuestCount)
-					{
-						if (!string.IsNullOrEmpty(TargetText))
-						{
-							TryTurnTo(obj, player);
-							SendMessage(player, FirstStep.TargetText, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
-						}
-					}
-					else if (!string.IsNullOrEmpty(Description))
-					{
-						TryTurnTo(obj, player);
-						SendMessage(player, Description, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
-					}
+					var startType = new StartTypeCollection(this);
+					startType.OfferQuest(player, obj);
+					return;
 				}
 				else if (!string.IsNullOrEmpty(Description))
 				{
@@ -1616,7 +1455,7 @@ namespace DOL.GS.Quests
 						charQuest.Count++;
 						charQuest.Step = 0;
 						GameServer.Database.SaveObject(charQuest);
-						long rewardXP = 0;
+						long rewardXP;
 						if (long.TryParse(DBDataQuest.RewardXP, out rewardXP))
 						{
 							player.GainExperience(GameLiving.eXPSource.Quest, rewardXP);
@@ -2481,5 +2320,291 @@ namespace DOL.GS.Quests
 			}
 		}
 
+		public class StartTypeStandard : StartTypeAbstract
+		{
+			public override eStartType StartTypeID => eStartType.Standard;
+
+			public StartTypeStandard(DataQuest dq) : base(dq) { }
+		}
+		
+		public class StartTypeCollection : StartTypeAbstract
+		{
+			public override eStartType StartTypeID => eStartType.Collection;
+
+			public StartTypeCollection(DataQuest dq) : base(dq) { }
+
+			public override void OfferQuest(GamePlayer player, GameObject obj)
+			{
+				CharacterXDataQuest charQuest = GetCharacterQuest(player, ID, false);
+
+				if (charQuest != null && charQuest.Count >= 1 && charQuest.Count < MaxQuestCount)
+				{
+					if (!string.IsNullOrEmpty(TargetText))
+					{
+						TryTurnTo(obj, player);
+						SendMessage(player, FirstStep.TargetText, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
+					}
+				}
+				else if (!string.IsNullOrEmpty(Description))
+				{
+					TryTurnTo(obj, player);
+					SendMessage(player, Description, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
+				}
+			}
+		}
+
+		public class StartTypeAutoStart : StartTypeAbstract
+		{
+			public override eStartType StartTypeID => eStartType.AutoStart;
+
+			public StartTypeAutoStart(DataQuest dq) : base(dq) { }
+
+			public override void OfferQuest(GamePlayer player, GameObject obj)
+			{
+				CharacterXDataQuest charQuest = GetCharacterQuest(player, ID, true);
+				DataQuest dq = new DataQuest(player, obj, DBDataQuest, charQuest);
+				dq.Step = 1;
+				player.AddQuest(dq);
+
+				if (!string.IsNullOrEmpty(FirstStep.SourceText))
+				{
+					TryTurnTo(obj, player);
+					SendMessage(player, FirstStep.SourceText, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
+				}
+
+				if (obj is GameNPC)
+				{
+					UpdateQuestIndicator(obj as GameNPC, player);
+				}
+				return;
+			}
+		}
+
+		public class StartTypeKillComplete : StartTypeAbstract
+		{
+			public override eStartType StartTypeID => eStartType.KillComplete;
+
+			public StartTypeKillComplete(DataQuest dq) : base(dq) { }
+		}
+
+		public class StartTypeInteractComplete : StartTypeAbstract
+		{
+			public override eStartType StartTypeID => eStartType.InteractComplete;
+
+			public StartTypeInteractComplete(DataQuest dq) : base(dq) { }
+
+			public override void OfferQuest(GamePlayer player, GameObject obj)
+			{
+				// This quest finishes with the interaction
+
+				CharacterXDataQuest charQuest = GetCharacterQuest(player, ID, true);
+
+				if (charQuest.Count < MaxQuestCount)
+				{
+					TryTurnTo(obj, player);
+
+					if (ExecuteCustomQuestStep(player, 0, eStepCheckType.Finish))
+					{
+						if (Description.Trim() != "")
+						{
+							SendMessage(player, Description, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
+						}
+
+						if (m_finalRewards.Count > 0)
+						{
+							lock (player.Inventory)
+							{
+								if (player.Inventory.IsSlotsFree(m_finalRewards.Count, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack))
+								{
+									foreach (ItemTemplate item in m_finalRewards)
+									{
+										if (item != null)
+										{
+											GiveItem((obj is GameLiving ? obj as GameLiving : null), player, item, false);
+										}
+									}
+								}
+								else
+								{
+									SendMessage(player, "Your inventory does not have enough space to finish this quest!", 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
+									return;
+								}
+							}
+						}
+
+						if (FirstStep.RewardXP > 0)
+						{
+							player.GainExperience(GameLiving.eXPSource.Quest, FirstStep.RewardXP);
+						}
+
+						if (FirstStep.RewardCLXP > 0)
+						{
+							player.GainChampionExperience(FirstStep.RewardCLXP, GameLiving.eXPSource.Quest);
+						}
+
+						if (FirstStep.RewardRP > 0)
+						{
+							player.GainRealmPoints(FirstStep.RewardRP);
+						}
+
+						if (FirstStep.RewardBP > 0)
+						{
+							player.GainBountyPoints(FirstStep.RewardBP);
+						}
+
+						if (FirstStep.RewardMoney > 0)
+						{
+							player.AddMoney(FirstStep.RewardMoney, "You are awarded {0}!");
+							InventoryLogging.LogInventoryAction("(QUEST;" + Name + ")", player, eInventoryActionType.Quest, FirstStep.RewardMoney);
+						}
+
+						charQuest.Count++;
+						GameServer.Database.SaveObject(charQuest);
+
+						bool add = true;
+						lock (player.QuestListFinished)
+						{
+							foreach (AbstractQuest q in player.QuestListFinished)
+							{
+								if (q is DataQuest && (q as DataQuest).ID == ID)
+								{
+									add = false;
+									break;
+								}
+							}
+						}
+
+						if (add)
+						{
+							player.QuestListFinished.Add(dataQuest);
+						}
+
+						player.Out.SendQuestListUpdate();
+
+						player.Out.SendMessage(String.Format(LanguageMgr.GetTranslation(player.Client.Account.Language, "AbstractQuest.FinishQuest.Completed", Name)), eChatType.CT_ScreenCenter, eChatLoc.CL_SystemWindow);
+						player.Out.SendMessage(String.Format(LanguageMgr.GetTranslation(player.Client.Account.Language, "AbstractQuest.FinishQuest.Completed", Name)), eChatType.CT_Important, eChatLoc.CL_SystemWindow);
+					}
+				}
+
+			}
+		}
+
+		public class StartTypeSearchStart : StartTypeAbstract
+		{
+			public override eStartType StartTypeID => eStartType.SearchStart;
+
+			public StartTypeSearchStart(DataQuest dq) : base(dq) { }
+
+			public override void OfferQuest(GamePlayer player, GameObject obj)
+			{
+				if (m_searchStartItemTemplate != "")
+				{
+					lock (player.Inventory)
+					{
+						if (player.Inventory.IsSlotsFree(1, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack))
+						{
+							ItemTemplate item = GameServer.Database.FindObjectByKey<ItemTemplate>(m_searchStartItemTemplate.Trim());
+							if (item == null)
+							{
+								string errorMsg = string.Format("SearchStart Item Template {0} not found in DB!", m_searchStartItemTemplate);
+								ChatUtil.SendDebugMessage(player, errorMsg);
+								log.Error(errorMsg);
+								return;
+							}
+
+							GiveItem(player, item, false);
+						}
+						else
+						{
+							player.Out.SendMessage("Your backpack is full, you can't start this quest!", eChatType.CT_System, eChatLoc.CL_SystemWindow);
+							return;
+						}
+					}
+
+				}
+
+				CharacterXDataQuest charQuest = GetCharacterQuest(player, ID, true);
+				DataQuest dq = new DataQuest(player, obj, DBDataQuest, charQuest);
+				dq.Step = 1;
+				player.AddQuest(dq);
+				if (!string.IsNullOrEmpty(FirstStep.SourceText))
+				{
+					TryTurnTo(obj, player);
+					SendMessage(player, FirstStep.SourceText, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
+				}
+
+				if (obj is GameNPC)
+				{
+					UpdateQuestIndicator(obj as GameNPC, player);
+				}
+
+			}
+		}
+
+		public class StartTypeRewardQuest : StartTypeAbstract
+		{
+			public override eStartType StartTypeID => eStartType.RewardQuest;
+
+			public StartTypeRewardQuest(DataQuest dq) : base(dq) { }
+
+			public override void OfferQuest(GamePlayer player, GameObject obj)
+			{
+				// Send offer quest dialog
+
+				GameNPC offerNPC = obj as GameNPC;
+				if (offerNPC != null)
+				{
+					TryTurnTo(obj, player);
+					// Note: If the offer is handled by the custom step then it should return false to prevent a double offer
+					if (ExecuteCustomQuestStep(player, 0, eStepCheckType.Offer))
+					{
+						player.Out.SendQuestOfferWindow(offerNPC, player, dataQuest);
+					}
+				}
+			}
+		}
+
+		public class StartTypeUnknown : StartTypeAbstract
+		{
+			public override eStartType StartTypeID => eStartType.Unknown;
+
+			public StartTypeUnknown(DataQuest dq) : base(dq) { }
+		}
+
+		public abstract class StartTypeAbstract
+		{
+			protected DataQuest dataQuest;
+
+			public StartTypeAbstract(DataQuest dq)
+			{
+				dataQuest = dq;
+			}
+
+			protected DataQuestStep FirstStep => dataQuest.FirstStep;
+			protected eStartType StartType => dataQuest.StartType;
+			protected int MaxQuestCount => dataQuest.MaxQuestCount;
+			protected int ID => dataQuest.ID;
+			protected string Name => dataQuest.Name;
+			protected string Description => dataQuest.Description;
+			protected string TargetText => dataQuest.TargetText;
+			protected DBDataQuest DBDataQuest => dataQuest.DBDataQuest;
+			protected List<ItemTemplate> m_finalRewards => dataQuest.m_finalRewards;
+			protected string m_searchStartItemTemplate => dataQuest.m_searchStartItemTemplate;
+
+			protected bool ExecuteCustomQuestStep(GamePlayer player, int step, eStepCheckType stepCheckType) { return dataQuest.ExecuteCustomQuestStep(player, step, stepCheckType); }
+			protected void UpdateQuestIndicator(GameNPC npc, GamePlayer player) { dataQuest.UpdateQuestIndicator(npc, player); }
+			protected void TryTurnTo(GameObject obj, GamePlayer player) { dataQuest.TryTurnTo(obj, player); }
+
+			public abstract eStartType StartTypeID {get;}
+
+			public virtual void OfferQuest(GamePlayer player, GameObject obj)
+			{
+				if (!string.IsNullOrEmpty(Description))
+				{
+					TryTurnTo(obj, player);
+					SendMessage(player, Description, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
+				}
+			}
+		}
 	}
 }
