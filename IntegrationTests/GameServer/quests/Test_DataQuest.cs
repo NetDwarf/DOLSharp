@@ -121,7 +121,7 @@ namespace DOL.Integration.GameServer
             Assert.AreEqual(7, actual.Value.SearchSeconds);
             Assert.AreEqual("text", actual.Value.PopupText);
 
-            Assert.AreEqual(1, dataQuest.SpyNumSearchAreas);
+            Assert.AreEqual(1, dataQuest.SpyAllQuestSearchAreas.Count);
         }
 
         [Test]
@@ -142,7 +142,7 @@ namespace DOL.Integration.GameServer
             Assert.AreEqual(7, actual.Value.SearchSeconds);
             Assert.AreEqual("text", actual.Value.PopupText);
 
-            Assert.AreEqual(1, dataQuest.SpyNumSearchAreas);
+            Assert.AreEqual(1, dataQuest.SpyAllQuestSearchAreas.Count);
         }
 
         [Test]
@@ -150,23 +150,7 @@ namespace DOL.Integration.GameServer
         {
             var dataQuest = new DataQuestSpy(dbDataQuest, null);
 
-            Assert.AreEqual(0, dataQuest.SpyNumSearchAreas);
-        }
-
-        [Test]
-        public void NumSearchAreas_TwoSearchAreaQuestsWithDifferentSearchAreaCount_CountIsSeparate()
-        {
-            var dbDataQuest = NewDBDataQuest();
-            dbDataQuest.SourceName = "SEARCHSTART;itemtemplate;text;3;4;5;6;7|SEARCHSTART;itemtemplate;text;3;4;5;6;7";
-            dbDataQuest.ID = 1;
-            var dbDataQuest2 = NewDBDataQuest();
-            dbDataQuest2.SourceName = "SEARCHSTART;itemtemplate;text;3;4;5;6;7";
-            dbDataQuest2.ID = 2;
-
-            var dataQuest = new DataQuestSpy(dbDataQuest, null);
-            var dataQuest2 = new DataQuestSpy(dbDataQuest2, null);
-
-            Assert.AreEqual(3, dataQuest.SpyAllQuestSearchAreas.Count);
+            Assert.AreEqual(0, dataQuest.SpyAllQuestSearchAreas.Count);
         }
 
         [Test]
@@ -177,7 +161,7 @@ namespace DOL.Integration.GameServer
 
             var dataQuest = new DataQuestSpy(dbDataQuest, null);
 
-            Assert.AreEqual(2, dataQuest.SpyNumSearchAreas);
+            Assert.AreEqual(2, dataQuest.SpyAllQuestSearchAreas.Count);
         }
 
         [Test]
@@ -217,7 +201,6 @@ namespace DOL.Integration.GameServer
             public string SpyStepItemTemplate => StepItemTemplate;
             public string SpyCollectItemTemplate => CollectItemTemplate;
             public string SpySearchStartItemTemplate => m_searchStartItemTemplate;
-            public int SpyNumSearchAreas => m_numSearchAreas;
         }
 
         private class FakePlayerSpy : FakePlayer

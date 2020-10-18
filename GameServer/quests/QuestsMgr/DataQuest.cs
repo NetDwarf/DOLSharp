@@ -226,12 +226,7 @@ namespace DOL.GS.Quests
         /// <summary>
         /// A static list of every search area for all data quests
         /// </summary>
-        protected static List<KeyValuePair<int, QuestSearchArea>> m_allQuestSearchAreas = new List<KeyValuePair<int, QuestSearchArea>>();
-
-        /// <summary>
-        /// How many search areas are part of this quest
-        /// </summary>
-        protected int m_numSearchAreas = 0;
+        protected List<KeyValuePair<int, QuestSearchArea>> m_allQuestSearchAreas = new List<KeyValuePair<int, QuestSearchArea>>();
 
         /// <summary>
         /// An item given to a player when starting with a search.
@@ -352,15 +347,7 @@ namespace DOL.GS.Quests
 
 			try
 			{
-                foreach (KeyValuePair<int, QuestSearchArea> entry in m_allQuestSearchAreas)
-                {
-                    if (entry.Key == ID)
-                    {
-                        m_numSearchAreas++;
-                    }
-                }
-
-                m_lastErrorText += " ::" + m_numSearchAreas + " search areas defined for data quest ID:" + ID;
+                m_lastErrorText += " ::" + m_allQuestSearchAreas.Count + " search areas defined for data quest ID: " + ID;
 
 				OptionalRewards = definition.OptionalRewards;
 				m_finalRewards = definition.FinalRewards;
@@ -1956,7 +1943,7 @@ namespace DOL.GS.Quests
             {
                 // every active quest in the players quest list is sent this command.  Respond if we have an active search
 
-                if (m_numSearchAreas > 0 && player == QuestPlayer)
+                if (m_allQuestSearchAreas.Count > 0 && player == QuestPlayer)
                 {
                     // see if the player is in our search area
 
