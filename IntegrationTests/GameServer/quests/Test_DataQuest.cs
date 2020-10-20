@@ -189,7 +189,7 @@ namespace DOL.Integration.GameServer
             public string SpySourceName => SourceName;
             public List<string> SpyQuestDependency => m_questDependencies;
             public List<byte> SpyAllowedClasses => m_allowedClasses;
-            public List<KeyValuePair<int, QuestSearchArea>> SpyAllQuestSearchAreas => m_allQuestSearchAreas;
+            public List<KeyValuePair<int, QuestSearchArea>> SpyAllQuestSearchAreas => questSearchAreas;
 
             public long SpyRewardMoney => RewardMoney;
             public long SpyRewardXP => RewardXP;
