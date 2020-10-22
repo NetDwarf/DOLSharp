@@ -35,6 +35,7 @@ namespace DOL.GS.Quests
 		public List<string> QuestDependencies { get; internal set; }
 		public string ClassType { get; internal set; }
 		public string AdditionalData { get; internal set; }
+		public DataQuest.eStartType StartTypeID { get; internal set; }
 	}
 
 	internal class DataQuestParser
@@ -73,6 +74,7 @@ namespace DOL.GS.Quests
 			var customQuestType = ParseArrayString(dbDataQuest.ClassType);
 			DataQuestDefinition.ClassType = customQuestType.Count > 0 ? ParseArrayString(dbDataQuest.ClassType)[0] : ""; 
 			DataQuestDefinition.AdditionalData = customQuestType.Count > 1 ? ParseArrayString(dbDataQuest.ClassType)[1] : "";
+			DataQuestDefinition.StartTypeID = (DataQuest.eStartType)dbDataQuest.StartType;
 
 			this.DataQuestDefinition = DataQuestDefinition;
 		}

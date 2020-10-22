@@ -164,24 +164,10 @@ namespace DOL.GS.Quests
 
         protected bool m_showIndicator => definition.ShowIndicator;
 
-        /// <summary>
-        /// Should the available quest indicator be shown for this quest?  Use NO_INDICATOR in SourceName
-        /// </summary>
-        public bool ShowIndicator
-        {
-            get 
-            {
-                if (StartType != DataQuest.eStartType.Collection &&
-                    StartType != DataQuest.eStartType.KillComplete &&
-                    StartType != DataQuest.eStartType.InteractComplete &&
-                    StartType != DataQuest.eStartType.SearchStart)
-                {
-                    return m_showIndicator;
-                }
-
-                return false;
-            }
-        }
+		/// <summary>
+		/// Should the available quest indicator be shown for this quest?  Use NO_INDICATOR in SourceName
+		/// </summary>
+		public bool ShowIndicator => StartTypeObj.ShowIndicator;
 
 
 		/// <summary>
@@ -198,6 +184,8 @@ namespace DOL.GS.Quests
 			RewardQuest = 200,		// A reward quest, where reward dialog is given to player on quest offer and complete.  
 			Unknown = 255
 		}
+
+		private StartTypeAbstract StartTypeObj;
 
 		/// <summary>
 		/// The type of each quest step
@@ -342,6 +330,8 @@ namespace DOL.GS.Quests
 			var parser = DataQuestParser.Load(m_dataQuest);
 			definition = parser.DataQuestDefinition;
 			steps = parser.DataQuestSteps;
+
+			StartTypeObj = CreateStartType(definition.StartTypeID);
 
 			string lastParse = "";
 
@@ -1306,7 +1296,6 @@ namespace DOL.GS.Quests
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine("blubb blubb error" + ex.ToString() + ex.Message);
 				log.Error("DataQuest [" + ID + "] Notify Error for " + e.Name, ex);
                 if (QuestPlayer != null) ChatUtil.SendDebugMessage(QuestPlayer, "DataQuest [" + ID + "] Notify Error for " + e.Name);
             }
@@ -1362,44 +1351,7 @@ namespace DOL.GS.Quests
 			// Can we offer this quest to the player?
 			if (CheckQuestQualification(player))
 			{
-				if (StartType == eStartType.InteractComplete)
-				{
-					var startType = new StartTypeInteractComplete(this);
-					startType.OfferQuest(player, obj);
-					return;
-				}
-
-				if (StartType == eStartType.AutoStart)
-				{
-					var startType = new StartTypeAutoStart(this);
-					startType.OfferQuest(player, obj);
-					return;
-				}
-
-				if (StartType == eStartType.SearchStart)
-				{
-					var startType = new StartTypeSearchStart(this);
-					startType.OfferQuest(player, obj);
-					return;
-				}
-
-				if (StartType == eStartType.RewardQuest)
-				{
-					var startType = new StartTypeRewardQuest(this);
-					startType.OfferQuest(player, obj);
-					return;
-				}
-				if (StartType == eStartType.Collection)
-				{
-					var startType = new StartTypeCollection(this);
-					startType.OfferQuest(player, obj);
-					return;
-				}
-				else if (!string.IsNullOrEmpty(Description))
-				{
-					TryTurnTo(obj, player);
-					SendMessage(player, Description, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
-				}
+				StartTypeObj.OfferQuest(player, obj);
 			}
 		}
 
@@ -2317,6 +2269,7 @@ namespace DOL.GS.Quests
 		public class StartTypeCollection : StartTypeAbstract
 		{
 			public override eStartType StartTypeID => eStartType.Collection;
+			public override bool ShowIndicator => false;
 
 			public StartTypeCollection(DataQuest dq) : base(dq) { }
 
@@ -2370,6 +2323,7 @@ namespace DOL.GS.Quests
 		public class StartTypeKillComplete : StartTypeAbstract
 		{
 			public override eStartType StartTypeID => eStartType.KillComplete;
+			public override bool ShowIndicator => false;
 
 			public StartTypeKillComplete(DataQuest dq) : base(dq) { }
 		}
@@ -2377,6 +2331,7 @@ namespace DOL.GS.Quests
 		public class StartTypeInteractComplete : StartTypeAbstract
 		{
 			public override eStartType StartTypeID => eStartType.InteractComplete;
+			public override bool ShowIndicator => false;
 
 			public StartTypeInteractComplete(DataQuest dq) : base(dq) { }
 
@@ -2479,6 +2434,7 @@ namespace DOL.GS.Quests
 		public class StartTypeSearchStart : StartTypeAbstract
 		{
 			public override eStartType StartTypeID => eStartType.SearchStart;
+			public override bool ShowIndicator => false;
 
 			public StartTypeSearchStart(DataQuest dq) : base(dq) { }
 
@@ -2558,6 +2514,11 @@ namespace DOL.GS.Quests
 			public StartTypeUnknown(DataQuest dq) : base(dq) { }
 		}
 
+
+		/*StartType != DataQuest.eStartType.Collection &&
+                    StartType != DataQuest.eStartType.KillComplete &&
+                    StartType != DataQuest.eStartType.InteractComplete &&
+                    StartType != DataQuest.eStartType.SearchStart)*/
 		public abstract class StartTypeAbstract
 		{
 			protected DataQuest dataQuest;
@@ -2584,6 +2545,8 @@ namespace DOL.GS.Quests
 
 			public abstract eStartType StartTypeID {get;}
 
+			public virtual bool ShowIndicator => dataQuest.m_showIndicator;
+
 			public virtual void OfferQuest(GamePlayer player, GameObject obj)
 			{
 				if (!string.IsNullOrEmpty(Description))
@@ -2591,6 +2554,21 @@ namespace DOL.GS.Quests
 					TryTurnTo(obj, player);
 					SendMessage(player, Description, 0, eChatType.CT_System, eChatLoc.CL_PopupWindow);
 				}
+			}
+		}
+
+		private StartTypeAbstract CreateStartType(DataQuest.eStartType startTypeID)
+		{
+			switch (startTypeID)
+			{
+				case eStartType.AutoStart: return new StartTypeAutoStart(this);
+				case eStartType.Collection: return new StartTypeCollection(this);
+				case eStartType.InteractComplete: return new StartTypeInteractComplete(this);
+				case eStartType.KillComplete: return new StartTypeKillComplete(this);
+				case eStartType.RewardQuest: return new StartTypeRewardQuest(this);
+				case eStartType.SearchStart: return new StartTypeSearchStart(this);
+				case eStartType.Standard: return new StartTypeStandard(this);
+				default: return new StartTypeUnknown(this);
 			}
 		}
 	}
