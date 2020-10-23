@@ -186,7 +186,9 @@ namespace DOL.GS
 		/// <summary>
 		/// Gets the server NpcManager
 		/// </summary>
-		public NpcManager NpcManager { get; protected set; }
+		[Obsolete("Property is going to be removed.")]
+		public NpcManager NpcManager { get; } = new NpcManager();
+		public MobAmbientBehaviourManager MobAmbientBehaviourManager { get; protected set; }
 
 		protected virtual IServerRules ServerRulesImpl
 		{
@@ -650,11 +652,9 @@ namespace DOL.GS
 				if (!InitComponent(() => PlayerManager = new PlayerManager(this), "Player Manager Initialization"))
 					return false;
 
-				//---------------------------------------------------------------
-				//Try to initialize the NpcManager
-				if (!InitComponent(() => NpcManager = new NpcManager(this), "NPC Manager Initialization"))
+				if (!InitComponent(() => MobAmbientBehaviourManager = new MobAmbientBehaviourManager(IDatabase), "Mob Ambient Behaviour Manager Initialization"))
 					return false;
-				
+
 				//---------------------------------------------------------------
 				//Try to start the Language Manager
 				if (!InitComponent(LanguageMgr.Init(), "Multi Language Initialization"))

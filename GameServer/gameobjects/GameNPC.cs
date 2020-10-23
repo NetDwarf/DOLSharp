@@ -3076,7 +3076,7 @@ namespace DOL.GS
 		{
 			// list of ambient texts
 			if (!string.IsNullOrEmpty(Name))
-				ambientTexts = GameServer.Instance.NpcManager.AmbientBehaviour[Name];
+				ambientTexts = GameServer.Instance.MobAmbientBehaviourManager[Name];
 		}
 
 		/// <summary>
