@@ -60,6 +60,8 @@ namespace DOL.UnitTests.Gameserver
         protected override IObjectDatabase DataBaseImpl => fakeDatabase;
         protected override void CheckAndInitDB() { }
 
+        private FakeServer() { MobAmbientBehaviourManager = new MobAmbientBehaviourManager(fakeDatabase); }
+
         public static FakeServer LoadAndReturn()
         {
             var fakeServer = new FakeServer();
@@ -99,7 +101,7 @@ namespace DOL.UnitTests.Gameserver
         public void RegisterDataObject(Type dataObjectType) => throw new NotImplementedException();
         public bool SaveObject(DataObject dataObject) => true;
         public bool SaveObject(IEnumerable<DataObject> dataObjects) => throw new NotImplementedException();
-        public IList<TObject> SelectAllObjects<TObject>() where TObject : DataObject => throw new NotImplementedException();
+        public IList<TObject> SelectAllObjects<TObject>() where TObject : DataObject => new List<TObject>();
         public IList<TObject> SelectAllObjects<TObject>(IsolationLevel isolation) where TObject : DataObject => throw new NotImplementedException();
         public TObject SelectObject<TObject>(string whereExpression, IEnumerable<IEnumerable<QueryParameter>> parameters) where TObject : DataObject => throw new NotImplementedException();
         public TObject SelectObject<TObject>(string whereExpression, IEnumerable<QueryParameter> parameter) where TObject : DataObject => throw new NotImplementedException();

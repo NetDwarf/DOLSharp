@@ -160,7 +160,7 @@ namespace DOL.GS
 		/// <summary>
 		/// Gets the current Zone of the Object
 		/// </summary>
-		public Zone CurrentZone
+		public virtual Zone CurrentZone
 		{
 			get
 			{

@@ -165,17 +165,73 @@ namespace DOL.Integration.GameServer
         }
 
         [Test]
-        public void CheckOfferQuest_PlayerGainsOneExpTotal()
+        public void DataQuest_StartTypeIsInteractCompleteAndPlayerInteractsWithQuestNPC_PlayerGainsOneExpTotal()
         {
             var dbDataQuest = NewDBDataQuest();
             dbDataQuest.StartType = (byte)DataQuest.eStartType.InteractComplete;
             dbDataQuest.RewardXP = "1";
             var dataQuest = new DataQuestSpy(dbDataQuest);
             var player = new FakePlayerSpy();
+            var npc = new FakeNPC();
+            npc.AddDataQuest(dataQuest);
 
-            dataQuest.Notify(GameObjectEvent.Interact, new FakeNPC(), new InteractEventArgs(player));
+            npc.Interact(player);
 
-            var actual = player.SpyGainExperienceExpTotal;
+            Assert.Contains(GameObjectEvent.Interact, dataQuest.SpyNotifyEvents);
+            var actual = player.SpyLastExperienceGained;
+            Assert.AreEqual(1, actual);
+        }
+
+        [Test]
+        public void DataQuest_CurrentStepTypeIsInteractionFinishedAndPlayerInteractsWithQuestNPC_PlayerGainsOneExp()
+        {
+            var questNPCName = "foo";
+            var questNPCRegion = 0;
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.StartType = (byte)DataQuest.eStartType.Standard;
+            dbDataQuest.StepType = ((byte)DataQuest.eStepType.InteractFinish).ToString();
+            dbDataQuest.RewardXP = "1";
+            dbDataQuest.TargetName = questNPCName + ";" + questNPCRegion;
+            var player = new FakePlayerSpy();
+            var questNPC = new FakeNPC();
+            questNPC.Name = questNPCName;
+            var dataQuest = new DataQuestSpy(player, null, dbDataQuest);
+            player.AddQuest(dataQuest);
+
+            dataQuest.Step = 1;
+            questNPC.Interact(player);
+
+            Assert.Contains(GameObjectEvent.InteractWith, dataQuest.SpyNotifyEvents);
+            var actual = player.SpyLastExperienceGained;
+            Assert.AreEqual(1, actual);
+        }
+
+        [Test]
+        public void DataQuest_CurrentStepTypeIsCollectFinishAndPlayerGivesCorrectItem_PlayerGainsOneExp()
+        {
+            var questNPCName = "foo";
+            var questNPCRegion = 0;
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.StartType = (byte)DataQuest.eStartType.Standard;
+            dbDataQuest.StepType = ((byte)DataQuest.eStepType.CollectFinish).ToString();
+            dbDataQuest.RewardXP = "1";
+            dbDataQuest.TargetName = questNPCName + ";" + questNPCRegion;
+            dbDataQuest.CollectItemTemplate = "the_item";
+            var questItem = new ItemTemplate();
+            questItem.Id_nb = "the_item";
+            var player = new FakePlayerSpy();
+            var invItem = new GameInventoryItem(questItem);
+            invItem.OwnerID = "doesNotMatter";
+            var questNPC = new FakeNPC();
+            questNPC.Name = questNPCName;
+            var dataQuest = new DataQuestSpy(player, null, dbDataQuest);
+            player.AddQuest(dataQuest);
+
+            dataQuest.Step = 1;
+            player.Notify(GamePlayerEvent.GiveItem, player, new GiveItemEventArgs(player, questNPC, invItem));
+
+            Assert.Contains(GamePlayerEvent.GiveItem, dataQuest.SpyNotifyEvents);
+            var actual = player.SpyLastExperienceGained;
             Assert.AreEqual(1, actual);
         }
 
@@ -185,6 +241,11 @@ namespace DOL.Integration.GameServer
         {
             public DataQuestSpy(DBDataQuest dbDataQuest) : base(dbDataQuest) { m_charQuest = new CharacterXDataQuest(); }
             public DataQuestSpy(DBDataQuest dbDataQuest, GameObject startingObject) : base(dbDataQuest, startingObject) { m_charQuest = new CharacterXDataQuest(); }
+            public DataQuestSpy(GamePlayer questingPlayer, GameObject sourceObject, DBDataQuest dataQuest) : base(questingPlayer, sourceObject, dataQuest, null) 
+            { 
+                m_charQuest = new CharacterXDataQuest(); 
+                m_charQuest.IsPersisted = true; 
+            }
 
             public string SpySourceName => SourceName;
             public List<string> SpyQuestDependency => m_questDependencies;
@@ -201,15 +262,23 @@ namespace DOL.Integration.GameServer
             public string SpyStepItemTemplate => StepItemTemplate;
             public string SpyCollectItemTemplate => CollectItemTemplate;
             public string SpySearchStartItemTemplate => m_searchStartItemTemplate;
+
+            public List<DOLEvent> SpyNotifyEvents { get; private set; } = new List<DOLEvent>();
+
+            public override void Notify(DOLEvent e, object sender, EventArgs args)
+            {
+                SpyNotifyEvents.Add(e);
+                base.Notify(e, sender, args);
+            }
         }
 
         private class FakePlayerSpy : FakePlayer
         {
-            public long SpyGainExperienceExpTotal { get; private set; }
+            public long SpyLastExperienceGained { get; private set; }
 
             public override void GainExperience(eXPSource xpSource, long expTotal, long expCampBonus, long expGroupBonus, long expOutpostBonus, bool sendMessage, bool allowMultiply, bool notify)
             {
-                SpyGainExperienceExpTotal = expTotal;
+                SpyLastExperienceGained = expTotal;
             }
         }
     }

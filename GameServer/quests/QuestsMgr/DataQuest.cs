@@ -1541,11 +1541,7 @@ namespace DOL.GS.Quests
 		/// <param name="item"></param>
 		protected virtual void OnPlayerGiveItem(GamePlayer player, GameObject obj, InventoryItem item)
 		{
-			var collectItemCount = 0;
-			foreach (var step in steps)
-				collectItemCount = (step.CollectItem == string.Empty) ? collectItemCount : collectItemCount++;
-
-			if (item == null || item.OwnerID == null || collectItemCount == 0)
+			if (item == null || item.OwnerID == null)
 				return;
 
 			if (TargetName == obj.Name && (TargetRegion == obj.CurrentRegionID || TargetRegion == 0)

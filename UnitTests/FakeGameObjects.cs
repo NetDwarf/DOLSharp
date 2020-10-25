@@ -86,11 +86,13 @@ namespace DOL.UnitTests.Gameserver
         public FakeNPC(ABrain defaultBrain) : base(defaultBrain)
         {
             this.ObjectState = eObjectState.Active;
+            m_CurrentRegion = new FakeRegion();
         }
 
         public FakeNPC() : this(new FakeBrain()) { }
 
-        public override Region CurrentRegion { get { return new FakeRegion(); } set { } }
+        public override Region CurrentRegion { get { return m_CurrentRegion; } set { } }
+        public override Zone CurrentZone => new Zone(CurrentRegion,0,"",0,0,0,0,0,false,0,false,0,0,0,0,0);
         public override bool IsAlive => true;
         public override int GetModified(eProperty property)
         {
