@@ -183,6 +183,35 @@ namespace DOL.Integration.GameServer
         }
 
         [Test]
+        public void DataQuest_StartTypeIsCollectionAndPlayerGivesKillTaskItem_PlayerGainsOneExp()
+        {
+            var questNPCName = "foo";
+            var questNPCRegion = 0;
+            var dbDataQuest = NewDBDataQuest();
+            var taskItemIDNB = "kill_task_item";
+            dbDataQuest.StartType = (byte)DataQuest.eStartType.Collection;
+            dbDataQuest.RewardXP = "1";
+            dbDataQuest.TargetName = questNPCName + ";" + questNPCRegion;
+            dbDataQuest.CollectItemTemplate = taskItemIDNB;
+            var questItem = new ItemTemplate();
+            questItem.Id_nb = taskItemIDNB;
+            var player = new FakePlayerSpy();
+            var invItem = new GameInventoryItem(questItem);
+            invItem.OwnerID = "";
+            var questNPC = new FakeNPC();
+            questNPC.Name = questNPCName;
+            var dataQuest = new DataQuestSpy(dbDataQuest, questNPC);
+            player.AddQuest(dataQuest);
+            questNPC.AddDataQuest(dataQuest);
+
+            questNPC.ReceiveItem(player, invItem);
+
+            Assert.Contains(GamePlayerEvent.ReceiveItem, dataQuest.SpyNotifyEvents);
+            var actual = player.SpyLastExperienceGained;
+            Assert.AreEqual(1, actual);
+        }
+
+        [Test]
         public void DataQuest_CurrentStepTypeIsInteractionFinishedAndPlayerInteractsWithQuestNPC_PlayerGainsOneExp()
         {
             var questNPCName = "foo";
@@ -221,7 +250,36 @@ namespace DOL.Integration.GameServer
             questItem.Id_nb = "the_item";
             var player = new FakePlayerSpy();
             var invItem = new GameInventoryItem(questItem);
-            invItem.OwnerID = "doesNotMatter";
+            invItem.OwnerID = "";
+            var questNPC = new FakeNPC();
+            questNPC.Name = questNPCName;
+            var dataQuest = new DataQuestSpy(player, null, dbDataQuest);
+            player.AddQuest(dataQuest);
+
+            dataQuest.Step = 1;
+            player.Notify(GamePlayerEvent.GiveItem, player, new GiveItemEventArgs(player, questNPC, invItem));
+
+            Assert.Contains(GamePlayerEvent.GiveItem, dataQuest.SpyNotifyEvents);
+            var actual = player.SpyLastExperienceGained;
+            Assert.AreEqual(1, actual);
+        }
+
+        [Test]
+        public void DataQuest_CurrentStepTypeIsDeliverFinishAndPlayerGivesCorrectItem_PlayerGainsOneExp()
+        {
+            var questNPCName = "foo";
+            var questNPCRegion = 0;
+            var dbDataQuest = NewDBDataQuest();
+            dbDataQuest.StartType = (byte)DataQuest.eStartType.Standard;
+            dbDataQuest.StepType = ((byte)DataQuest.eStepType.DeliverFinish).ToString();
+            dbDataQuest.RewardXP = "1";
+            dbDataQuest.TargetName = questNPCName + ";" + questNPCRegion;
+            dbDataQuest.CollectItemTemplate = "the_item";
+            var questItem = new ItemTemplate();
+            questItem.Id_nb = "the_item";
+            var player = new FakePlayerSpy();
+            var invItem = new GameInventoryItem(questItem);
+            invItem.OwnerID = "";
             var questNPC = new FakeNPC();
             questNPC.Name = questNPCName;
             var dataQuest = new DataQuestSpy(player, null, dbDataQuest);

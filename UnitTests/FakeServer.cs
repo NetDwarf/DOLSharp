@@ -21,6 +21,7 @@ namespace DOL.UnitTests.Gameserver
         public override void SendUpdateMaxSpeed() { }
         public override void SendEncumberance() { }
         public override void SendStatusUpdate() { }
+        public override void SendInventorySlotsUpdate(ICollection<int> slots) { }
     }
 
     public class FakeRegion : Region
