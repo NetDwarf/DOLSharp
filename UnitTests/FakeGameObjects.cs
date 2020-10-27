@@ -113,6 +113,8 @@ namespace DOL.UnitTests.Gameserver
         {
             return new System.Collections.Generic.List<int>();
         }
+
+        public override void StopFollowing() { }
     }
 
     public class FakeLiving : GameLiving
