@@ -9,9 +9,8 @@ env:
    - BUILD_TARGET=Debug
    - BUILD_TARGET=Release
 
-install:
- - travis_retry nuget install NUnit.Console -Version 3.11.1 -OutputDirectory test -ExcludeVersion
 script:
  - dotnet build --configuration=$BUILD_TARGET
- - LANG=en_US.CP1252 mono ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/$BUILD_TARGET/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
- - LANG=en_US.CP1252 mono ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/$BUILD_TARGET/lib/Tests.dll --where "namespace =~ 'DOL.Integration' and category!='Explicit'"
+ - dotnet add Tests package NUnit.ConsoleRunner --version 3.11.1 --package-directory test
+ - ./test/nunit.consolerunner/*/tools/nunit3-console.exe ./build/Tests/$BUILD_TARGET/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
+ - ./test/nunit.consolerunner/*/tools/nunit3-console.exe ./build/Tests/$BUILD_TARGET/lib/Tests.dll --where "namespace =~ 'DOL.Integration' and category!='Explicit'"
