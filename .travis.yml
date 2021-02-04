@@ -11,6 +11,5 @@ env:
 
 script:
  - dotnet build --configuration=$BUILD_TARGET
- - dotnet add Tests package NUnit.ConsoleRunner --version 3.11.1 --package-directory test
- - ./test/nunit.consolerunner/*/tools/nunit3-console.exe ./build/Tests/$BUILD_TARGET/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
- - ./test/nunit.consolerunner/*/tools/nunit3-console.exe ./build/Tests/$BUILD_TARGET/lib/Tests.dll --where "namespace =~ 'DOL.Integration' and category!='Explicit'"
+ - dotnet test build/Tests/$BUILD_TARGET/lib/Tests.dll --filter "FullyQualifiedName~DOL.UnitTests & TestCategory!=Explicit"
+ - dotnet test build/Tests/$BUILD_TARGET/lib/Tests.dll --filter "FullyQualifiedName~DOL.Integration & TestCategory!=Explicit"
