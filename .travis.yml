@@ -1,3 +1,6 @@
+branches:
+  only:
+  - TravisTest
 language: csharp
 solution: Dawn of Light.sln
 sudo: false # Use container-based infrastructure
@@ -5,7 +8,6 @@ sudo: false # Use container-based infrastructure
 env:
   matrix:
    - BUILD_TARGET=Debug
-   - BUILD_TARGET=Release
 
 install:
  - Configuration=$BUILD_TARGET travis_retry nuget restore
