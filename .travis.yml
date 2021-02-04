@@ -1,4 +1,6 @@
 language: csharp
+mono: none
+dotnet: 5.0.102
 solution: Dawn of Light.sln
 sudo: false # Use container-based infrastructure
 
@@ -8,9 +10,8 @@ env:
    - BUILD_TARGET=Release
 
 install:
- - Configuration=$BUILD_TARGET travis_retry nuget restore
  - travis_retry nuget install NUnit.Console -Version 3.11.1 -OutputDirectory test -ExcludeVersion
 script:
- - MONO_IOMAP=case msbuild /p:Configuration=$BUILD_TARGET "Dawn of Light.sln"
+ - dotnet build --configuration=$BUILD_TARGET
  - LANG=en_US.CP1252 mono ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/$BUILD_TARGET/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
  - LANG=en_US.CP1252 mono ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/$BUILD_TARGET/lib/Tests.dll --where "namespace =~ 'DOL.Integration' and category!='Explicit'"
