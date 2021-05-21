@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\GameServer\**\*.cs" />
+    <Compile Remove="..\..\GameServer\gameutils\ScriptMgr.cs" />
     <EmbeddedResource Include="..\..\GameServer\config\logconfig.xml" />
     <EmbeddedResource Include="..\..\GameServer\config\invalidnames.txt" />
     <EmbeddedResource Include="..\..\GameServer\config\logconfig_unix.xml" />
