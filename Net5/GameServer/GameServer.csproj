@@ -44,17 +44,15 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.12" />
-    <PackageReference Include="System.CodeDom" Version="5.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.9.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
     <ProjectReference Include="..\DOLBase\DOLBase.csproj" Name="DOLBase" />
     <ProjectReference Include="..\DOLDatabase\DOLDatabase.csproj" Name="DOLDatabase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\GameServer\**\*.cs" />
-    <EmbeddedResource Include="..\..\GameServer\config\logconfig.xml" />
-    <EmbeddedResource Include="..\..\GameServer\config\invalidnames.txt" />
-    <EmbeddedResource Include="..\..\GameServer\config\logconfig_unix.xml" />
-    <None Include="..\..\GameServer\language\**\*.txt" />
+    <Compile Remove="..\..\GameServer\gameutils\DOLScriptCompiler.cs" />
+    <EmbeddedResource Include="..\..\GameServer\config\*" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' != 'Unix' ">xcopy "$(MSBuildProjectDirectory)\..\..\GameServer\language\*.txt" "$(MSBuildProjectDirectory)\..\$(Configuration)\languages" /y /s /q /i</PostBuildEvent>

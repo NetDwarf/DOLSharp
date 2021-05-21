@@ -16,16 +16,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-using log4net;
-
-using Microsoft.CSharp;
-using Microsoft.VisualBasic;
+#if NETFRAMEWORK
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+
+using Microsoft.CSharp;
+using Microsoft.VisualBasic;
+using log4net;
 
 namespace DOL.GS
 {
@@ -74,7 +75,6 @@ namespace DOL.GS
             var compilerResults = compiler.CompileAssemblyFromFile(compilerParameters, sourceFilePaths);
             lastCompilationErrors = compilerResults.Errors;
             GC.Collect();
-            PrintErrors(compilerResults);
             return compilerResults.CompiledAssembly;
         }
 
@@ -87,14 +87,6 @@ namespace DOL.GS
             lastCompilationErrors = compilerResults.Errors;
             if (HasErrors) return null;
             return compilerResults.CompiledAssembly;
-        }
-
-        private void PrintErrors(CompilerResults compilerResults)
-        {
-            foreach (var errorMessage in GetDetailedErrorMessages())
-            {
-                log.Error(errorMessage);
-            }
         }
 
         public IEnumerable<string> GetDetailedErrorMessages()
@@ -125,3 +117,4 @@ namespace DOL.GS
         }
     }
 }
+#endif

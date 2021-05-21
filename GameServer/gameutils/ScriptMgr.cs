@@ -519,6 +519,10 @@ namespace DOL.GS
 				if (compileVB) compiler.SetToVBSharp();
 
 				var compiledAssembly = compiler.Compile(dllName, files);
+				foreach (var errorMessage in compiler.GetDetailedErrorMessages())
+				{
+					log.Error(errorMessage);
+				}
 				if (compiler.HasErrors) return false;
 				compilationSuccessful = true;
 
