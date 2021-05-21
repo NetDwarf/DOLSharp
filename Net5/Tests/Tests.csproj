@@ -1,0 +1,68 @@
+﻿<Project>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>..\build\Tests\$(Configuration)\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyName>Tests</AssemblyName>
+    <OutputType>Library</OutputType>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <OutputPath>..\build\Tests\$(Configuration)\lib\</OutputPath>
+    <IntermediateOutputPath>..\build\Tests\$(Configuration)\obj\</IntermediateOutputPath>
+    <NoWin32Manifest>False</NoWin32Manifest>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Deterministic>false</Deterministic>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>False</Optimize>
+    <DebugType>Full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>None</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <PlatformTarget>x86</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+    <PackageReference Include="NUnit" Version="3.13.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+    <ProjectReference Include="..\DOLBase\DOLBase.csproj" Name="DOLBase" />
+    <ProjectReference Include="..\DOLDatabase\DOLDatabase.csproj" Name="DOLDatabase" />
+    <ProjectReference Include="..\DOLServer\DOLServer.csproj" Name="DOLServer" />
+    <ProjectReference Include="..\GameServer\GameServer.csproj" Name="GameServer" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Tests\**\*.cs" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent Condition=" '$(OS)' != 'Unix' ">
+      xcopy "$(MSBuildProjectDirectory)\..\..\GameServer\language\*.txt" "$(MSBuildProjectDirectory)\$(OutputPath)\..\languages" /y /s /q /i
+      xcopy "$(MSBuildProjectDirectory)\..\..\GameServerScripts\*.cs" "$(MSBuildProjectDirectory)\$(OutputPath)\..\scripts" /y /s /q /i
+      xcopy "$(MSBuildProjectDirectory)\..\..\GameServerScripts\dbupdater\*.xml" "$(MSBuildProjectDirectory)\$(OutputPath)\..\scripts\dbupdater" /y /s /q /i
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Unix' ">
+      cd "$(MSBuildProjectDirectory)/../../GameServer/language/"; mkdir -p "$(MSBuildProjectDirectory)/$(OutputPath)/../languages/"; find ./ -name "*.txt" | xargs -i -t cp --parents -f {} "$(MSBuildProjectDirectory)/$(OutputPath)/../languages/"
+      cd "$(MSBuildProjectDirectory)/../../GameServerScripts/"; mkdir -p "$(MSBuildProjectDirectory)/$(OutputPath)/../scripts/"; find ./ -name "*.cs" | xargs -i -t cp --parents -f {} "$(MSBuildProjectDirectory)/$(OutputPath)/../scripts/"; find "./dbupdater" -name "*.xml" | xargs -i -t cp --parents -f {} "$(MSBuildProjectDirectory)/$(OutputPath)/../scripts"</PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>
