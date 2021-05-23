@@ -17,7 +17,6 @@
  *
  */
 using System;
-using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -32,8 +31,8 @@ using DOL.GS.Spells;
 using DOL.GS.Commands;
 using DOL.Events;
 using log4net;
-using Microsoft.CSharp;
-using Microsoft.VisualBasic;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
 
 namespace DOL.GS
 {
@@ -407,30 +406,24 @@ namespace DOL.GS
 			}
 			if (client.Player != null)
 			{
-				client.Player.Notify(DOL.Events.GamePlayerEvent.ExecuteCommand, new ExecuteCommandEventArgs(client.Player, myCommand, pars));
+				client.Player.Notify(GamePlayerEvent.ExecuteCommand, new ExecuteCommandEventArgs(client.Player, myCommand, pars));
 			}
 			myCommand.m_cmdHandler.OnCommand(client, pars);
 		}
 
-		/// <summary>
-		/// Compiles the scripts into an assembly
-		/// </summary>
-		/// <param name="compileVB">True if the source files will be in VB.NET</param>
-		/// <param name="path">Path to the source files</param>
-		/// <param name="dllName">Name of the assembly to be generated</param>
-		/// <param name="asm_names">References to other assemblies</param>
-		/// <returns>True if succeeded</returns>
 		public static bool CompileScripts(bool compileVB, string path, string dllName, string[] asm_names)
 		{
+			if (compileVB) throw new NotSupportedException("Please migrate your scripts to C#.");
+
 			if (!path.EndsWith(@"\") && !path.EndsWith(@"/"))
-				path = path + "/";
+				path += "/";
 
 			//Reset the assemblies
 			m_compiledScripts.Clear();
 
-			//Check if there are any scripts, if no scripts exist, that is fine as well
-			IList<FileInfo> files = ParseDirectory(new DirectoryInfo(path), compileVB ? "*.vb" : "*.cs", true);
-			if (files.Count == 0)
+			var files = ParseDirectory(new DirectoryInfo(path), "*.cs", true).Where(file => !file.Name.EndsWith("AssemblyAttributes.cs") && file.Name != "AssemblyInfo.cs");
+
+			if (!files.Any())
 			{
 				return true;
 			}
@@ -439,7 +432,7 @@ namespace DOL.GS
 			bool recompileRequired = true;
 
 			//This file should hold the script infos
-			FileInfo configFile = new FileInfo(dllName + ".xml");
+			var configFile = new FileInfo(dllName + ".xml");
 
 			//If the script assembly is missing, recompile is required
 			if (!File.Exists(dllName))
@@ -459,18 +452,18 @@ namespace DOL.GS
 
 					try
 					{
-						XMLConfigFile config = XMLConfigFile.ParseXMLFile(configFile);
+						var config = XMLConfigFile.ParseXMLFile(configFile);
 
 						//Assume no scripts changed
 						recompileRequired = false;
 
-						Dictionary<string, ConfigElement> precompiledScripts = new Dictionary<string, ConfigElement>(config.Children);
+						var precompiledScripts = new Dictionary<string, ConfigElement>(config.Children);
 
 						//Now test the files
-						foreach (FileInfo finfo in files)
+						foreach (var finfo in files)
 						{
 							if (config[finfo.FullName]["size"].GetInt(0) != finfo.Length
-							    || config[finfo.FullName]["lastmodified"].GetLong(0) != finfo.LastWriteTime.ToFileTime())
+								|| config[finfo.FullName]["lastmodified"].GetLong(0) != finfo.LastWriteTime.ToFileTime())
 							{
 								//Recompile required
 								recompileRequired = true;
@@ -498,12 +491,12 @@ namespace DOL.GS
 						log.Debug("Script info file missing, recompile required!");
 				}
 			}
-			
+
 			//If we need no compiling, we load the existing assembly!
 			if (!recompileRequired)
 			{
 				recompileRequired = !LoadAssembly(dllName);
-				
+
 				if (!recompileRequired)
 				{
 					//Return success!
@@ -515,66 +508,25 @@ namespace DOL.GS
 			if (File.Exists(dllName))
 				File.Delete(dllName);
 
-			CompilerResults res = null;
 			try
 			{
-				CodeDomProvider compiler;
+				var scriptDLLFile = new FileInfo(Path.Combine(dllName));
+				var compilation = GetCompiler(scriptDLLFile.Name, asm_names, files.ToArray());
+				var emitResult = compilation.Emit(scriptDLLFile.FullName);
 
-				if (compileVB)
-				{
-					compiler = new VBCodeProvider();
-				}
-				else
-				{
-					compiler = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
-				}
-				
-				// Graveen: allow script compilation in debug or release mode
-				#if DEBUG
-				CompilerParameters param = new CompilerParameters(asm_names, dllName, true);
-				#else
-				CompilerParameters param = new CompilerParameters(asm_names, dllName, false);
-				#endif
-				param.GenerateExecutable = false;
-				param.GenerateInMemory = false;
-				param.WarningLevel = 2;
-				param.CompilerOptions = string.Format("/optimize /lib:.{0}lib", Path.DirectorySeparatorChar);
-				param.ReferencedAssemblies.Add("System.Core.dll");
-
-				string[] filepaths = new string[files.Count];
-				for (int i = 0; i < files.Count; i++)
-					filepaths[i] = ((FileInfo)files[i]).FullName;
-
-				res = compiler.CompileAssemblyFromFile(param, filepaths);
-
-				//After compiling, collect
 				GC.Collect();
 
-				if (res.Errors.HasErrors)
+				if (!emitResult.Success)
 				{
-					foreach (CompilerError err in res.Errors)
-					{
-						if (err.IsWarning) continue;
+					var failures = emitResult.Diagnostics.Where(diagnostic =>
+					diagnostic.IsWarningAsError ||
+					diagnostic.Severity == DiagnosticSeverity.Error);
 
-						StringBuilder builder = new StringBuilder();
-						builder.Append("   ");
-						builder.Append(err.FileName);
-						builder.Append(" Line:");
-						builder.Append(err.Line);
-						builder.Append(" Col:");
-						builder.Append(err.Column);
-						if (log.IsErrorEnabled)
-						{
-							log.Error("Script compilation failed because: ");
-							log.Error(err.ErrorText);
-							log.Error(builder.ToString());
-						}
-					}
+					foreach (var diag in failures) log.Error($"\t{diag.Location} {diag.Id}: {diag.GetMessage()}");
 
 					return false;
 				}
-
-				AddOrReplaceAssembly(res.CompiledAssembly);
+				AddOrReplaceAssembly(Assembly.LoadFile(scriptDLLFile.FullName));
 			}
 			catch (Exception e)
 			{
@@ -582,16 +534,8 @@ namespace DOL.GS
 					log.Error("CompileScripts", e);
 				m_compiledScripts.Clear();
 			}
-			//now notify our callbacks
-			bool ret = false;
-			if (res != null)
-			{
-				ret = !res.Errors.HasErrors;
-			}
-			if (ret == false)
-				return ret;
 
-			XMLConfigFile newconfig = new XMLConfigFile();
+			var newconfig = new XMLConfigFile();
 			foreach (FileInfo finfo in files)
 			{
 				newconfig[finfo.FullName]["size"].Set(finfo.Length);
@@ -603,6 +547,53 @@ namespace DOL.GS
 			newconfig.Save(configFile);
 
 			return true;
+		}
+
+		private static CSharpCompilation GetCompiler(string targetDLLName, string[] assemblyFileNames, params FileInfo[] scriptFiles)
+		{
+			var syntaxTrees = scriptFiles.Select(file => CSharpSyntaxTree.ParseText(File.ReadAllText(file.FullName)));
+
+			var references = GetCompilationReferences(assemblyFileNames);
+
+			CSharpCompilation compilation = CSharpCompilation.Create(
+				targetDLLName,
+				syntaxTrees: syntaxTrees,
+				references: references,
+				options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+				);
+
+			return compilation;
+		}
+
+		private static List<PortableExecutableReference> GetCompilationReferences(string[] additionalReferences)
+		{
+			var references = AppDomain.CurrentDomain
+							.GetAssemblies()
+							.Where(a => !a.IsDynamic)
+							.Select(a => a.Location)
+							.Where(s => !string.IsNullOrEmpty(s))
+							.Select(s => MetadataReference.CreateFromFile(s))
+							.ToList();
+
+			foreach (var additionalReference in additionalReferences)
+			{
+				var dllName = additionalReference.EndsWith(".dll") ? additionalReference : additionalReference + ".dll";
+				var probingPaths = new[] { ".", Path.GetDirectoryName(typeof(System.Runtime.GCSettings).GetTypeInfo().Assembly.Location) };
+				var foundReference = false;
+				foreach (var probingPath in probingPaths)
+				{
+					var potentialReferenceFilePath = Path.Combine(probingPath, dllName);
+					if (File.Exists(potentialReferenceFilePath))
+					{
+						references.Add(MetadataReference.CreateFromFile(potentialReferenceFilePath));
+						foundReference = true;
+						break;
+					}
+				}
+				if (foundReference == false) log.Error($"Reference not found: {additionalReference}");
+			}
+
+			return references;
 		}
 		
 		/// <summary>
