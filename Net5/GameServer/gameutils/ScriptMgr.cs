@@ -421,7 +421,7 @@ namespace DOL.GS
 			//Reset the assemblies
 			m_compiledScripts.Clear();
 
-			var files = ParseDirectory(new DirectoryInfo(path), "*.cs", true).Where(file => !file.Name.EndsWith("AssemblyAttributes.cs") && file.Name != "AssemblyInfo.cs");
+			var files = ParseDirectory(new DirectoryInfo(path), "*.cs", true);
 
 			if (!files.Any())
 			{
@@ -565,7 +565,7 @@ namespace DOL.GS
 			return compilation;
 		}
 
-		private static List<PortableExecutableReference> GetCompilationReferences(string[] additionalReferences)
+		private static IEnumerable<PortableExecutableReference> GetCompilationReferences(string[] additionalReferences)
 		{
 			var references = AppDomain.CurrentDomain
 							.GetAssemblies()
