@@ -10,13 +10,13 @@ jobs:
     strategy:
       matrix:
         buildtarget: [Debug]
-        os: [windows-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v2
-      - uses: microsoft/setup-msbuild@v1
-      - uses: nuget/setup-nuget@v1
+      - name: Setup
+        run: |
+          DEBIAN_FRONTEND=noninteractive apt install mono-complete nuget -y
 
       - name: Build
         run: |
