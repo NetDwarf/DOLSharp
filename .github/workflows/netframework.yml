@@ -1,6 +1,8 @@
 name: CI Net Framework
 
 on:
+  push:
+    branches: [ CI ]
   workflow_dispatch:
 
 jobs:
