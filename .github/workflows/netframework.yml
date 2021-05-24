@@ -11,7 +11,7 @@ jobs:
       matrix:
         buildtarget: [Debug]
         os: [ubuntu-latest]
-    runs-on: {{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     
     steps:
       - uses: actions/checkout@v2
@@ -20,11 +20,11 @@ jobs:
 
       - name: Build
         run: |
-             Configuration={{ matrix.buildtarget }} nuget restore
+             Configuration=${{ matrix.buildtarget }} nuget restore
              nuget install NUnit.Console -Version 3.11.1 -OutputDirectory test -ExcludeVersion
 
       - name: Test
         run: |
-             MONO_IOMAP=case msbuild /p:Configuration={{ matrix.buildtarget }} "Dawn of Light.sln"
-             LANG=en_US.CP1252 mono ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/{{ matrix.buildtarget }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
-             LANG=en_US.CP1252 mono ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/{{ matrix.buildtarget }}/lib/Tests.dll --where "namespace =~ 'DOL.Integration' and category!='Explicit'"
+             MONO_IOMAP=case msbuild /p:Configuration=${{ matrix.buildtarget }} "Dawn of Light.sln"
+             LANG=en_US.CP1252 mono ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ matrix.buildtarget }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
+             LANG=en_US.CP1252 mono ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ matrix.buildtarget }}/lib/Tests.dll --where "namespace =~ 'DOL.Integration' and category!='Explicit'"
