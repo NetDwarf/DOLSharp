@@ -33,5 +33,6 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Test
-        run: dotnet test Net5\build\Tests\Debug\lib\Tests.dll --filter -v normal 'DOL.UnitTests'
+        run: |
+             dotnet test Net5\build\Tests\Debug\lib\Tests.dll --filter -v normal 'DOL.UnitTests'
              dotnet test Net5\build\Tests\Debug\lib\Tests.dll --filter -v normal 'DOL.Integration'
