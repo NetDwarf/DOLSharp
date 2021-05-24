@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         buildtarget: [Debug]
-        os: [ubuntu-latest]
+        os: [windows-latest]
     runs-on: ${{ matrix.os }}
     
     steps:
