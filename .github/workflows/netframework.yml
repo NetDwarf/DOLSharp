@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Setup
+      - name: Setup2
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt install p7zip
           echo "Hello release" > testfile
