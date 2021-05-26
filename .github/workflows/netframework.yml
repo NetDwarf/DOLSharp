@@ -19,9 +19,11 @@ jobs:
           echo "Hello release" > testfile
           7z a -tzip test.zip testfile
           7z a -tzip test2.zip testfile
-      - uses: actions/upload-artifact@v2
+      - uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          name: test-${{ matrix.buildtarget }}.zip
-          path: test*.zip
-          if-no-files-found: error
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          title: "Development Build"
+          files: |
+            *.zip
           
