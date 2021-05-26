@@ -22,11 +22,6 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: test-${{ matrix.buildtarget }}.zip
-          path: test.zip
-          if-no-files-found: error
-      - uses: actions/upload-artifact@v2
-        with:
-          name: test2-${{ matrix.buildtarget }}.zip
-          path: test2.zip
+          path: test*.zip
           if-no-files-found: error
           
