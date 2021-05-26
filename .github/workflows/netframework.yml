@@ -21,6 +21,6 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: test.zip
-          path: test-{{ matrix.buildtarget }}.zip
+          path: test-Debug.zip
           if-no-files-found: error
           
