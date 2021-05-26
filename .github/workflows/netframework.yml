@@ -20,6 +20,7 @@ jobs:
           7z a -tzip test-${{ matrix.buildtarget }}.zip testfile
       - uses: actions/upload-artifact@v2
         with:
-          name: test-{{ matrix.buildtarget }}.zip
+          name: test.zip
           path: test-{{ matrix.buildtarget }}.zip
+          if-no-files-found: error
           
