@@ -17,10 +17,16 @@ jobs:
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt install p7zip
           echo "Hello release" > testfile
-          7z a -tzip test-${{ matrix.buildtarget }}.zip testfile
+          7z a -tzip test.zip testfile
+          7z a -tzip test2.zip testfile
       - uses: actions/upload-artifact@v2
         with:
           name: test-${{ matrix.buildtarget }}.zip
-          path: test-Debug.zip
+          path: test.zip
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v2
+        with:
+          name: test2-${{ matrix.buildtarget }}.zip
+          path: test2.zip
           if-no-files-found: error
           
