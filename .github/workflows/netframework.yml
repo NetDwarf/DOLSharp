@@ -15,10 +15,11 @@ jobs:
     steps:
       - name: Setup2
         run: |
-          DEBIAN_FRONTEND=noninteractive sudo apt install p7zip
+          DEBIAN_FRONTEND=noninteractive sudo apt install p7zip tree
           echo "Hello release" > testfile
           7z a -tzip test.zip testfile
           7z a -tzip test2.zip testfile
+          tree
           CURRENTTAG=$(git tag | grep -E "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" | tail -n1)
           echo $CURRENTTAG
           export NEXTTAG=$(echo $CURRENTTAG | cut -d'.' -f1-3).$(($(echo $CURRENTTAG | cut -d'.' -f4)+1)) #increment by one
