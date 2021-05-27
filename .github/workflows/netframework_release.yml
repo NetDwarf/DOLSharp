@@ -9,7 +9,7 @@ jobs:
   build:
     strategy:
       matrix:
-        build_target: [Debug]
+        build_target: [Debug, Release]
     runs-on: windows-latest
     
     steps:
