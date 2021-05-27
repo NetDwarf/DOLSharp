@@ -20,8 +20,9 @@ jobs:
       - name: Set Version Variable
         run: |
           git fetch --tags -q
-          CURRENTTAG=$(git tag | grep -E "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" | tail -n1)
-          export NEXTVERSION=$(echo $CURRENTTAG | cut -d'.' -f1-3).$(($(echo $CURRENTTAG | cut -d'.' -f4)+1)) #increment by one
+          $CURRENTVERSION=(git tag | Select-String -Pattern '^\d+\.\d+\.\d+\.\d+$' | Select-Object -Last 1) -split '\.'
+          $CURRENTVERSION[3]=[int]$CURRENTVERSION[3]+1
+          $NEXTVERSION=$CURRENTVERSION -join '.'
           echo "next_version=$NEXTVERSION" >> $GITHUB_ENV
       - name: Build
         run: |
