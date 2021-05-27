@@ -23,20 +23,16 @@ jobs:
           7z a -tzip test2.zip testfile
           git fetch --tags -q
           CURRENTTAG=$(git tag | grep -E "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" | tail -n1)
-          echo $CURRENTTAG
           export NEXTTAG=$(echo $CURRENTTAG | cut -d'.' -f1-3).$(($(echo $CURRENTTAG | cut -d'.' -f4)+1)) #increment by one
-          echo $NEXTTAG
           
           echo "nexttag=$NEXTTAG" >> $GITHUB_ENV
           
           echo ${{ env.nexttag }}
-#      - uses: "marvinpinto/action-automatic-releases@latest"
-#        with:
-#          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-#          automatic_release_tag: ${{ env.NEXTTAG }}
-#          title: "Development Build"
-#          files: |
-#            *.zip
-      - name: Get Info
-        run: echo ${{ env.nexttag }}
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ env.nexttag }}
+          title: "Development Build"
+          files: |
+            *.zip
           
