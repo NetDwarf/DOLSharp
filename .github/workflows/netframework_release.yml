@@ -25,13 +25,13 @@ jobs:
           echo "next_version=$NEXTVERSION" >> $GITHUB_ENV
       - name: Build
         run: |
-          CONFIGURATION=${{ build_target }} nuget restore
-          MONO_IOMAP=case msbuild /p:Configuration=${{ build_target }} "Dawn of Light.sln"
+          CONFIGURATION=${{ matrix.build_target }} nuget restore
+          MONO_IOMAP=case msbuild /p:Configuration=${{ matrix.build_target }} "Dawn of Light.sln"
       - name: Test
         run: |
           nuget install NUnit.Console -Version 3.12.0 -OutputDirectory test -ExcludeVersion
-          ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ build_target }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
-          ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ build_target }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
+          ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ matrix.build_target }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
+          ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ matrix.build_target }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
 #      - name: Create Artifacts
       - name: Release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -41,6 +41,6 @@ jobs:
           prerelease: false
           title: "Development Build"
           files: |
-            ./${{ build_target }}/
-            ./build/Tests/${{ build_target }}/
+            ./${{ matrix.build_target }}/
+            ./build/Tests/${{ matrix.build_target }}/
           
