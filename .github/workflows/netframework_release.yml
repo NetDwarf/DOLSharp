@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: |
           $env:CONFIGURATION=${{ matrix.build_target }}; nuget restore
-          $env:$MONO_IOMAP=case; msbuild /p:Configuration=${{ matrix.build_target }} "Dawn of Light.sln"
+          $env:MONO_IOMAP=case; msbuild /p:Configuration=${{ matrix.build_target }} "Dawn of Light.sln"
       - name: Test
         run: |
           nuget install NUnit.Console -Version 3.12.0 -OutputDirectory test -ExcludeVersion
