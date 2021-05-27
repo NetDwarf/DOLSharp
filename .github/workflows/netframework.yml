@@ -27,9 +27,9 @@ jobs:
           export NEXTTAG=$(echo $CURRENTTAG | cut -d'.' -f1-3).$(($(echo $CURRENTTAG | cut -d'.' -f4)+1)) #increment by one
           echo $NEXTTAG
           
-          echo "NEXTTAG=$NEXTTAG" >> $GITHUB_ENV
+          echo "nexttag=$NEXTTAG" >> $GITHUB_ENV
           
-          echo ${{ env.NEXTTAG }}
+          echo ${{ env.nexttag }}
 #      - uses: "marvinpinto/action-automatic-releases@latest"
 #        with:
 #          repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -38,5 +38,5 @@ jobs:
 #          files: |
 #            *.zip
       - name: Get Info
-        run: echo ${{ env.NEXT_TAG }}
+        run: echo ${{ env.nexttag }}
           
