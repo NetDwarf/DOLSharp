@@ -14,7 +14,7 @@ jobs:
     
     steps:
       - name: Built Prerequisites
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
       - uses: nuget/setup-nuget@v1
       - uses: microsoft/setup-msbuild@v1.0.2
       - name: Set Version Variable
@@ -34,7 +34,7 @@ jobs:
           ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ build_target }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
 #      - name: Create Artifacts
       - name: Release
-      - uses: "marvinpinto/action-automatic-releases@latest"
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: ${{ env.next_version }}
