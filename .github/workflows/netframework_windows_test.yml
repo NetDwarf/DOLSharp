@@ -1,4 +1,4 @@
-name: CI Net Framework
+name: Test NetFramework on Windows
 
 on:
   pull_request:
