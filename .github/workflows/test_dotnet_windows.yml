@@ -1,4 +1,4 @@
-name: CI .Net5
+name: Test .Net5 on Windows
 
 on:
   push:
