@@ -26,8 +26,8 @@ jobs:
           echo "next_version=$NEXTVERSION" >> $GITHUB_ENV
       - name: Build
         run: |
-          $CONFIGURATION=${{ matrix.build_target }} nuget restore
-          $MONO_IOMAP=case msbuild /p:Configuration=${{ matrix.build_target }} "Dawn of Light.sln"
+          $env:CONFIGURATION=${{ matrix.build_target }}; nuget restore
+          $env:$MONO_IOMAP=case; msbuild /p:Configuration=${{ matrix.build_target }} "Dawn of Light.sln"
       - name: Test
         run: |
           nuget install NUnit.Console -Version 3.12.0 -OutputDirectory test -ExcludeVersion
