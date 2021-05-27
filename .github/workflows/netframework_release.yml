@@ -24,7 +24,7 @@ jobs:
           $CURRENTVERSION[3]=[int]$CURRENTVERSION[3]+1
           $NEXTVERSION=$CURRENTVERSION -join '.'
           Add-Content -Path $env:GITHUB_ENV -Value "next_version=$NEXTVERSION"
-          echo ${{ env.next_version }}
+          echo $NEXTVERSION
       - name: Build
         run: |
           $env:CONFIGURATION="${{ matrix.build_target }}"; nuget restore
