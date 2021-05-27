@@ -21,10 +21,7 @@ jobs:
         with:
           dotnet-version: 5.0.x
 
-      - name: Build
-        run: dotnet build -c ${{ matrix.env }} Net5\DOLdotnet.sln
-
       - name: Test
         run: |
-             dotnet test Net5\build\Tests\${{ matrix.env }}\lib\Tests.dll -v normal --filter 'DOL.UnitTests'
-             dotnet test Net5\build\Tests\${{ matrix.env }}\lib\Tests.dll -v normal --filter 'DOL.Integration'
+             dotnet test Net5\Tests\Tests.csproj -v normal --filter 'DOL.UnitTests'
+             dotnet test Net5\Tests\Tests.csproj -v normal --filter 'DOL.Integration'
