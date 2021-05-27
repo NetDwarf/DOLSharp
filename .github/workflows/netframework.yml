@@ -29,7 +29,7 @@ jobs:
           echo $CURRENTTAG
           export NEXTTAG=$(echo $CURRENTTAG | cut -d'.' -f1-3).$(($(echo $CURRENTTAG | cut -d'.' -f4)+1)) #increment by one
           echo $NEXTTAG
-          echo {{ env.NEXTTAG }}
+          echo ${{ env.NEXTTAG }}
         env:
           NEXTTAG: $NEXTTAG
 #      - uses: "marvinpinto/action-automatic-releases@latest"
