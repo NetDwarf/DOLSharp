@@ -1,0 +1,30 @@
+name: CI Net Framework
+
+on:
+  pull_request:
+    branches: [ CI ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        build_target: [Debug, Release]
+    runs-on: windows-latest
+    
+    steps:
+      - name: Build Prerequisites (Checkout)
+        uses: actions/checkout@v2
+      - name: Build Prerequisites (Nuget)
+        uses: nuget/setup-nuget@v1 
+      - name: Build Prerequisites (MSBuild)
+        uses: microsoft/setup-msbuild@v1.0.2
+      - name: Build
+        run: |
+          $env:CONFIGURATION="${{ matrix.build_target }}"; nuget restore
+          $env:MONO_IOMAP="case"; msbuild /p:Configuration=${{ matrix.build_target }} "Dawn of Light.sln"
+      - name: Test
+        run: |
+          nuget install NUnit.Console -Version 3.12.0 -OutputDirectory test -ExcludeVersion
+          ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ matrix.build_target }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
+          ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ matrix.build_target }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
