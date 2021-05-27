@@ -27,7 +27,7 @@ jobs:
           export NEXTTAG=$(echo $CURRENTTAG | cut -d'.' -f1-3).$(($(echo $CURRENTTAG | cut -d'.' -f4)+1)) #increment by one
           echo $NEXTTAG
           
-          echo "::set-env name=NEXTTAG::$NEXTTAG"
+          echo "NEXTTAG=$NEXTTAG" >> $GITHUB_ENV
           
           echo ${{ env.NEXTTAG }}
 #      - uses: "marvinpinto/action-automatic-releases@latest"
