@@ -13,10 +13,8 @@ jobs:
     runs-on: windows-latest
     
     steps:
-      - name: Built Prerequisites
-        uses: actions/checkout@v2
-      - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Build Prerequisites
+        uses: actions/checkout@v2, nuget/setup-nuget@v1, microsoft/setup-msbuild@v1.0.2
       - name: Set Version Variable
         run: |
           git fetch --tags -q
@@ -34,7 +32,10 @@ jobs:
           nuget install NUnit.Console -Version 3.12.0 -OutputDirectory test -ExcludeVersion
           ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ matrix.build_target }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
           ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ matrix.build_target }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
-#      - name: Create Artifacts
+      - name: Create Release Artifacts
+        run: |
+          Compress-Archive ./${{ matrix.build_target }}/ DOLServer_net45_${{ matrix.build_target }}.zip
+          Compress-Archive ./build/Tests/${{ matrix.build_target }}/ DOLServer_UnitTests_net48_${{ matrix.build_target }}.zip
       - name: Release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -43,6 +44,5 @@ jobs:
           prerelease: false
           title: "Development Build"
           files: |
-            ./${{ matrix.build_target }}/
-            ./build/Tests/${{ matrix.build_target }}/
+            *.zip
           
