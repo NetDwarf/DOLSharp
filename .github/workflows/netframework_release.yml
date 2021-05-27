@@ -23,8 +23,9 @@ jobs:
           $CURRENTVERSION=(git tag | Select-String -Pattern '^\d+\.\d+\.\d+\.\d+$' | Select-Object -Last 1) -split '\.'
           $CURRENTVERSION[3]=[int]$CURRENTVERSION[3]+1
           $NEXTVERSION=$CURRENTVERSION -join '.'
-          echo "next_version='$NEXTVERSION'" >> $GITHUB_ENV
+          echo "next_version=$NEXTVERSION" >> $GITHUB_ENV
           echo ${{ env.next_version }}
+          echo $GITHUB_ENV
       - name: Build
         run: |
           $env:CONFIGURATION="${{ matrix.build_target }}"; nuget restore
