@@ -2,7 +2,7 @@ name: CI .Net5
 
 on:
   push:
-    branches: [ Net5Upgrade ]
+    branches: [ CI ]
 
   workflow_dispatch:
 
