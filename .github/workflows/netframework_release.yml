@@ -13,8 +13,12 @@ jobs:
     runs-on: windows-latest
     
     steps:
-      - name: Build Prerequisites
-        uses: actions/checkout@v2, nuget/setup-nuget@v1, microsoft/setup-msbuild@v1.0.2
+      - name: Build Prerequisites (Checkout)
+        uses: actions/checkout@v2
+      - name: Build Prerequisites (Nuget)
+        uses: nuget/setup-nuget@v1 
+      - name: Build Prerequisites (MSBuild)
+        uses: microsoft/setup-msbuild@v1.0.2
       - name: Set Version Variable
         run: |
           git fetch --tags -q
