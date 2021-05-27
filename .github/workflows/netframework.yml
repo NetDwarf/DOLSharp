@@ -21,6 +21,7 @@ jobs:
           echo "Hello release" > testfile
           7z a -tzip test.zip testfile
           7z a -tzip test2.zip testfile
+          git status
           git tag
           CURRENTTAG=$(git tag | grep -E "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" | tail -n1)
           echo $CURRENTTAG
