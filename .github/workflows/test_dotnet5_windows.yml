@@ -1,0 +1,27 @@
+name: Test .Net5 on Windows
+
+on:
+  pull_request:
+    branches: [ CI ]
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        env: [Debug, Release]
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+
+      - name: Test
+        run: |
+             dotnet test Net5\Tests\Tests.csproj -v normal --filter 'DOL.UnitTests'
+             dotnet test Net5\Tests\Tests.csproj -v normal --filter 'DOL.Integration'

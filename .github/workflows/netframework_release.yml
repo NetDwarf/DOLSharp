@@ -1,0 +1,52 @@
+name: CI Net Framework
+
+on:
+  push:
+    branches: [ CI ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        build_target: [Debug, Release]
+    runs-on: windows-latest
+    
+    steps:
+      - name: Build Prerequisites (Checkout)
+        uses: actions/checkout@v2
+      - name: Build Prerequisites (Nuget)
+        uses: nuget/setup-nuget@v1 
+      - name: Build Prerequisites (MSBuild)
+        uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set Version Variable
+        run: |
+          git fetch --tags -q
+          $CURRENTVERSION=(git tag | Select-String -Pattern '^\d+\.\d+\.\d+\.\d+$' | Select-Object -Last 1) -split '\.'
+          $CURRENTVERSION[3]=[int]$CURRENTVERSION[3]+1
+          $NEXTVERSION=$CURRENTVERSION -join '.'
+          Add-Content -Path $env:GITHUB_ENV -Value "next_version=$NEXTVERSION"
+          echo $NEXTVERSION
+      - name: Build
+        run: |
+          $env:CONFIGURATION="${{ matrix.build_target }}"; nuget restore
+          $env:MONO_IOMAP="case"; msbuild /p:Configuration=${{ matrix.build_target }} "Dawn of Light.sln"
+      - name: Test
+        run: |
+          nuget install NUnit.Console -Version 3.12.0 -OutputDirectory test -ExcludeVersion
+          ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ matrix.build_target }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
+          ./test/NUnit.ConsoleRunner/tools/nunit3-console.exe ./build/Tests/${{ matrix.build_target }}/lib/Tests.dll --where "namespace =~ 'DOL.UnitTests' and category!='Explicit'"
+      - name: Create Release Artifacts
+        run: |
+          Compress-Archive ./${{ matrix.build_target }}/ DOLServer_net45_${{ matrix.build_target }}.zip
+          Compress-Archive ./build/Tests/${{ matrix.build_target }}/ DOLServer_UnitTests_net48_${{ matrix.build_target }}.zip
+      - name: Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ env.next_version }}
+          prerelease: false
+          title: "Development Build"
+          files: |
+            *.zip
+          
