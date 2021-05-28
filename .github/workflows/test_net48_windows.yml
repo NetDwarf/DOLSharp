@@ -18,7 +18,7 @@ jobs:
       - name: Build Prerequisites (Nuget)
         uses: nuget/setup-nuget@v1 
       - name: Build Prerequisites (MSBuild)
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@v1
       - name: Build
         run: |
           $env:CONFIGURATION="${{ matrix.build_target }}"; nuget restore
