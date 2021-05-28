@@ -1,7 +1,7 @@
 name: Test .Net5 on Windows
 
 on:
-  push:
+  pull_request:
     branches: [ CI ]
 
   workflow_dispatch:
