@@ -515,11 +515,10 @@ namespace DOL.GS
 			var compilationSuccessful = false;
 			try
 			{
-				ScriptCompiler compiler;
-				if (compileVB) compiler = ScriptCompiler.CreateForVBSharp(dllName, asm_names);
-				else compiler = ScriptCompiler.CreateForCSharp(dllName, asm_names);
+				DOLScriptCompiler compiler = new DOLScriptCompiler();
+				if (compileVB) compiler.SetToVBSharp();
 
-				var compiledAssembly = compiler.Compile(files);
+				var compiledAssembly = compiler.Compile(dllName, files);
 				if (compiler.HasErrors) return false;
 				compilationSuccessful = true;
 
