@@ -17,7 +17,6 @@
  *
  */
 using System;
-using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -32,8 +31,6 @@ using DOL.GS.Spells;
 using DOL.GS.Commands;
 using DOL.Events;
 using log4net;
-using Microsoft.CSharp;
-using Microsoft.VisualBasic;
 
 namespace DOL.GS
 {
@@ -182,7 +179,7 @@ namespace DOL.GS
 			//build array of disabled commands
 			string[] disabledarray = ServerProperties.Properties.DISABLED_COMMANDS.Split(';');
 
-			foreach (Assembly script in GameServerScripts)
+			foreach (var script in GameServerScripts)
 			{
 				if (log.IsDebugEnabled)
 					log.Debug("ScriptMgr: Searching for commands in " + script.GetName());
@@ -220,7 +217,7 @@ namespace DOL.GS
 							if (log.IsDebugEnabled && quiet == false)
 								log.Debug("ScriptMgr: Command - '" + attrib.Cmd + "' - (" + attrib.Description + ") required plvl:" + attrib.Level);
 
-							GameCommand cmd = new GameCommand();
+							var cmd = new GameCommand();
 							cmd.Usage = attrib.Usage;
 							cmd.m_cmd = attrib.Cmd;
 							cmd.m_lvl = attrib.Level;
@@ -416,20 +413,20 @@ namespace DOL.GS
 		/// Compiles the scripts into an assembly
 		/// </summary>
 		/// <param name="compileVB">True if the source files will be in VB.NET</param>
-		/// <param name="path">Path to the source files</param>
+		/// <param name="scriptFolder">Path to the source files</param>
 		/// <param name="dllName">Name of the assembly to be generated</param>
 		/// <param name="asm_names">References to other assemblies</param>
 		/// <returns>True if succeeded</returns>
-		public static bool CompileScripts(bool compileVB, string path, string dllName, string[] asm_names)
+		public static bool CompileScripts(bool compileVB, string scriptFolder, string dllName, string[] asm_names)
 		{
-			if (!path.EndsWith(@"\") && !path.EndsWith(@"/"))
-				path = path + "/";
+			if (!scriptFolder.EndsWith(@"\") && !scriptFolder.EndsWith(@"/"))
+				scriptFolder = scriptFolder + "/";
 
 			//Reset the assemblies
 			m_compiledScripts.Clear();
 
 			//Check if there are any scripts, if no scripts exist, that is fine as well
-			IList<FileInfo> files = ParseDirectory(new DirectoryInfo(path), compileVB ? "*.vb" : "*.cs", true);
+			IList<FileInfo> files = ParseDirectory(new DirectoryInfo(scriptFolder), compileVB ? "*.vb" : "*.cs", true);
 			if (files.Count == 0)
 			{
 				return true;
@@ -515,66 +512,18 @@ namespace DOL.GS
 			if (File.Exists(dllName))
 				File.Delete(dllName);
 
-			CompilerResults res = null;
+			var compilationSuccessful = false;
 			try
 			{
-				CodeDomProvider compiler;
+				ScriptCompiler compiler;
+				if (compileVB) compiler = ScriptCompiler.CreateForVBSharp(dllName, asm_names);
+				else compiler = ScriptCompiler.CreateForCSharp(dllName, asm_names);
 
-				if (compileVB)
-				{
-					compiler = new VBCodeProvider();
-				}
-				else
-				{
-					compiler = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
-				}
-				
-				// Graveen: allow script compilation in debug or release mode
-				#if DEBUG
-				CompilerParameters param = new CompilerParameters(asm_names, dllName, true);
-				#else
-				CompilerParameters param = new CompilerParameters(asm_names, dllName, false);
-				#endif
-				param.GenerateExecutable = false;
-				param.GenerateInMemory = false;
-				param.WarningLevel = 2;
-				param.CompilerOptions = string.Format("/optimize /lib:.{0}lib", Path.DirectorySeparatorChar);
-				param.ReferencedAssemblies.Add("System.Core.dll");
+				var compiledAssembly = compiler.Compile(files);
+				if (compiler.HasErrors) return false;
+				compilationSuccessful = true;
 
-				string[] filepaths = new string[files.Count];
-				for (int i = 0; i < files.Count; i++)
-					filepaths[i] = ((FileInfo)files[i]).FullName;
-
-				res = compiler.CompileAssemblyFromFile(param, filepaths);
-
-				//After compiling, collect
-				GC.Collect();
-
-				if (res.Errors.HasErrors)
-				{
-					foreach (CompilerError err in res.Errors)
-					{
-						if (err.IsWarning) continue;
-
-						StringBuilder builder = new StringBuilder();
-						builder.Append("   ");
-						builder.Append(err.FileName);
-						builder.Append(" Line:");
-						builder.Append(err.Line);
-						builder.Append(" Col:");
-						builder.Append(err.Column);
-						if (log.IsErrorEnabled)
-						{
-							log.Error("Script compilation failed because: ");
-							log.Error(err.ErrorText);
-							log.Error(builder.ToString());
-						}
-					}
-
-					return false;
-				}
-
-				AddOrReplaceAssembly(res.CompiledAssembly);
+				AddOrReplaceAssembly(compiledAssembly);
 			}
 			catch (Exception e)
 			{
@@ -583,16 +532,10 @@ namespace DOL.GS
 				m_compiledScripts.Clear();
 			}
 			//now notify our callbacks
-			bool ret = false;
-			if (res != null)
-			{
-				ret = !res.Errors.HasErrors;
-			}
-			if (ret == false)
-				return ret;
+			if (!compilationSuccessful) return false;
 
-			XMLConfigFile newconfig = new XMLConfigFile();
-			foreach (FileInfo finfo in files)
+			var newconfig = new XMLConfigFile();
+			foreach (var finfo in files)
 			{
 				newconfig[finfo.FullName]["size"].Set(finfo.Length);
 				newconfig[finfo.FullName]["lastmodified"].Set(finfo.LastWriteTime.ToFileTime());
@@ -604,6 +547,8 @@ namespace DOL.GS
 
 			return true;
 		}
+
+		
 		
 		/// <summary>
 		/// Load an Assembly from DLL path.
