@@ -29,7 +29,7 @@ using System.Reflection;
 
 namespace DOL.GS
 {
-	public class DOLScriptCompiler
+    public class DOLScriptCompiler : IScriptCompiler
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -97,7 +97,7 @@ namespace DOL.GS
             }
         }
 
-        public IList<string> GetDetailedErrorMessages()
+        public IEnumerable<string> GetDetailedErrorMessages()
         {
             var errorMessages = new List<string>();
             foreach (CompilerError error in lastCompilationErrors)
@@ -114,7 +114,7 @@ namespace DOL.GS
             return errorMessages;
         }
 
-        public IList<string> GetErrorMessages()
+        public IEnumerable<string> GetErrorMessages()
         {
             var errorMessages = new List<string>();
             foreach (CompilerError error in lastCompilationErrors)

@@ -17,6 +17,7 @@
  *
  */
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using DOL.GS.PacketHandler;
@@ -39,7 +40,7 @@ namespace DOL.GS.Commands
 			var compiledAssembly = compiler.CompileFromSource(GetCode(methodBody));
 
 			var errorMessages = compiler.GetErrorMessages();
-			if(errorMessages.Count > 0)
+			if(errorMessages.Any())
             {
 				if (client.Player != null)
 				{
