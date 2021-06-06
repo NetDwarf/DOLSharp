@@ -35,7 +35,6 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <PlatformTarget>x86</PlatformTarget>
     <RegisterForComInterop>False</RegisterForComInterop>
     <BaseAddress>285212672</BaseAddress>
     <FileAlignment>4096</FileAlignment>
