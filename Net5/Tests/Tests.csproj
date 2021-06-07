@@ -10,13 +10,8 @@
     <AssemblyName>Tests</AssemblyName>
     <OutputType>Library</OutputType>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <NoStdLib>False</NoStdLib>
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <OutputPath>..\build\Tests\$(Configuration)\lib\</OutputPath>
     <IntermediateOutputPath>..\build\Tests\$(Configuration)\obj\</IntermediateOutputPath>
-    <NoWin32Manifest>False</NoWin32Manifest>
-    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Deterministic>false</Deterministic>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -26,20 +21,15 @@
     <Optimize>False</Optimize>
     <DebugType>Full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>None</DebugType>
     <DebugSymbols>false</DebugSymbols>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <RegisterForComInterop>False</RegisterForComInterop>
-    <BaseAddress>285212672</BaseAddress>
-    <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />

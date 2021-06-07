@@ -9,15 +9,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <AssemblyName>GameServer</AssemblyName>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <NoStdLib>False</NoStdLib>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>1570%3b1572%3b1573%3b1587%3b1591%3b1592</NoWarn>
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <IntermediateOutputPath>..\build\GameServer\$(Configuration)\obj\</IntermediateOutputPath>
-    <NoWin32Manifest>False</NoWin32Manifest>
     <OutputPath>..\$(Configuration)\lib\</OutputPath>
-    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Deterministic>false</Deterministic>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -27,20 +20,15 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <Optimize>False</Optimize>
     <DebugSymbols>true</DebugSymbols>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugType>None</DebugType>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>True</Optimize>
     <DebugSymbols>false</DebugSymbols>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <RegisterForComInterop>False</RegisterForComInterop>
-    <BaseAddress>285212672</BaseAddress>
-    <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.12" />
@@ -58,14 +46,5 @@
     <PostBuildEvent Condition=" '$(OS)' != 'Unix' ">xcopy "$(MSBuildProjectDirectory)\..\..\GameServer\language\*.txt" "$(MSBuildProjectDirectory)\..\$(Configuration)\languages" /y /s /q /i</PostBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' == 'Unix' ">cd "$(MSBuildProjectDirectory)/../../GameServer/language/"; mkdir -p "$(MSBuildProjectDirectory)/../$(Configuration)/languages/"; find ./ -name "*.txt" | xargs -i -t cp --parents -f {} "$(MSBuildProjectDirectory)/../$(Configuration)/languages/"</PostBuildEvent>
   </PropertyGroup>
-  <!-- Graveen: the following is replacing the rev number in the asembly.info file by the SVN rev number of the current project. -->
-  <!-- You must work on project under SVN version control, have msbuild community tasks assemblies installed and subversion client -->
-  <!-- The path of the tools should either be corrected below, or matched. In case you lack one of theses prereqs, rev number 'll not be changed. -->
-  <Target Name="BeforeBuild">
-    <SvnVersion LocalPath="." Condition="Exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\') and Exists('$(ProgramFiles)\subversion\bin\svnversion.exe')">
-      <Output TaskParameter="Revision" PropertyName="Revision" />
-    </SvnVersion>
-    <FileUpdate Files="AssemblyInfo.cs" Regex="(\d+)\.(\d+)\.(\d+)\.(\*|\d+)" ReplacementText="$1.$2.$3.$(Revision)" Condition="Exists('..\auto_version') and $(Revision)!='' and $(Revision)!=-1 and Exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\') and Exists('$(ProgramFiles)\subversion\bin\svnversion.exe')" />
-  </Target>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>
