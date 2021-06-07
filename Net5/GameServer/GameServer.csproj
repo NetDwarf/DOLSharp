@@ -41,10 +41,13 @@
     <Compile Include="..\..\GameServer\**\*.cs" />
     <Compile Remove="..\..\GameServer\gameutils\DOLScriptCompiler.cs" />
     <EmbeddedResource Include="..\..\GameServer\config\*" />
+    <TranslationFiles Include="..\..\GameServer\language\**\*.txt" />
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent Condition=" '$(OS)' != 'Unix' ">xcopy "$(MSBuildProjectDirectory)\..\..\GameServer\language\*.txt" "$(MSBuildProjectDirectory)\..\$(Configuration)\languages" /y /s /q /i</PostBuildEvent>
-    <PostBuildEvent Condition=" '$(OS)' == 'Unix' ">cd "$(MSBuildProjectDirectory)/../../GameServer/language/"; mkdir -p "$(MSBuildProjectDirectory)/../$(Configuration)/languages/"; find ./ -name "*.txt" | xargs -i -t cp --parents -f {} "$(MSBuildProjectDirectory)/../$(Configuration)/languages/"</PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="CopyFiles" AfterTargets="AfterBuild">
+    <Copy 
+      SourceFiles="@(TranslationFiles)"
+      DestinationFiles="@(TranslationFiles->'$(MSBuildProjectDirectory)\..\$(Configuration)\languages\%(RecursiveDir)%(Filename)%Extension()')"
+    />
+  </Target>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

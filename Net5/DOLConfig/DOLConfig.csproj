@@ -56,17 +56,15 @@
     <Content Include="..\..\DOLConfig\icon.ico" />
     <Compile Include="..\..\DOLConfig\**\*.cs" />
     <EmbeddedResource Include="..\..\DOLConfig\**\*.resx" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\..\DOLConfig\DOLConfig.exe.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <XmlFiles Include="..\..\DOLConfig\**\*.xml" />
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent Condition=" '$(OS)' != 'Unix' ">xcopy "$(MSBuildProjectDirectory)\..\..\DOLConfig\*.xml" "$(MSBuildProjectDirectory)\..\$(Configuration)\lib\config" /y /s /q /i
-    </PostBuildEvent>
-    <PostBuildEvent Condition=" '$(OS)' == 'Unix' ">cd "$(MSBuildProjectDirectory)/../../DOLConfig/"; mkdir -p "$(MSBuildProjectDirectory)/../$(Configuration)/lib/config"; find ./ -name "*.xml" | xargs -i -t cp --parents -f {} "$(MSBuildProjectDirectory)/../$(Configuration)/lib/config/"
-    </PostBuildEvent>
-    </PropertyGroup>
+  <Target Name="CopyFiles" AfterTargets="AfterBuild">
+    <Copy
+      SourceFiles="@(XmlFiles)"
+      DestinationFiles="@(XmlFiles->'$(MSBuildProjectDirectory)\..\$(Configuration)\lib\config\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

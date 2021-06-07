@@ -39,12 +39,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\GameServerScripts\**\*.cs" />
+    <XmlFiles Include="..\..\GameServerScripts\dbupdater\**\*.xml" />
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent Condition=" '$(OS)' != 'Unix' ">xcopy "$(MSBuildProjectDirectory)\..\..\GameServerScripts\*.cs" "$(MSBuildProjectDirectory)\..\$(Configuration)\scripts" /y /s /q /i
-xcopy "$(MSBuildProjectDirectory)\..\..\GameServerScripts\dbupdater\*.xml" "$(MSBuildProjectDirectory)\..\$(Configuration)\scripts\dbupdater" /y /s /q /i</PostBuildEvent>
-    <PostBuildEvent Condition=" '$(OS)' == 'Unix' ">cd "$(MSBuildProjectDirectory)/../../GameServerScripts/"; mkdir -p "$(MSBuildProjectDirectory)/../$(Configuration)/scripts/"; find ./ -name "*.cs" | xargs -i -t cp --parents -f {} "$(MSBuildProjectDirectory)/../$(Configuration)/scripts/"; find ./dbupdater -name "*.xml" | xargs -i -t cp --parents -f {} "$(MSBuildProjectDirectory)/../$(Configuration)/scripts/"
-</PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="CopyFiles" AfterTargets="AfterBuild">
+    <Copy 
+      SourceFiles="@(Compile)" 
+      DestinationFiles="@(Compile->'$(MSBuildProjectDirectory)\..\$(Configuration)\scripts\%(RecursiveDir)%(Filename)%(Extension)')"
+    />
+    <Copy 
+      SourceFiles="@(XmlFiles)" 
+      DestinationFiles="@(XmlFiles->'$(MSBuildProjectDirectory)\..\$(Configuration)\scripts\dbupdater\%(RecursiveDir)%(Filename)%(Extension)')"
+    />
+  </Target>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>
