@@ -83,14 +83,5 @@ xcopy "$(MSBuildProjectDirectory)\dbupdater\*.xml" "$(MSBuildProjectDirectory)\.
     <PostBuildEvent Condition=" '$(OS)' == 'Unix' ">cd "$(MSBuildProjectDirectory)/"; mkdir -p "$(MSBuildProjectDirectory)/../$(Configuration)/scripts/"; find ./ -name "*.cs" | xargs -i -t cp --parents -f {} "$(MSBuildProjectDirectory)/../$(Configuration)/scripts/"; find ./dbupdater -name "*.xml" | xargs -i -t cp --parents -f {} "$(MSBuildProjectDirectory)/../$(Configuration)/scripts/"
 </PostBuildEvent>
   </PropertyGroup>
-  <!-- Graveen: the following is replacing the rev number in the asembly.info file by the SVN rev number of the current project. -->
-  <!-- You must work on project under SVN version control, have msbuild community tasks assemblies installed and subversion client -->
-  <!-- The path of the tools should either be corrected below, or matched. In case you lack one of theses prereqs, rev number 'll not be changed. -->
-  <Target Name="BeforeBuild">
-    <SvnVersion LocalPath="." Condition="Exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\') and Exists('$(ProgramFiles)\subversion\bin\svnversion.exe')">
-      <Output TaskParameter="Revision" PropertyName="Revision" />
-    </SvnVersion>
-    <FileUpdate Files="AssemblyInfo.cs" Regex="(\d+)\.(\d+)\.(\d+)\.(\*|\d+)" ReplacementText="$1.$2.$3.$(Revision)" Condition="Exists('..\auto_version') and $(Revision)!='' and $(Revision)!=-1 and Exists('$(MSBuildExtensionsPath)\MSBuildCommunityTasks\') and Exists('$(ProgramFiles)\subversion\bin\svnversion.exe')" />
-  </Target>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>
