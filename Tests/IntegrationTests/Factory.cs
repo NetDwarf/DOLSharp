@@ -36,7 +36,7 @@ namespace DOL.Integration
 
             IObjectDatabase sqliteDB;
 
-            var configDBConnectionString = $"Data Source={SQLiteDBPath};Version=3;Pooling=False;Cache Size=1073741824;Journal Mode=Off;Synchronous=Off;Foreign Keys=True;Default Timeout=60";
+            var configDBConnectionString = $"Data Source={SQLiteDBPath};Foreign Keys=True";
             sqliteDB = ObjectDatabase.GetObjectDatabase(ConnectionType.DATABASE_SQLITE, configDBConnectionString);
             return sqliteDB;
         }

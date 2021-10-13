@@ -55,7 +55,7 @@ namespace DOL.Integration.Server
 				GameServerConfiguration config = new GameServerConfiguration();
 				config.RootDirectory = FakeRoot.FullName;
 				config.DBType = ConnectionType.DATABASE_SQLITE;
-				config.DBConnectionString = string.Format("Data Source={0};Version=3;Pooling=False;Cache Size=1073741824;Journal Mode=Off;Synchronous=Off;Foreign Keys=True;Default Timeout=60",
+				config.DBConnectionString = string.Format("Data Source={0};Foreign Keys=True;Cache=Shared",
 												 Path.Combine(config.RootDirectory, "dol-tests-only.sqlite3.db"));
 				config.Port = 0; // Auto Choosing Listen Port
 				config.UDPPort = 0; // Auto Choosing Listen Port
@@ -67,6 +67,13 @@ namespace DOL.Integration.Server
 
 				Console.WriteLine("Game Server Instance Created !");
 			}
+
+			log4net.Config.BasicConfigurator.Configure(
+				new log4net.Appender.ConsoleAppender
+				{
+					Layout = new log4net.Layout.SimpleLayout(),
+					Threshold = log4net.Core.Level.Info
+				});
 		}
 
 		private class GameServerWithDefaultDB : GameServer

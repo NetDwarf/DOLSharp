@@ -38,6 +38,13 @@ namespace DOL.Database.Handlers
 		public SQLiteObjectDatabase(string ConnectionString)
 			: base(ConnectionString)
 		{
+			var connection = new SqliteConnection(ConnectionString);
+			connection.Open();
+
+			var dbConfigCommand = connection.CreateCommand();
+			dbConfigCommand.CommandText = @"PRAGMA journal_mode='off'; PRAGMA cache_size=1073741824; PRAGMA synchronous='off'";
+			dbConfigCommand.ExecuteNonQuery();
+			connection.Close();
 		}
 		
 		#region SQLite Implementation
@@ -624,7 +631,7 @@ namespace DOL.Database.Handlers
 											try
 											{
 												cmd.ExecuteNonQuery();
-												obj.Add(GetLastInsertedID(cmd));
+												obj.Add(GetLastInsertedID(conn));
 											}
 											catch (Exception ex)
 											{
@@ -686,17 +693,21 @@ namespace DOL.Database.Handlers
 		}
 		#endregion
 
-		private long GetLastInsertedID(SqliteCommand cmd)
+		private long GetLastInsertedID(SqliteConnection conn)
 		{
-			var sql = "SELECT last_insert_rowid()";
-			cmd.CommandText = sql;
-			var lastID = (long)cmd.ExecuteScalar();
-			return lastID;
+			using (var cmd = conn.CreateCommand())
+			{
+				var sql = "SELECT last_insert_rowid()";
+				cmd.CommandText = sql;
+				var lastID = (long)cmd.ExecuteScalar();
+				return lastID;
+			}
 		}
 
 		protected override DbConnection CreateConnection(string connectionsString)
 		{
-			return new SqliteConnection(ConnectionString);
+			var conn =  new SqliteConnection(ConnectionString);
+			return conn;
 		}
 
 		protected override void CloseConnection(DbConnection connection)
@@ -731,10 +742,10 @@ namespace DOL.Database.Handlers
 		{
 			if (e is SqliteException sqle)
 			{
-				Console.WriteLine(sqle.ErrorCode);
-				switch (sqle.ErrorCode)
+				if (sqle.SqliteErrorCode == 19) return true;
+				switch (sqle.SqliteExtendedErrorCode)
 				{
-					case -2147467259: // SQLITE_CONSTRAINT
+					case 19: // SQLITE_CONSTRAINT
 					case 275: // SQLITE_CONSTRAINT_CHECK
 					case 787: // SQLITE_CONSTRAINT_FOREIGNKEY
 					case 2067: // SQLITE_CONSTRAINT_UNIQUE

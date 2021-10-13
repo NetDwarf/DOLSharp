@@ -132,7 +132,7 @@ namespace DOL.Integration.Database
 				Assert.IsFalse(obj.IsPersisted, "Different Test Objects should not have Persisted Flag before adding...");
 				Assert.IsTrue(obj.Dirty, "Different Test Objects should be Dirty before adding...");
 			}
-			
+
 			var inserted = Database.AddObject(objs);
 			
 			Assert.IsTrue(inserted, "Different Test Objects should be inserted successfully, something went wrong...");

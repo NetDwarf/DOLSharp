@@ -113,7 +113,7 @@ namespace DOL.Database
 			foreach (var grp in dataObjects.GroupBy(obj => obj.GetType()))
 			{
 				var tableHandler = GetTableHandler(grp.Key);
-				
+
 				if (tableHandler == null)
 				{
 					if (log.IsErrorEnabled)
@@ -128,7 +128,7 @@ namespace DOL.Database
 					{
 						var objs = allowed.ToArray();
 						var results = AddObjectImpl(tableHandler, objs);
-						
+
 						var resultsByObjs = results.Select((result, index) => new { Success = result, DataObject = objs[index] })
 							.GroupBy(obj => obj.Success);
 						
