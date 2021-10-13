@@ -795,7 +795,7 @@ namespace DOL.Database
 					{
 						try
 						{
-							cmd.CommandText = SQLCommand;
+							cmd.CommandText = @"PRAGMA journal_mode='off'; PRAGMA cache_size=1073741824; PRAGMA synchronous='off';"+ SQLCommand;
 							conn.Open();
 							long start = (DateTime.UtcNow.Ticks / 10000);
 

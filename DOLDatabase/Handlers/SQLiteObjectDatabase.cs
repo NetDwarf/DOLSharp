@@ -38,13 +38,7 @@ namespace DOL.Database.Handlers
 		public SQLiteObjectDatabase(string ConnectionString)
 			: base(ConnectionString)
 		{
-			var connection = new SqliteConnection(ConnectionString);
-			connection.Open();
-
-			var dbConfigCommand = connection.CreateCommand();
-			dbConfigCommand.CommandText = @"PRAGMA journal_mode='off'; PRAGMA cache_size=1073741824; PRAGMA synchronous='off'";
-			dbConfigCommand.ExecuteNonQuery();
-			connection.Close();
+			
 		}
 		
 		#region SQLite Implementation
@@ -706,8 +700,8 @@ namespace DOL.Database.Handlers
 
 		protected override DbConnection CreateConnection(string connectionsString)
 		{
-			var conn =  new SqliteConnection(ConnectionString);
-			return conn;
+			var connection =  new SqliteConnection(ConnectionString);
+			return connection;
 		}
 
 		protected override void CloseConnection(DbConnection connection)
