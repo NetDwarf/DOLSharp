@@ -475,6 +475,122 @@ namespace DOL.UnitTests.Gameserver
 
         #endregion
 
+        [Test]
+        public void CheckBeginCast_ForPetSpell_PlayerHasNoPet_False()
+        {
+            var caster = NewFakePlayer();
+
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Pet";
+            var spellHandler = new SpellHandler(caster, spell, null);
+            var actual = spellHandler.CheckBeginCast(null);
+
+            var expected = false;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckBeginCast_ForPetSpell_PlayerHasPet_True()
+        {
+            var caster = NewFakePlayer();
+            var pet = new GamePet(new FakeBrain());
+            var petBrain = new FakeControlledBrain();
+            caster.ControlledBrain = petBrain;
+            petBrain.Body = pet;
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Pet";
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckBeginCast(null);
+
+            var expected = true;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckBeginCast_ForGroundTargetAreaSpell_GroundTargetIsInRangeAndView_True()
+        {
+            var caster = NewFakePlayer();
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Area";
+            var spellHandler = new SpellHandler(caster, spell, null);
+            caster.GroundTargetInView = true;
+
+            var actual = spellHandler.CheckBeginCast(null);
+
+            var expected = true;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckBeginCast_ForEnemyPointBlankSpell_True()
+        {
+            var caster = NewFakePlayer();
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Enemy";
+            spell.fakeRange = 0;
+            var target = NewFakeNPC();
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckBeginCast(target);
+
+            var expected = true;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckBeginCast_ForEnemySpellWithRangeOne_OnEnemyNPC_True()
+        {
+            var caster = NewFakePlayer();
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Enemy";
+            spell.fakeRange = 1;
+            var target = NewFakeNPC();
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckBeginCast(target);
+
+            var expected = true;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckBeginCast_ForRealmSpellWithRangeOne_OnFriendlyNPC_True()
+        {
+            var caster = NewFakePlayer();
+            caster.Realm = eRealm.Albion;
+            var npc = NewFakeNPC();
+            npc.Realm = eRealm.Albion;
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Realm";
+            spell.fakeRange = 1;
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckBeginCast(npc);
+
+            var expected = true;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckBeginCast_ForCorpseSpellWithRangeOne_OnDeadNPC_True()
+        {
+            var caster = NewFakePlayer();
+            caster.Realm = eRealm.Albion;
+            var npc = NewFakeNPC();
+            npc.Realm = eRealm.Albion;
+            npc.fakeIsAlive = false;
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Corpse";
+            spell.fakeRange = 1;
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckBeginCast(npc);
+
+            var expected = true;
+            Assert.AreEqual(expected, actual);
+        }
+
         private static GameLiving NewFakeLiving() => new FakeLiving();
         private static FakePlayerSpy NewFakePlayer() => new FakePlayerSpy() { Realm = eRealm.Albion };
         private static FakeNPC NewFakeNPC() => new FakeNPC();

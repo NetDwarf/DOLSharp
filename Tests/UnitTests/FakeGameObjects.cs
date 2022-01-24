@@ -22,8 +22,9 @@ namespace DOL.UnitTests.Gameserver
 
         public FakePlayer() : base(null, null)
         {
-            this.ObjectState = eObjectState.Active;
-            this.m_invulnerabilityTick = -1;
+            InitControlledBrainArray(1);
+            ObjectState = eObjectState.Active;
+            m_invulnerabilityTick = -1;
         }
 
         public override ICharacterClass CharacterClass { get { return fakeCharacterClass; } }
@@ -83,6 +84,7 @@ namespace DOL.UnitTests.Gameserver
     public class FakeNPC : GameNPC
     {
         public int modifiedEffectiveLevel;
+        public bool fakeIsAlive = true;
 
         public FakeNPC(ABrain defaultBrain) : base(defaultBrain)
         {
@@ -92,7 +94,7 @@ namespace DOL.UnitTests.Gameserver
         public FakeNPC() : this(new FakeBrain()) { }
 
         public override Region CurrentRegion { get { return new FakeRegion(); } set { } }
-        public override bool IsAlive => true;
+        public override bool IsAlive => fakeIsAlive;
         public override int GetModified(eProperty property)
         {
             switch (property)
