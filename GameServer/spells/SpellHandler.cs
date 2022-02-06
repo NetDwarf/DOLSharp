@@ -897,95 +897,10 @@ namespace DOL.GS.Spells
 				return false;
 			}
 
-			if (m_spell.Target.ToLower() == "area")
+			var targetType = SpellTargetType.Create(Spell.Target);
+			if (targetType.CheckEndCast(this, Caster, target) == false)
 			{
-				if (!m_caster.IsWithinRadius(m_caster.GroundTarget, CalculateSpellRange()))
-				{
-					MessageToCaster("Your area target is out of range.  Select a closer target.", eChatType.CT_SpellResisted);
-					return false;
-				}
-			}
-			else if (m_spell.Target.ToLower() != "self" && m_spell.Target.ToLower() != "group" && m_spell.Target.ToLower() != "cone" && m_spell.Range > 0)
-			{
-				if (m_spell.Target.ToLower() != "pet")
-				{
-					//all other spells that need a target
-					if (target == null || target.ObjectState != GameObject.eObjectState.Active)
-					{
-						if (Caster is GamePlayer)
-							MessageToCaster("You must select a target for this spell!", eChatType.CT_SpellResisted);
-						return false;
-					}
-
-					if (!m_caster.IsWithinRadius(target, CalculateSpellRange()))
-					{
-						if (Caster is GamePlayer)
-							MessageToCaster("That target is too far away!", eChatType.CT_SpellResisted);
-						return false;
-					}
-				}
-
-				switch (m_spell.Target)
-				{
-					case "Enemy":
-						//enemys have to be in front and in view for targeted spells
-						if (!m_caster.IsObjectInFront(target, 180))
-						{
-							MessageToCaster("Your target is not in view. The spell fails.", eChatType.CT_SpellResisted);
-							return false;
-						}
-
-						if (!GameServer.ServerRules.IsAllowedToAttack(Caster, target, false))
-						{
-							return false;
-						}
-						break;
-
-					case "Corpse":
-						if (target.IsAlive || !GameServer.ServerRules.IsSameRealm(Caster, target, true))
-						{
-							MessageToCaster("This spell only works on dead members of your realm!",
-											eChatType.CT_SpellResisted);
-							return false;
-						}
-						break;
-
-					case "Realm":
-						if (GameServer.ServerRules.IsAllowedToAttack(Caster, target, true))
-						{
-							return false;
-						}
-						break;
-
-					case "Pet":
-						/*
-						 * [Ganrod] Nidel: Can cast pet spell on all Pet/Turret/Minion (our pet)
-						 * -If caster target's isn't own pet.
-						 *  -check if caster have controlled pet, select this automatically
-						 *  -check if target isn't null
-						 * -check if target isn't too far away
-						 * If all checks isn't true, return false.
-						 */
-						if (target == null || !Caster.IsControlledNPC(target as GameNPC))
-						{
-							if (Caster.ControlledBrain != null && Caster.ControlledBrain.Body != null)
-							{
-								target = Caster.ControlledBrain.Body;
-							}
-							else
-							{
-								MessageToCaster("You must cast this spell on a creature you are controlling.", eChatType.CT_System);
-								return false;
-							}
-						}
-						//Now check distance for own pet
-						if (!m_caster.IsWithinRadius(target, CalculateSpellRange()))
-						{
-							MessageToCaster("That target is too far away!", eChatType.CT_SpellResisted);
-							return false;
-						}
-						break;
-				}
+				return false;
 			}
 
 			if (m_caster.Mana <= 0 && Spell.Power != 0 && Spell.SpellType != "Archery")

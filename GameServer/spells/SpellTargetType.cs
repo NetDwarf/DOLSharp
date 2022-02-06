@@ -23,17 +23,17 @@ using DOL.GS.PacketHandler;
 
 namespace DOL.GS.Spells
 {
-    internal class SpellTargetType
+	internal class SpellTargetType
 	{
 		protected string targetType = "";
 
 		protected SpellTargetType(string targetType)
-        {
+		{
 			this.targetType = targetType;
-        }
+		}
 
 		public static SpellTargetType Create(string targetType)
-        {
+		{
 			targetType = targetType.ToLower();
 			if (targetType == "pet") return new PetTarget(targetType);
 			if (targetType == "area") return new GroundTarget(targetType);
@@ -41,10 +41,10 @@ namespace DOL.GS.Spells
 			if (targetType == "realm") return new RealmTarget(targetType);
 			if (targetType == "corpse") return new CorpseTarget(targetType);
 			return new SpellTargetType(targetType);
-        }
+		}
 
 		protected bool IsTargetValid(SpellHandler spellHandler, GameLiving target, bool quiet)
-        {
+		{
 			if (target == null || target.ObjectState != GameLiving.eObjectState.Active)
 			{
 				if (!quiet) spellHandler.MessageToCaster("You must select a target for this spell!",
@@ -55,20 +55,21 @@ namespace DOL.GS.Spells
 		}
 
 		protected bool IsTargetInRange(SpellHandler spellHandler, GameLiving caster, GameLiving selectedTarget, bool quiet)
-        {
+		{
 			if (!caster.IsWithinRadius(selectedTarget, spellHandler.CalculateSpellRange()))
 			{
-				if (caster is GamePlayer && !quiet) spellHandler.MessageToCaster("That target is too far away!",
-																	eChatType.CT_SpellResisted);
-				caster.Notify(GameLivingEvent.CastFailed,
-							  new CastFailedEventArgs(spellHandler, CastFailedEventArgs.Reasons.TargetTooFarAway));
+				if (caster is GamePlayer && !quiet)
+				{
+					spellHandler.MessageToCaster("That target is too far away!", eChatType.CT_SpellResisted);
+				}
+				caster.Notify(GameLivingEvent.CastFailed, new CastFailedEventArgs(spellHandler, CastFailedEventArgs.Reasons.TargetTooFarAway));
 				return false;
 			}
 			return true;
 		}
 
 		protected bool IsTargetInView(SpellHandler spellHandler, GameLiving caster, GameLiving selectedTarget, bool quiet)
-        {
+		{
 			if (selectedTarget == caster.TargetObject && !caster.TargetInView)
 			{
 				if (!quiet) spellHandler.MessageToCaster("Your target is not in visible!", eChatType.CT_SpellResisted);
@@ -79,8 +80,8 @@ namespace DOL.GS.Spells
 		}
 
 		public virtual bool CheckBeginCast(SpellHandler spellHandler, GameLiving caster, GameLiving selectedTarget, bool quiet)
-        {
-			if (targetType != "self" && targetType != "group" && targetType != "controlled" 
+		{
+			if (targetType != "self" && targetType != "group" && targetType != "controlled"
 				&& targetType != "cone" && spellHandler.Spell.Range > 0)
 			{
 				if (IsTargetValid(spellHandler, selectedTarget, quiet) == false) return false;
@@ -88,6 +89,62 @@ namespace DOL.GS.Spells
 				if (IsTargetInView(spellHandler, caster, selectedTarget, quiet) == false) return false;
 			}
 
+			return true;
+		}
+
+		public virtual bool CheckEndCast(SpellHandler spellHandler, GameLiving caster, GameLiving target)
+		{
+			var targetType = spellHandler.Spell.Target.ToLower();
+			if (targetType != "self" && targetType != "group" && targetType != "cone" && spellHandler.Spell.Range > 0)
+			{
+				//all other spells that need a target
+				if (target == null || target.ObjectState != GameObject.eObjectState.Active)
+				{
+					if (caster is GamePlayer)
+						spellHandler.MessageToCaster("You must select a target for this spell!", eChatType.CT_SpellResisted);
+					return false;
+				}
+
+				if (!caster.IsWithinRadius(target, spellHandler.CalculateSpellRange()))
+				{
+					if (caster is GamePlayer)
+						spellHandler.MessageToCaster("That target is too far away!", eChatType.CT_SpellResisted);
+					return false;
+				}
+
+				switch (targetType)
+				{
+					case "enemy":
+						//enemys have to be in front and in view for targeted spells
+						if (!caster.IsObjectInFront(target, 180))
+						{
+							spellHandler.MessageToCaster("Your target is not in view. The spell fails.", eChatType.CT_SpellResisted);
+							return false;
+						}
+
+						if (!GameServer.ServerRules.IsAllowedToAttack((GameLiving)caster, target, false))
+						{
+							return false;
+						}
+						break;
+
+					case "corpse":
+						if (target.IsAlive || !GameServer.ServerRules.IsSameRealm((GameLiving)caster, target, true))
+						{
+							spellHandler.MessageToCaster("This spell only works on dead members of your realm!",
+											eChatType.CT_SpellResisted);
+							return false;
+						}
+						break;
+
+					case "realm":
+						if (GameServer.ServerRules.IsAllowedToAttack((GameLiving)caster, target, true))
+						{
+							return false;
+						}
+						break;
+				}
+			}
 			return true;
 		}
 
@@ -125,7 +182,33 @@ namespace DOL.GS.Spells
 
 			return currentTarget;
 		}
-    }
+
+		public override bool CheckEndCast(SpellHandler spellHandler, GameLiving caster, GameLiving target)
+		{
+			if (spellHandler.Spell.Range <= 0) return true;
+
+			if (target == null || !caster.IsControlledNPC(target as GameNPC))
+			{
+				if (caster.ControlledBrain != null && caster.ControlledBrain.Body != null)
+				{
+					target = caster.ControlledBrain.Body;
+				}
+				else
+				{
+					spellHandler.MessageToCaster("You must cast this spell on a creature you are controlling.", eChatType.CT_System);
+					return false;
+				}
+			}
+
+			if (!caster.IsWithinRadius(target, spellHandler.CalculateSpellRange()))
+			{
+				spellHandler.MessageToCaster("That target is too far away!", eChatType.CT_SpellResisted);
+				return false;
+			}
+
+			return true;
+		}
+	}
 
 	internal class GroundTarget : SpellTargetType
     {
@@ -141,6 +224,17 @@ namespace DOL.GS.Spells
 			if (!caster.GroundTargetInView)
 			{
 				spellHandler.MessageToCaster("Your ground target is not in view!", eChatType.CT_SpellResisted);
+				return false;
+			}
+
+			return true;
+		}
+
+		public override bool CheckEndCast(SpellHandler spellHandler, GameLiving caster, GameLiving target)
+		{
+			if (!caster.IsWithinRadius(caster.GroundTarget, spellHandler.CalculateSpellRange()))
+			{
+				spellHandler.MessageToCaster("Your area target is out of range.  Select a closer target.", eChatType.CT_SpellResisted);
 				return false;
 			}
 
@@ -207,7 +301,37 @@ namespace DOL.GS.Spells
 
 			return true;
 		}
-    }
+
+		public override bool CheckEndCast(SpellHandler spellHandler, GameLiving caster, GameLiving target)
+		{
+			if (spellHandler.Spell.Range <= 0)
+			{
+				return true;
+			}
+
+			IsTargetValid(spellHandler, target, false);
+
+			if (!caster.IsWithinRadius(target, spellHandler.CalculateSpellRange()))
+			{
+				if (caster is GamePlayer)
+					spellHandler.MessageToCaster("That target is too far away!", eChatType.CT_SpellResisted);
+				return false;
+			}
+
+			if (!caster.IsObjectInFront(target, 180))
+			{
+				spellHandler.MessageToCaster("Your target is not in view. The spell fails.", eChatType.CT_SpellResisted);
+				return false;
+			}
+
+			if (!GameServer.ServerRules.IsAllowedToAttack((GameLiving)caster, target, false))
+			{
+				return false;
+			}
+
+			return true;
+		}
+	}
 
 	internal class RealmTarget : SpellTargetType
 	{
@@ -230,6 +354,30 @@ namespace DOL.GS.Spells
 			if (!selectedTarget.IsAlive)
 			{
 				if (!quiet) spellHandler.MessageToCaster(selectedTarget.GetName(0, true) + " is dead!", eChatType.CT_SpellResisted);
+				return false;
+			}
+
+			return true;
+		}
+
+		public override bool CheckEndCast(SpellHandler spellHandler, GameLiving caster, GameLiving target)
+		{
+			if (spellHandler.Spell.Range <= 0)
+			{
+				return true;
+			}
+
+			IsTargetValid(spellHandler, target, false);
+
+			if (!caster.IsWithinRadius(target, spellHandler.CalculateSpellRange()))
+			{
+				if (caster is GamePlayer)
+					spellHandler.MessageToCaster("That target is too far away!", eChatType.CT_SpellResisted);
+				return false;
+			}
+
+			if (GameServer.ServerRules.IsAllowedToAttack((GameLiving)caster, target, true))
+			{
 				return false;
 			}
 
@@ -259,6 +407,30 @@ namespace DOL.GS.Spells
 
 			if (IsTargetInView(spellHandler, caster, selectedTarget, quiet) == false) return false;
 
+			return true;
+		}
+
+		public override bool CheckEndCast(SpellHandler spellHandler, GameLiving caster, GameLiving target)
+		{
+			if (spellHandler.Spell.Range <= 0)
+			{
+				return true;
+			}
+
+			if(IsTargetValid(spellHandler, target, false) == false) return false;
+
+			if (!caster.IsWithinRadius(target, spellHandler.CalculateSpellRange()))
+			{
+				if (caster is GamePlayer)
+					spellHandler.MessageToCaster("That target is too far away!", eChatType.CT_SpellResisted);
+				return false;
+			}
+			if (target.IsAlive || !GameServer.ServerRules.IsSameRealm((GameLiving)caster, target, true))
+			{
+				spellHandler.MessageToCaster("This spell only works on dead members of your realm!",
+								eChatType.CT_SpellResisted);
+				return false;
+			}
 			return true;
 		}
 	}

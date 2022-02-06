@@ -475,6 +475,7 @@ namespace DOL.UnitTests.Gameserver
 
         #endregion
 
+        #region CheckBeginCast
         [Test]
         public void CheckBeginCast_ForPetSpell_PlayerHasNoPet_False()
         {
@@ -519,6 +520,24 @@ namespace DOL.UnitTests.Gameserver
             var actual = spellHandler.CheckBeginCast(null);
 
             var expected = true;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckBeginCast_ForGroundTargetAreaSpell_GroundTargetIsInViewButNotInRange_False()
+        {
+            var caster = NewFakePlayer();
+            caster.X = 0;
+            caster.GroundTarget.X = 64;
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Area";
+            spell.fakeRange = 32;
+            var spellHandler = new SpellHandler(caster, spell, null);
+            caster.GroundTargetInView = true;
+
+            var actual = spellHandler.CheckBeginCast(null);
+
+            var expected = false;
             Assert.AreEqual(expected, actual);
         }
 
@@ -590,6 +609,140 @@ namespace DOL.UnitTests.Gameserver
             var expected = true;
             Assert.AreEqual(expected, actual);
         }
+        #endregion CheckBeginCast
+
+        #region CheckEndCast
+        [Test]
+        public void CheckEndCast_ForGroundTargetSpell_GroundTargetIsOutOfRange_False()
+        {
+            var caster = NewFakePlayer();
+            caster.X = 0;
+            caster.GroundTarget.X = 64;
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Area";
+            spell.fakeRange = 32;
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckEndCast(null);
+
+            var expected = false;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckEndCast_ForPetSpell_PlayerHasPet_True()
+        {
+            var caster = NewFakePlayer();
+            var pet = new GamePet(new FakeBrain());
+            var petBrain = new FakeControlledBrain();
+            caster.ControlledBrain = petBrain;
+            petBrain.Body = pet;
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Pet";
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckEndCast(null);
+
+            var expected = true;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckEndCast_ForPetSpell_PlayerHasPetButNotInRange_False()
+        {
+            var caster = NewFakePlayer();
+            caster.X = 0;
+            var pet = new GamePet(new FakeBrain());
+            pet.X = 64;
+            var petBrain = new FakeControlledBrain();
+            caster.ControlledBrain = petBrain;
+            petBrain.Body = pet;
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Pet";
+            spell.fakeRange = 32;
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckEndCast(null);
+
+            var expected = false;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckEndCast_ForEnemySpell_NpcWithSameRealm_False()
+        {
+            var caster = NewFakePlayer();
+            caster.Realm = eRealm.Albion;
+            var npc = NewFakeNPC();
+            npc.Realm = eRealm.Albion;
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Enemy";
+            spell.fakeRange = 1;
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckEndCast(npc);
+
+            var expected = false;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckEndCast_ForEnemySpell_NpcIsBehindCaster_False()
+        {
+            var caster = NewFakePlayer();
+            caster.X = 0;
+            caster.Heading = 0;
+            var npc = NewFakeNPC();
+            npc.X = -33; //everything within 32 radius is considered in front of target
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Enemy";
+            spell.fakeRange = 1;
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckEndCast(npc);
+
+            var expected = false;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckEndCast_ForCorpseSpell_TargetIsSameRealmAndNotAlive_True()
+        {
+            var caster = NewFakePlayer();
+            caster.Realm = eRealm.Albion;
+            var npc = NewFakeNPC();
+            npc.Realm = eRealm.Albion;
+            npc.fakeIsAlive = false;
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Corpse";
+            spell.fakeRange = 1;
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckEndCast(npc);
+
+            var expected = true;
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CheckEndCast_ForRealmSpell_TargetIsSameRealm_True()
+        {
+            var caster = NewFakePlayer();
+            caster.Realm = eRealm.Albion;
+            var npc = NewFakeNPC();
+            npc.Realm = eRealm.Albion;
+            Console.WriteLine($"{npc.Realm} {caster.Realm}");
+            var spell = NewFakeSpell();
+            spell.fakeTarget = "Realm";
+            spell.fakeRange = 1;
+            var spellHandler = new SpellHandler(caster, spell, null);
+
+            var actual = spellHandler.CheckEndCast(npc);
+
+            var expected = true;
+            Assert.AreEqual(expected, actual);
+        }
+        #endregion CheckEndCast
 
         private static GameLiving NewFakeLiving() => new FakeLiving();
         private static FakePlayerSpy NewFakePlayer() => new FakePlayerSpy() { Realm = eRealm.Albion };
