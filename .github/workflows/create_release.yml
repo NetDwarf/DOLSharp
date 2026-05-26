@@ -9,7 +9,7 @@ on:
 jobs:
   get_release_info:
     name: Get Release Info
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.release_info.outputs.version }}
     steps:
@@ -48,7 +48,7 @@ jobs:
   netcore_build:
     name: Create Build
     needs: get_release_info
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         build_target: [Debug, Release]
@@ -120,7 +120,7 @@ jobs:
   create_release:
     name: Create Release
     needs: [get_release_info,netcore_build]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4

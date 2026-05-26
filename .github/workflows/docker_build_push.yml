@@ -13,7 +13,7 @@ on:
 jobs:
   docker_build_push:
     name: Build Docker Image and Push to Docker Hub
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Get Date
         id: getdate
